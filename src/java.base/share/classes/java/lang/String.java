@@ -580,7 +580,7 @@ public final class String
      * disambiguate it against other similar methods of this class.
      */
     @SuppressWarnings("removal")
-    public @Unique String(Charset charset, @PolySigned byte @GuardSatisfied [] bytes, @IndexOrHigh({"#1"}) int offset, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int length) {
+    private @Unique String(Charset charset, @PolySigned byte @GuardSatisfied [] bytes, @IndexOrHigh({"#1"}) int offset, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int length) {
         if (length == 0) {
             this.value = "".value;
             this.coder = "".coder;

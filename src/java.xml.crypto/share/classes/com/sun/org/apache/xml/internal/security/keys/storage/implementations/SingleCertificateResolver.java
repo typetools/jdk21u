@@ -78,7 +78,6 @@ public class SingleCertificateResolver extends StorageResolverSpi {
         @Pure
         @Override
         public boolean hasNext() {
-
             return !this.alreadyReturned;
         }
 

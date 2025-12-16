@@ -31,6 +31,7 @@ import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 
 import javax.security.auth.login.Configuration;
 import jdk.internal.event.SecurityProviderServiceEvent;
+
 import java.io.*;
 import java.security.cert.CertStoreParameters;
 import java.util.*;
@@ -724,7 +725,7 @@ public abstract class Provider extends Properties {
      */
     @Override
     public synchronized @PolyNull Object computeIfPresent(Object key,
-            BiFunction<? super Object, ? super Object, ? extends @PolyNull Object> 
+            BiFunction<? super Object, ? super Object, ? extends @PolyNull Object>
             remappingFunction) {
         check("putProviderProperty." + name);
         check("removeProviderProperty." + name);

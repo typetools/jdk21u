@@ -1831,7 +1831,8 @@ public final @Interned class Class<@UnknownKeyFor T> implements java.io.Serializ
     public @ClassGetSimpleName String getSimpleName() {
         if (isUnnamedClass()) {
             return "";
-        }        ReflectionData<T> rd = reflectionData();
+        }
+        ReflectionData<T> rd = reflectionData();
         String simpleName = rd.simpleName;
         if (simpleName == null) {
             rd.simpleName = simpleName = getSimpleName0();
@@ -1902,7 +1903,8 @@ public final @Interned class Class<@UnknownKeyFor T> implements java.io.Serializ
     public @Nullable @CanonicalName String getCanonicalName() {
         if (isUnnamedClass()) {
             return null;
-        }        ReflectionData<T> rd = reflectionData();
+        }
+        ReflectionData<T> rd = reflectionData();
         String canonicalName = rd.canonicalName;
         if (canonicalName == null) {
             rd.canonicalName = canonicalName = getCanonicalName0();
