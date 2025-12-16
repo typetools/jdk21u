@@ -24,6 +24,7 @@
  */
 package jdk.javadoc.internal.tool;
 
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -320,6 +321,7 @@ public class ElementsTable {
      *
      * @return true if included
      */
+    @Pure
     public boolean isIncluded(Element e) {
         if (e == null) {
             return false;
@@ -577,6 +579,7 @@ public class ElementsTable {
         return result;
     }
 
+    @Pure
     private boolean isMandated(ModuleElement mdle, RequiresDirective rd) {
         return toolEnv.elements.getOrigin(mdle, rd) == MANDATED;
     }
@@ -971,6 +974,7 @@ public class ElementsTable {
         }
     }
 
+    @Pure
     private boolean isTypeElementSelected(TypeElement te) {
         return (xclasses || toolEnv.getFileKind(te) == SOURCE) && isSelected(te);
     }
@@ -986,6 +990,7 @@ public class ElementsTable {
      * @param e the element to be checked
      * @return true if the element is visible
      */
+    @Pure
     public boolean isSelected(Element e) {
         if (toolEnv.isSynthetic((Symbol) e) && !toolEnv.isUnnamed((Symbol) e)) {
             return false;
@@ -1108,6 +1113,7 @@ public class ElementsTable {
             modpkg = new ModulePackage(name);
         }
 
+        @Pure
         boolean isExcluded() {
             return excluded;
         }

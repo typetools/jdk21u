@@ -25,6 +25,9 @@
 
 package javax.crypto;
 
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.dataflow.qual.Pure;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -325,6 +328,7 @@ final class CryptoPolicyParser {
         return false;
     }
 
+    @Pure
     private boolean peek(String expect) {
         boolean found = false;
 

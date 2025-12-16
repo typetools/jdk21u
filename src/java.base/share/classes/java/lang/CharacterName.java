@@ -25,8 +25,10 @@
 
 package java.lang;
 
-import jdk.internal.util.ArraysSupport;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
 
+import jdk.internal.util.ArraysSupport;
 import java.io.DataInputStream;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
@@ -35,7 +37,8 @@ import java.util.zip.InflaterInputStream;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
-class CharacterName {
+@AnnotatedFor({"index", "interning"})
+@UsesObjectEquals class CharacterName {
 
     private static SoftReference<CharacterName> refCharName;
 

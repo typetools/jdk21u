@@ -25,6 +25,14 @@
 
 package java.lang;
 
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.index.qual.PolyLowerBound;
+import org.checkerframework.checker.index.qual.PolyUpperBound;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.common.value.qual.StaticallyExecutable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.math.BigDecimal;
 import java.util.Random;
 import jdk.internal.math.FloatConsts;
@@ -123,7 +131,8 @@ import jdk.internal.vm.annotation.IntrinsicCandidate;
  * @since   1.0
  */
 
-public final class Math {
+@AnnotatedFor({"index", "interning", "lock", "nullness"})
+public final @UsesObjectEquals class Math {
 
     /**
      * Don't let anyone instantiate this class.
@@ -181,6 +190,7 @@ public final class Math {
      * @param   a   an angle, in radians.
      * @return  the sine of the argument.
      */
+    @Pure
     @IntrinsicCandidate
     public static double sin(double a) {
         return StrictMath.sin(a); // default impl. delegates to StrictMath
@@ -199,6 +209,7 @@ public final class Math {
      * @param   a   an angle, in radians.
      * @return  the cosine of the argument.
      */
+    @Pure
     @IntrinsicCandidate
     public static double cos(double a) {
         return StrictMath.cos(a); // default impl. delegates to StrictMath
@@ -217,6 +228,7 @@ public final class Math {
      * @param   a   an angle, in radians.
      * @return  the tangent of the argument.
      */
+    @Pure
     @IntrinsicCandidate
     public static double tan(double a) {
         return StrictMath.tan(a); // default impl. delegates to StrictMath
@@ -236,6 +248,7 @@ public final class Math {
      * @param   a   the value whose arc sine is to be returned.
      * @return  the arc sine of the argument.
      */
+    @Pure
     public static double asin(double a) {
         return StrictMath.asin(a); // default impl. delegates to StrictMath
     }
@@ -254,6 +267,7 @@ public final class Math {
      * @param   a   the value whose arc cosine is to be returned.
      * @return  the arc cosine of the argument.
      */
+    @Pure
     public static double acos(double a) {
         return StrictMath.acos(a); // default impl. delegates to StrictMath
     }
@@ -275,6 +289,7 @@ public final class Math {
      * @param   a   the value whose arc tangent is to be returned.
      * @return  the arc tangent of the argument.
      */
+    @Pure
     public static double atan(double a) {
         return StrictMath.atan(a); // default impl. delegates to StrictMath
     }
@@ -289,6 +304,7 @@ public final class Math {
      *          in radians.
      * @since   1.2
      */
+    @Pure
     public static double toRadians(double angdeg) {
         return angdeg * DEGREES_TO_RADIANS;
     }
@@ -305,6 +321,7 @@ public final class Math {
      *          in degrees.
      * @since   1.2
      */
+    @Pure
     public static double toDegrees(double angrad) {
         return angrad * RADIANS_TO_DEGREES;
     }
@@ -327,6 +344,7 @@ public final class Math {
      * @return  the value <i>e</i><sup>{@code a}</sup>,
      *          where <i>e</i> is the base of the natural logarithms.
      */
+    @Pure
     @IntrinsicCandidate
     public static double exp(double a) {
         return StrictMath.exp(a); // default impl. delegates to StrictMath
@@ -352,6 +370,7 @@ public final class Math {
      * @return  the value ln&nbsp;{@code a}, the natural logarithm of
      *          {@code a}.
      */
+    @Pure
     @IntrinsicCandidate
     public static double log(double a) {
         return StrictMath.log(a); // default impl. delegates to StrictMath
@@ -380,6 +399,7 @@ public final class Math {
      * @return  the base 10 logarithm of  {@code a}.
      * @since 1.5
      */
+    @Pure
     @IntrinsicCandidate
     public static double log10(double a) {
         return StrictMath.log10(a); // default impl. delegates to StrictMath
@@ -406,6 +426,7 @@ public final class Math {
      * @return  the positive square root of {@code a}.
      *          If the argument is NaN or less than zero, the result is NaN.
      */
+    @Pure
     @IntrinsicCandidate
     public static double sqrt(double a) {
         return StrictMath.sqrt(a); // default impl. delegates to StrictMath
@@ -442,6 +463,7 @@ public final class Math {
      * @return  the cube root of {@code a}.
      * @since 1.5
      */
+    @Pure
     public static double cbrt(double a) {
         return StrictMath.cbrt(a);
     }
@@ -468,6 +490,7 @@ public final class Math {
      * @return  the remainder when {@code f1} is divided by
      *          {@code f2}.
      */
+    @Pure
     public static double IEEEremainder(double f1, double f2) {
         return StrictMath.IEEEremainder(f1, f2); // delegate to StrictMath
     }
@@ -494,6 +517,7 @@ public final class Math {
      *          floating-point value that is greater than or equal to
      *          the argument and is equal to a mathematical integer.
      */
+    @Pure
     @IntrinsicCandidate
     public static double ceil(double a) {
         return StrictMath.ceil(a); // default impl. delegates to StrictMath
@@ -518,6 +542,7 @@ public final class Math {
      *          floating-point value that less than or equal to the argument
      *          and is equal to a mathematical integer.
      */
+    @Pure
     @IntrinsicCandidate
     public static double floor(double a) {
         return StrictMath.floor(a); // default impl. delegates to StrictMath
@@ -542,6 +567,7 @@ public final class Math {
      * @return  the closest floating-point value to {@code a} that is
      *          equal to a mathematical integer.
      */
+    @Pure
     @IntrinsicCandidate
     public static double rint(double a) {
         return StrictMath.rint(a); // default impl. delegates to StrictMath
@@ -608,6 +634,7 @@ public final class Math {
      *          in polar coordinates that corresponds to the point
      *          (<i>x</i>,&nbsp;<i>y</i>) in Cartesian coordinates.
      */
+    @Pure
     @IntrinsicCandidate
     public static double atan2(double y, double x) {
         return StrictMath.atan2(y, x); // default impl. delegates to StrictMath
@@ -746,6 +773,7 @@ public final class Math {
      * @param   b   the exponent.
      * @return  the value {@code a}<sup>{@code b}</sup>.
      */
+    @Pure
     @IntrinsicCandidate
     public static double pow(double a, double b) {
         return StrictMath.pow(a, b); // default impl. delegates to StrictMath
@@ -771,8 +799,8 @@ public final class Math {
      * @see     java.lang.Integer#MAX_VALUE
      * @see     java.lang.Integer#MIN_VALUE
      */
-    @IntrinsicCandidate
-    public static int round(float a) {
+    @Pure
+    @IntrinsicCandidate    public static int round(float a) {
         int intBits = Float.floatToRawIntBits(a);
         int biasedExp = (intBits & FloatConsts.EXP_BIT_MASK)
                 >> (FloatConsts.SIGNIFICAND_WIDTH - 1);
@@ -821,8 +849,8 @@ public final class Math {
      * @see     java.lang.Long#MAX_VALUE
      * @see     java.lang.Long#MIN_VALUE
      */
-    @IntrinsicCandidate
-    public static long round(double a) {
+    @Pure
+    @IntrinsicCandidate    public static long round(double a) {
         long longBits = Double.doubleToRawLongBits(a);
         long biasedExp = (longBits & DoubleConsts.EXP_BIT_MASK)
                 >> (DoubleConsts.SIGNIFICAND_WIDTH - 1);
@@ -889,6 +917,7 @@ public final class Math {
      * @see #nextDown(double)
      * @see Random#nextDouble()
      */
+    @Pure
     public static double random() {
         return RandomNumberGeneratorHolder.randomNumberGenerator.nextDouble();
     }
@@ -1875,8 +1904,9 @@ public final class Math {
      * @return  the absolute value of the argument.
      * @see Math#absExact(int)
      */
+    @Pure
     @IntrinsicCandidate
-    public static int abs(int a) {
+    public static @NonNegative int abs(int a) {
         return (a < 0) ? -a : a;
     }
 
@@ -1898,6 +1928,7 @@ public final class Math {
      * @see Math#abs(int)
      * @since 15
      */
+    @Pure
     public static int absExact(int a) {
         if (a == Integer.MIN_VALUE)
             throw new ArithmeticException(
@@ -1921,8 +1952,9 @@ public final class Math {
      * @return  the absolute value of the argument.
      * @see Math#absExact(long)
      */
+    @Pure
     @IntrinsicCandidate
-    public static long abs(long a) {
+    public static @NonNegative long abs(long a) {
         return (a < 0) ? -a : a;
     }
 
@@ -1944,6 +1976,7 @@ public final class Math {
      * @see Math#abs(long)
      * @since 15
      */
+    @Pure
     public static long absExact(long a) {
         if (a == Long.MIN_VALUE)
             throw new ArithmeticException(
@@ -1972,6 +2005,7 @@ public final class Math {
      * @param   a   the argument whose absolute value is to be determined
      * @return  the absolute value of the argument.
      */
+    @Pure
     @IntrinsicCandidate
     public static float abs(float a) {
         // Convert to bit field form, zero the sign bit, and convert back
@@ -1998,6 +2032,7 @@ public final class Math {
      * @param   a   the argument whose absolute value is to be determined
      * @return  the absolute value of the argument.
      */
+    @Pure
     @IntrinsicCandidate
     public static double abs(double a) {
         // Convert to bit field form, zero the sign bit, and convert back
@@ -2015,8 +2050,10 @@ public final class Math {
      * @param   b   another argument.
      * @return  the larger of {@code a} and {@code b}.
      */
+    @Pure
+    @StaticallyExecutable
     @IntrinsicCandidate
-    public static int max(int a, int b) {
+    public static @PolyUpperBound int max(@PolyUpperBound int a, @PolyUpperBound int b) {
         return (a >= b) ? a : b;
     }
 
@@ -2030,7 +2067,9 @@ public final class Math {
      * @param   b   another argument.
      * @return  the larger of {@code a} and {@code b}.
      */
-    public static long max(long a, long b) {
+    @Pure
+    @StaticallyExecutable
+    public static @PolyUpperBound long max(@PolyUpperBound long a, @PolyUpperBound long b) {
         return (a >= b) ? a : b;
     }
 
@@ -2056,6 +2095,8 @@ public final class Math {
      * @param   b   another argument.
      * @return  the larger of {@code a} and {@code b}.
      */
+    @Pure
+    @StaticallyExecutable
     @IntrinsicCandidate
     public static float max(float a, float b) {
         if (a != a)
@@ -2087,6 +2128,8 @@ public final class Math {
      * @param   b   another argument.
      * @return  the larger of {@code a} and {@code b}.
      */
+    @Pure
+    @StaticallyExecutable
     @IntrinsicCandidate
     public static double max(double a, double b) {
         if (a != a)
@@ -2110,8 +2153,9 @@ public final class Math {
      * @param   b   another argument.
      * @return  the smaller of {@code a} and {@code b}.
      */
+    @Pure
     @IntrinsicCandidate
-    public static int min(int a, int b) {
+    public static @PolyLowerBound int min(@PolyLowerBound int a, @PolyLowerBound int b) {
         return (a <= b) ? a : b;
     }
 
@@ -2125,7 +2169,9 @@ public final class Math {
      * @param   b   another argument.
      * @return  the smaller of {@code a} and {@code b}.
      */
-    public static long min(long a, long b) {
+    @Pure
+    @StaticallyExecutable
+    public static @PolyLowerBound long min(@PolyLowerBound long a, @PolyLowerBound long b) {
         return (a <= b) ? a : b;
     }
 
@@ -2147,6 +2193,8 @@ public final class Math {
      * @param   b   another argument.
      * @return  the smaller of {@code a} and {@code b}.
      */
+    @Pure
+    @StaticallyExecutable
     @IntrinsicCandidate
     public static float min(float a, float b) {
         if (a != a)
@@ -2178,6 +2226,8 @@ public final class Math {
      * @param   b   another argument.
      * @return  the smaller of {@code a} and {@code b}.
      */
+    @Pure
+    @StaticallyExecutable
     @IntrinsicCandidate
     public static double min(double a, double b) {
         if (a != a)
@@ -2526,6 +2576,7 @@ public final class Math {
      * @author Joseph D. Darcy
      * @since 1.5
      */
+    @Pure
     public static double ulp(double d) {
         int exp = getExponent(d);
 
@@ -2573,6 +2624,7 @@ public final class Math {
      * @author Joseph D. Darcy
      * @since 1.5
      */
+    @Pure
     public static float ulp(float f) {
         int exp = getExponent(f);
 
@@ -2614,6 +2666,7 @@ public final class Math {
      * @author Joseph D. Darcy
      * @since 1.5
      */
+    @Pure
     @IntrinsicCandidate
     public static double signum(double d) {
         return (d == 0.0 || Double.isNaN(d))?d:copySign(1.0, d);
@@ -2636,6 +2689,7 @@ public final class Math {
      * @author Joseph D. Darcy
      * @since 1.5
      */
+    @Pure
     @IntrinsicCandidate
     public static float signum(float f) {
         return (f == 0.0f || Float.isNaN(f))?f:copySign(1.0f, f);
@@ -2666,6 +2720,7 @@ public final class Math {
      * @return  The hyperbolic sine of {@code x}.
      * @since 1.5
      */
+    @Pure
     public static double sinh(double x) {
         return StrictMath.sinh(x);
     }
@@ -2694,6 +2749,7 @@ public final class Math {
      * @return  The hyperbolic cosine of {@code x}.
      * @since 1.5
      */
+    @Pure
     public static double cosh(double x) {
         return StrictMath.cosh(x);
     }
@@ -2734,6 +2790,7 @@ public final class Math {
      * @return  The hyperbolic tangent of {@code x}.
      * @since 1.5
      */
+    @Pure
     public static double tanh(double x) {
         return StrictMath.tanh(x);
     }
@@ -2764,6 +2821,7 @@ public final class Math {
      * without intermediate overflow or underflow
      * @since 1.5
      */
+    @Pure
     public static double hypot(double x, double y) {
         return StrictMath.hypot(x, y);
     }
@@ -2802,6 +2860,7 @@ public final class Math {
      * @return  the value <i>e</i><sup>{@code x}</sup>&nbsp;-&nbsp;1.
      * @since 1.5
      */
+    @Pure
     public static double expm1(double x) {
         return StrictMath.expm1(x);
     }
@@ -2839,6 +2898,7 @@ public final class Math {
      * log of {@code x}&nbsp;+&nbsp;1
      * @since 1.5
      */
+    @Pure
     public static double log1p(double x) {
         return StrictMath.log1p(x);
     }
@@ -2862,6 +2922,7 @@ public final class Math {
      * and the sign of {@code sign}.
      * @since 1.6
      */
+    @Pure
     @IntrinsicCandidate
     public static double copySign(double magnitude, double sign) {
         return Double.longBitsToDouble((Double.doubleToRawLongBits(sign) &
@@ -2890,6 +2951,7 @@ public final class Math {
      * and the sign of {@code sign}.
      * @since 1.6
      */
+    @Pure
     @IntrinsicCandidate
     public static float copySign(float magnitude, float sign) {
         return Float.intBitsToFloat((Float.floatToRawIntBits(sign) &
@@ -2917,6 +2979,7 @@ public final class Math {
      * @return the unbiased exponent of the argument
      * @since 1.6
      */
+    @Pure
     public static int getExponent(float f) {
         /*
          * Bitwise convert f to integer, mask out exponent bits, shift
@@ -2945,6 +3008,7 @@ public final class Math {
      * @return the unbiased exponent of the argument
      * @since 1.6
      */
+    @Pure
     public static int getExponent(double d) {
         /*
          * Bitwise convert d to long, mask out exponent bits, shift
@@ -2995,6 +3059,7 @@ public final class Math {
      * direction of {@code direction}.
      * @since 1.6
      */
+    @Pure
     public static double nextAfter(double start, double direction) {
         /*
          * The cases:
@@ -3079,6 +3144,7 @@ public final class Math {
      * direction of {@code direction}.
      * @since 1.6
      */
+    @Pure
     public static float nextAfter(float start, double direction) {
         /*
          * The cases:
@@ -3152,6 +3218,7 @@ public final class Math {
      * infinity.
      * @since 1.6
      */
+    @Pure
     public static double nextUp(double d) {
         // Use a single conditional and handle the likely cases first.
         if (d < Double.POSITIVE_INFINITY) {
@@ -3191,6 +3258,7 @@ public final class Math {
      * infinity.
      * @since 1.6
      */
+    @Pure
     public static float nextUp(float f) {
         // Use a single conditional and handle the likely cases first.
         if (f < Float.POSITIVE_INFINITY) {
@@ -3312,6 +3380,7 @@ public final class Math {
      * @return {@code d} &times; 2<sup>{@code scaleFactor}</sup>
      * @since 1.6
      */
+    @Pure
     public static double scalb(double d, int scaleFactor) {
         /*
          * When scaling up, it does not matter what order the
@@ -3399,6 +3468,7 @@ public final class Math {
      * @return {@code f} &times; 2<sup>{@code scaleFactor}</sup>
      * @since 1.6
      */
+    @Pure
     public static float scalb(float f, int scaleFactor) {
         // magnitude of a power of two so large that scaling a finite
         // nonzero value by it would be guaranteed to over or

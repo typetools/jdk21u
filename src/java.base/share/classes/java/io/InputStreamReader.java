@@ -25,6 +25,15 @@
 
 package java.io;
 
+import org.checkerframework.checker.index.qual.GTENegativeOne;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
+import org.checkerframework.checker.index.qual.LTLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
@@ -59,6 +68,7 @@ import sun.nio.cs.StreamDecoder;
  * @since       1.1
  */
 
+@AnnotatedFor({"index", "mustcall", "nullness"})
 public class InputStreamReader extends Reader {
     private final StreamDecoder sd;
 
@@ -84,7 +94,7 @@ public class InputStreamReader extends Reader {
      *
      * @see Charset#defaultCharset()
      */
-    public InputStreamReader(InputStream in) {
+    public @MustCallAlias InputStreamReader(@MustCallAlias InputStream in) {
         super(in);
         Charset cs = Charset.defaultCharset();
         sd = StreamDecoder.forInputStreamReader(in, lockFor(this), cs);
@@ -102,7 +112,7 @@ public class InputStreamReader extends Reader {
      * @throws     UnsupportedEncodingException
      *             If the named charset is not supported
      */
-    public InputStreamReader(InputStream in, String charsetName)
+    public @MustCallAlias InputStreamReader(@MustCallAlias InputStream in, String charsetName)
         throws UnsupportedEncodingException
     {
         super(in);
@@ -119,7 +129,7 @@ public class InputStreamReader extends Reader {
      *
      * @since 1.4
      */
-    public InputStreamReader(InputStream in, Charset cs) {
+    public @MustCallAlias InputStreamReader(@MustCallAlias InputStream in, Charset cs) {
         super(in);
         if (cs == null)
             throw new NullPointerException("charset");
@@ -134,7 +144,7 @@ public class InputStreamReader extends Reader {
      *
      * @since 1.4
      */
-    public InputStreamReader(InputStream in, CharsetDecoder dec) {
+    public @MustCallAlias InputStreamReader(@MustCallAlias InputStream in, CharsetDecoder dec) {
         super(in);
         if (dec == null)
             throw new NullPointerException("charset decoder");
@@ -160,7 +170,7 @@ public class InputStreamReader extends Reader {
      *
      * @revised 1.4
      */
-    public String getEncoding() {
+    public @Nullable String getEncoding() {
         return sd.getEncoding();
     }
 
@@ -184,7 +194,7 @@ public class InputStreamReader extends Reader {
      * {@inheritDoc}
      * @throws     IndexOutOfBoundsException  {@inheritDoc}
      */
-    public int read(char[] cbuf, int off, int len) throws IOException {
+    public @GTENegativeOne @LTEqLengthOf({"#1"}) int read(char[] cbuf, @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) throws IOException {
         return sd.read(cbuf, off, len);
     }
 

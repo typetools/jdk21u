@@ -25,6 +25,9 @@
 
 package java.nio.channels.spi;
 
+import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethodsIf;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -69,6 +72,7 @@ import sun.nio.ch.SelectorImpl;
  * @since 1.4
  */
 
+@AnnotatedFor({"mustcall"})
 public abstract class AbstractSelector
     extends Selector
 {
@@ -147,6 +151,7 @@ public abstract class AbstractSelector
      */
     protected abstract void implCloseSelector() throws IOException;
 
+    @EnsuresCalledMethodsIf(expression="this", result=false, methods={"close"})
     public final boolean isOpen() {
         return !closed;
     }

@@ -25,6 +25,12 @@
 
 package sun.security.util;
 
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
 import java.io.ByteArrayOutputStream;
 
 import jdk.internal.util.Preconditions;
@@ -177,7 +183,9 @@ public class BitArray {
         return repn.clone();
     }
 
-    public boolean equals(Object obj) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object obj) {
         if (obj == this) return true;
         if (!(obj instanceof BitArray ba)) return false;
 

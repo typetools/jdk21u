@@ -25,6 +25,9 @@
 
 package java.lang.ref;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -40,7 +43,9 @@ import jdk.internal.misc.VM;
  * @since    1.2
  */
 
-public class ReferenceQueue<T> {
+@AnnotatedFor({"interning", "nullness"})
+@SuppressWarnings({"rawtypes"})
+public @UsesObjectEquals class ReferenceQueue<T> {
     private static class Null extends ReferenceQueue<Object> {
         public Null() { super(0); }
 
@@ -56,6 +61,7 @@ public class ReferenceQueue<T> {
     private volatile Reference<? extends T> head;
     private long queueLength = 0;
 
+    @SuppressWarnings({"unchecked"})
     private final ReentrantLock lock;
     private final Condition notEmpty;
 
@@ -63,6 +69,7 @@ public class ReferenceQueue<T> {
         notEmpty.signalAll();
     }
 
+    @SuppressWarnings({"unchecked"})
     void await() throws InterruptedException {
         notEmpty.await();
     }

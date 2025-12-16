@@ -25,6 +25,12 @@
 
 package java.util;
 
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.security.*;
 
 import jdk.internal.access.JavaLangAccess;
@@ -72,6 +78,7 @@ import jdk.internal.access.SharedSecrets;
  *      RFC 4122: A Universally Unique IDentifier (UUID) URN Namespace
  * @since   1.5
  */
+@AnnotatedFor({"lock", "nullness", "index"})
 public final class UUID implements java.io.Serializable, Comparable<UUID> {
 
     /**
@@ -301,7 +308,7 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      *
      * @return  The least significant 64 bits of this UUID's 128 bit value
      */
-    public long getLeastSignificantBits() {
+    public long getLeastSignificantBits(@GuardSatisfied UUID this) {
         return leastSigBits;
     }
 
@@ -310,7 +317,7 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      *
      * @return  The most significant 64 bits of this UUID's 128 bit value
      */
-    public long getMostSignificantBits() {
+    public long getMostSignificantBits(@GuardSatisfied UUID this) {
         return mostSigBits;
     }
 
@@ -461,8 +468,9 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      *
      * @return  A string representation of this {@code UUID}
      */
+    @SideEffectFree
     @Override
-    public String toString() {
+    public String toString(@GuardSatisfied UUID this) {
         return jla.fastUUID(leastSigBits, mostSigBits);
     }
 
@@ -471,8 +479,9 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      *
      * @return  A hash code value for this {@code UUID}
      */
+    @Pure
     @Override
-    public int hashCode() {
+    public int hashCode(@GuardSatisfied UUID this) {
         return Long.hashCode(mostSigBits ^ leastSigBits);
     }
 
@@ -488,8 +497,9 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      * @return  {@code true} if the objects are the same; {@code false}
      *          otherwise
      */
+    @Pure
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@GuardSatisfied UUID this, @GuardSatisfied @Nullable Object obj) {
         if ((null == obj) || (obj.getClass() != UUID.class))
             return false;
         UUID id = (UUID)obj;
@@ -513,8 +523,9 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
      *          greater than {@code val}
      *
      */
+    @Pure
     @Override
-    public int compareTo(UUID val) {
+    public int compareTo(@GuardSatisfied UUID this, @GuardSatisfied UUID val) {
         // The ordering is intentionally set up so that the UUIDs
         // can simply be numerically compared as two numbers
         int mostSigBits = Long.compare(this.mostSigBits, val.mostSigBits);

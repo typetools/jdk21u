@@ -25,6 +25,14 @@
 
 package java.security;
 
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
 import sun.security.util.SecurityConstants;
 
 import java.util.Enumeration;
@@ -98,7 +106,9 @@ public final class AllPermission extends Permission {
      * @param obj the object we are testing for equality with this object.
      * @return true if {@code obj} is an {@code AllPermission}, false otherwise.
      */
-    public boolean equals(Object obj) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object obj) {
         return (obj instanceof AllPermission);
     }
 
@@ -219,11 +229,12 @@ final class AllPermissionCollection
         return new Enumeration<>() {
             private boolean hasMore = all_allowed;
 
-            public boolean hasMoreElements() {
+            @EnsuresNonEmptyIf(result = true, expression = "this")
+            public boolean hasMoreElements(/**/) {
                 return hasMore;
             }
 
-            public Permission nextElement() {
+            public Permission nextElement(/*@NonEmpty Enumeration<Permission> this*/) {
                 hasMore = false;
                 return SecurityConstants.ALL_PERMISSION;
             }

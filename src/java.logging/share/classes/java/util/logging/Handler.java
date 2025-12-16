@@ -26,6 +26,9 @@
 
 package java.util.logging;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.Objects;
 import java.io.UnsupportedEncodingException;
 import java.security.AccessController;
@@ -50,7 +53,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * @since 1.4
  */
 
-public abstract class Handler {
+@AnnotatedFor({"interning"})
+public abstract @UsesObjectEquals class Handler {
     private static final int offValue = Level.OFF.intValue();
     private final LogManager manager = LogManager.getLogManager();
 

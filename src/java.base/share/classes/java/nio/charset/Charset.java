@@ -25,8 +25,12 @@
 
 package java.nio.charset;
 
-import jdk.internal.misc.ThreadTracker;
-import jdk.internal.misc.VM;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
+
+import jdk.internal.misc.ThreadTracker;import jdk.internal.misc.VM;
 import jdk.internal.util.StaticProperty;
 import jdk.internal.vm.annotation.Stable;
 import sun.nio.cs.ThreadLocalCoders;
@@ -358,11 +362,14 @@ public abstract class Charset
                     return true;
                 }
 
+                @Pure
+                @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext() {
                     return getNext();
                 }
 
-                public CharsetProvider next() {
+                @SideEffectsOnly("this")
+                public CharsetProvider next(/*@NonEmpty Iterator<CharsetProvider> this*/) {
                     if (!getNext())
                         throw new NoSuchElementException();
                     CharsetProvider n = next;
@@ -801,6 +808,7 @@ public abstract class Charset
      *
      * @return  {@code true} if the given charset is contained in this charset
      */
+    @Pure
     public abstract boolean contains(Charset cs);
 
     /**

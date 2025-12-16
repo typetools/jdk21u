@@ -25,8 +25,9 @@
 
 package jdk.javadoc.internal.doclets.formats.html;
 
-import java.net.URI;
-import java.util.ArrayList;
+import org.checkerframework.dataflow.qual.Pure;
+
+import java.net.URI;import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;

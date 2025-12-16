@@ -25,6 +25,22 @@
 
 package java.io;
 
+import org.checkerframework.checker.index.qual.GTENegativeOne;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
+import org.checkerframework.checker.index.qual.LTLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.index.qual.Positive;
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -67,6 +83,7 @@ import jdk.internal.misc.InternalLock;
  * @since       1.1
  */
 
+@AnnotatedFor({"index", "lock", "mustcall", "nullness"})
 public class BufferedReader extends Reader {
     private Reader in;
 
@@ -96,7 +113,7 @@ public class BufferedReader extends Reader {
      *
      * @throws IllegalArgumentException  If {@code sz <= 0}
      */
-    public BufferedReader(Reader in, int sz) {
+    public @MustCallAlias BufferedReader(@MustCallAlias Reader in, @Positive int sz) {
         super(in);
         if (sz <= 0)
             throw new IllegalArgumentException("Buffer size <= 0");
@@ -111,7 +128,7 @@ public class BufferedReader extends Reader {
      *
      * @param  in   A Reader
      */
-    public BufferedReader(Reader in) {
+    public @MustCallAlias BufferedReader(@MustCallAlias Reader in) {
         this(in, DEFAULT_CHAR_BUFFER_SIZE);
     }
 
@@ -173,7 +190,7 @@ public class BufferedReader extends Reader {
      *         end of the stream has been reached
      * @throws     IOException  If an I/O error occurs
      */
-    public int read() throws IOException {
+    public @GTENegativeOne int read(@GuardSatisfied BufferedReader this) throws IOException {
         Object lock = this.lock;
         if (lock instanceof InternalLock locker) {
             locker.lock();
@@ -288,7 +305,7 @@ public class BufferedReader extends Reader {
      * @throws     IndexOutOfBoundsException {@inheritDoc}
      * @throws     IOException  {@inheritDoc}
      */
-    public int read(char[] cbuf, int off, int len) throws IOException {
+    public @GTENegativeOne @LTEqLengthOf({"#1"}) int read(@GuardSatisfied BufferedReader this, char[] cbuf, @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) throws IOException {
         Object lock = this.lock;
         if (lock instanceof InternalLock locker) {
             locker.lock();
@@ -339,7 +356,7 @@ public class BufferedReader extends Reader {
      *
      * @throws     IOException  If an I/O error occurs
      */
-    String readLine(boolean ignoreLF, boolean[] term) throws IOException {
+    String readLine(@GuardSatisfied BufferedReader this, boolean ignoreLF, boolean @Nullable [] term) throws IOException {
         Object lock = this.lock;
         if (lock instanceof InternalLock locker) {
             locker.lock();
@@ -432,14 +449,14 @@ public class BufferedReader extends Reader {
      *
      * @see java.nio.file.Files#readAllLines
      */
-    public String readLine() throws IOException {
+    public @Nullable String readLine(@GuardSatisfied BufferedReader this) throws IOException {
         return readLine(false, null);
     }
 
     /**
      * {@inheritDoc}
      */
-    public long skip(long n) throws IOException {
+    public @NonNegative long skip(@GuardSatisfied BufferedReader this, @NonNegative long n) throws IOException {
         if (n < 0L) {
             throw new IllegalArgumentException("skip value is negative");
         }
@@ -493,7 +510,9 @@ public class BufferedReader extends Reader {
      *
      * @throws     IOException  If an I/O error occurs
      */
-    public boolean ready() throws IOException {
+    @EnsuresNonNullIf(expression={"readLine()"}, result=true)
+    @Pure
+    public boolean ready(@GuardSatisfied BufferedReader this) throws IOException {
         Object lock = this.lock;
         if (lock instanceof InternalLock locker) {
             locker.lock();
@@ -555,7 +574,7 @@ public class BufferedReader extends Reader {
      * @throws     IllegalArgumentException  If {@code readAheadLimit < 0}
      * @throws     IOException  If an I/O error occurs
      */
-    public void mark(int readAheadLimit) throws IOException {
+    public void mark(@GuardSatisfied BufferedReader this, @NonNegative int readAheadLimit) throws IOException {
         if (readAheadLimit < 0) {
             throw new IllegalArgumentException("Read-ahead limit < 0");
         }
@@ -587,7 +606,7 @@ public class BufferedReader extends Reader {
      * @throws     IOException  If the stream has never been marked,
      *                          or if the mark has been invalidated
      */
-    public void reset() throws IOException {
+    public void reset(@GuardSatisfied BufferedReader this) throws IOException {
         Object lock = this.lock;
         if (lock instanceof InternalLock locker) {
             locker.lock();
@@ -613,7 +632,7 @@ public class BufferedReader extends Reader {
         skipLF = markedSkipLF;
     }
 
-    public void close() throws IOException {
+    public void close(@GuardSatisfied BufferedReader this) throws IOException {
         Object lock = this.lock;
         if (lock instanceof InternalLock locker) {
             locker.lock();
@@ -668,11 +687,13 @@ public class BufferedReader extends Reader {
      *
      * @since 1.8
      */
-    public Stream<String> lines() {
+    public Stream<String> lines(@GuardSatisfied BufferedReader this) {
         Iterator<String> iter = new Iterator<>() {
             String nextLine = null;
 
             @Override
+            @Pure
+            @EnsuresNonEmptyIf(result = true, expression = "this")
             public boolean hasNext() {
                 if (nextLine != null) {
                     return true;
@@ -687,7 +708,8 @@ public class BufferedReader extends Reader {
             }
 
             @Override
-            public String next() {
+            @SideEffectsOnly("this")
+            public String next(/*@NonEmpty Iterator<String> this*/) {
                 if (nextLine != null || hasNext()) {
                     String line = nextLine;
                     nextLine = null;

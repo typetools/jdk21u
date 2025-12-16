@@ -24,8 +24,9 @@
  */
 package java.lang.constant;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
+import org.checkerframework.checker.signature.qual.MethodDescriptor;
+
+import java.lang.invoke.MethodHandles;import java.lang.invoke.MethodType;
 import java.lang.invoke.TypeDescriptor;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -195,7 +196,7 @@ public sealed interface MethodTypeDesc
      * @return the method type descriptor string
      * @jvms 4.3.3 Method Descriptors
      */
-    String descriptorString();
+    @MethodDescriptor String descriptorString();
 
     /**
      * Returns a human-readable descriptor for this method type, using the

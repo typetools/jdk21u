@@ -44,6 +44,8 @@ import static javax.xml.catalog.CatalogMessages.formatMessage;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.xml.sax.SAXException;
 
 /**
@@ -337,6 +339,7 @@ class CatalogImpl extends GroupEntry implements Catalog {
             int nextCatalogIndex = 0;
 
             @Override
+            @Pure
             public boolean hasNext() {
                 if (nextCatalog != null) {
                     return true;
@@ -347,6 +350,7 @@ class CatalogImpl extends GroupEntry implements Catalog {
             }
 
             @Override
+            @SideEffectsOnly("this")
             public Catalog next() {
                 if (nextCatalog != null || hasNext()) {
                     Catalog catalog = nextCatalog;

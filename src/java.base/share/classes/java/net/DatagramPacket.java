@@ -25,10 +25,12 @@
 
 package java.net;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.Objects;
 
 import jdk.internal.util.Preconditions;
-
 /**
  * This class represents a datagram packet.
  * <p>
@@ -53,8 +55,9 @@ import jdk.internal.util.Preconditions;
  * @author  Benjamin Renaud
  * @since   1.0
  */
+@AnnotatedFor({"interning"})
 public final
-class DatagramPacket {
+@UsesObjectEquals class DatagramPacket {
 
     /*
      * The fields of this class are package-private since DatagramSocketImpl

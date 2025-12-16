@@ -25,6 +25,13 @@
 
 package java.util.zip;
 
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.index.qual.Positive;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.checker.signedness.qual.PolySigned;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.FilterOutputStream;
 import java.io.OutputStream;
 import java.io.InputStream;
@@ -39,6 +46,7 @@ import java.io.IOException;
  * @author      David Connelly
  * @since 1.1
  */
+@AnnotatedFor({"index", "signedness"})
 public class DeflaterOutputStream extends FilterOutputStream {
 
     /*
@@ -94,9 +102,9 @@ public class DeflaterOutputStream extends FilterOutputStream {
      *
      * @since 1.7
      */
-    public DeflaterOutputStream(OutputStream out,
+    public @MustCallAlias DeflaterOutputStream(@MustCallAlias OutputStream out,
                                 Deflater def,
-                                int size,
+                                @Positive int size,
                                 boolean syncFlush) {
         super(out);
         if (out == null || def == null) {
@@ -122,7 +130,7 @@ public class DeflaterOutputStream extends FilterOutputStream {
      * @param size the output buffer size
      * @throws    IllegalArgumentException if {@code size <= 0}
      */
-    public DeflaterOutputStream(OutputStream out, Deflater def, int size) {
+    public @MustCallAlias DeflaterOutputStream(@MustCallAlias OutputStream out, Deflater def, @Positive int size) {
         this(out, def, size, false);
     }
 
@@ -140,7 +148,7 @@ public class DeflaterOutputStream extends FilterOutputStream {
      *
      * @since 1.7
      */
-    public DeflaterOutputStream(OutputStream out,
+    public @MustCallAlias DeflaterOutputStream(@MustCallAlias OutputStream out,
                                 Deflater def,
                                 boolean syncFlush) {
         this(out, def, DEFAULT_BUF_SIZE, syncFlush);
@@ -157,7 +165,7 @@ public class DeflaterOutputStream extends FilterOutputStream {
      * @param out the output stream
      * @param def the compressor ("deflater")
      */
-    public DeflaterOutputStream(OutputStream out, Deflater def) {
+    public @MustCallAlias DeflaterOutputStream(@MustCallAlias OutputStream out, Deflater def) {
         this(out, def, DEFAULT_BUF_SIZE, false);
     }
 
@@ -177,7 +185,7 @@ public class DeflaterOutputStream extends FilterOutputStream {
      *
      * @since 1.7
      */
-    public DeflaterOutputStream(OutputStream out, boolean syncFlush) {
+    public @MustCallAlias DeflaterOutputStream(@MustCallAlias OutputStream out, boolean syncFlush) {
         this(out, out != null ? new Deflater() : null, DEFAULT_BUF_SIZE, syncFlush);
         usesDefaultDeflater = true;
     }
@@ -190,7 +198,7 @@ public class DeflaterOutputStream extends FilterOutputStream {
      *
      * @param out the output stream
      */
-    public DeflaterOutputStream(OutputStream out) {
+    public @MustCallAlias DeflaterOutputStream(@MustCallAlias OutputStream out) {
         this(out, false);
         usesDefaultDeflater = true;
     }
@@ -202,7 +210,7 @@ public class DeflaterOutputStream extends FilterOutputStream {
      * @throws    IOException if an I/O error has occurred
      */
     @Override
-    public void write(int b) throws IOException {
+    public void write(@NonNegative int b) throws IOException {
         byte[] buf = new byte[1];
         buf[0] = (byte)(b & 0xff);
         write(buf, 0, 1);
@@ -217,7 +225,7 @@ public class DeflaterOutputStream extends FilterOutputStream {
      * @throws    IOException if an I/O error has occurred
      */
     @Override
-    public void write(byte[] b, int off, int len) throws IOException {
+    public void write(@PolySigned byte[] b, @IndexOrHigh({"#1"}) int off, @IndexOrHigh({"#1"}) int len) throws IOException {
         if (def.finished()) {
             throw new IOException("write beyond end of stream");
         }

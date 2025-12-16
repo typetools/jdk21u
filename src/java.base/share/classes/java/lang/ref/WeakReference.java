@@ -25,6 +25,10 @@
 
 package java.lang.ref;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.CFComment;
+
 
 /**
  * Weak reference objects, which do not prevent their referents from being
@@ -46,6 +50,7 @@ package java.lang.ref;
  * @since    1.2
  */
 
+@AnnotatedFor({"nullness"})
 public non-sealed class WeakReference<T> extends Reference<T> {
 
     /**
@@ -54,7 +59,7 @@ public non-sealed class WeakReference<T> extends Reference<T> {
      *
      * @param referent object the new weak reference will refer to
      */
-    public WeakReference(T referent) {
+    public WeakReference(@Nullable T referent) {
         super(referent);
     }
 
@@ -66,7 +71,9 @@ public non-sealed class WeakReference<T> extends Reference<T> {
      * @param q the queue with which the reference is to be registered,
      *          or {@code null} if registration is not required
      */
-    public WeakReference(T referent, ReferenceQueue<? super T> q) {
+    @CFComment({"Nullness: q is @NonNull because it is sometimes required to be non-null.",
+                "To treat it as @Nullable, see https://checkerframework.org/manual/#nullness-jdk-conservative ."})
+    public WeakReference(@Nullable T referent, ReferenceQueue<? super T> q) {
         super(referent, q);
     }
 

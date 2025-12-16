@@ -25,6 +25,13 @@
 
 package java.net;
 
+import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethodsIf;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.checker.mustcall.qual.CreatesMustCallFor;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import sun.security.util.SecurityConstants;
 
 import java.io.InputStream;
@@ -97,7 +104,8 @@ import java.util.Collections;
  * @see     java.nio.channels.SocketChannel
  * @since   1.0
  */
-public class Socket implements java.io.Closeable {
+@AnnotatedFor({"calledmethods", "interning", "mustcall", "nullness"})
+public @UsesObjectEquals class Socket implements java.io.Closeable {
     private static final VarHandle STATE, IN, OUT;
     static {
         try {
@@ -318,7 +326,7 @@ public class Socket implements java.io.Closeable {
      * @see        java.net.SocketImpl
      * @see        SecurityManager#checkConnect
      */
-    public Socket(String host, int port)
+    public Socket(@Nullable String host, int port)
         throws UnknownHostException, IOException
     {
         this(host != null ? new InetSocketAddress(host, port) :
@@ -393,7 +401,7 @@ public class Socket implements java.io.Closeable {
      * @see        SecurityManager#checkConnect
      * @since   1.1
      */
-    public Socket(String host, int port, InetAddress localAddr,
+    public Socket(@Nullable String host, int port, @Nullable InetAddress localAddr,
                   int localPort) throws IOException {
         this(host != null ? new InetSocketAddress(host, port) :
                new InetSocketAddress(InetAddress.getByName(null), port),
@@ -435,7 +443,7 @@ public class Socket implements java.io.Closeable {
      * @see        SecurityManager#checkConnect
      * @since   1.1
      */
-    public Socket(InetAddress address, int port, InetAddress localAddr,
+    public Socket(InetAddress address, int port, @Nullable InetAddress localAddr,
                   int localPort) throws IOException {
         this(address != null ? new InetSocketAddress(address, port) : null,
              new InetSocketAddress(localAddr, localPort), true);
@@ -482,7 +490,7 @@ public class Socket implements java.io.Closeable {
      * @deprecated Use DatagramSocket instead for UDP transport.
      */
     @Deprecated
-    public Socket(String host, int port, boolean stream) throws IOException {
+    public Socket(@Nullable String host, int port, boolean stream) throws IOException {
         this(host != null ? new InetSocketAddress(host, port) :
                new InetSocketAddress(InetAddress.getByName(null), port),
              (SocketAddress) null, stream);
@@ -682,6 +690,7 @@ public class Socket implements java.io.Closeable {
      *          SocketAddress subclass not supported by this socket
      * @since 1.4
      */
+    @CreatesMustCallFor
     public void connect(SocketAddress endpoint) throws IOException {
         connect(endpoint, 0);
     }
@@ -718,6 +727,7 @@ public class Socket implements java.io.Closeable {
      *          if {@code timeout} is negative
      * @since 1.4
      */
+    @CreatesMustCallFor
     public void connect(SocketAddress endpoint, int timeout) throws IOException {
         if (endpoint == null)
             throw new IllegalArgumentException("connect: The address can't be null");
@@ -782,7 +792,8 @@ public class Socket implements java.io.Closeable {
      * @since   1.4
      * @see #isBound
      */
-    public void bind(SocketAddress bindpoint) throws IOException {
+    @CreatesMustCallFor
+    public void bind(@Nullable SocketAddress bindpoint) throws IOException {
         int s = state;
         if (isClosed(s))
             throw new SocketException("Socket is closed");
@@ -828,7 +839,7 @@ public class Socket implements java.io.Closeable {
      * @return  the remote IP address to which this socket is connected,
      *          or {@code null} if the socket is not connected.
      */
-    public InetAddress getInetAddress() {
+    public @Nullable InetAddress getInetAddress() {
         if (!isConnected())
             return null;
         try {
@@ -933,7 +944,7 @@ public class Socket implements java.io.Closeable {
      * @see #connect(SocketAddress)
      * @since 1.4
      */
-    public SocketAddress getRemoteSocketAddress() {
+    public @Nullable SocketAddress getRemoteSocketAddress() {
         if (!isConnected())
             return null;
         return new InetSocketAddress(getInetAddress(), getPort());
@@ -968,7 +979,7 @@ public class Socket implements java.io.Closeable {
      * @see SecurityManager#checkConnect
      * @since 1.4
      */
-    public SocketAddress getLocalSocketAddress() {
+    public @Nullable SocketAddress getLocalSocketAddress() {
         if (!isBound())
             return null;
         return new InetSocketAddress(getLocalAddress(), getLocalPort());
@@ -990,7 +1001,7 @@ public class Socket implements java.io.Closeable {
      *
      * @since 1.4
      */
-    public SocketChannel getChannel() {
+    public @Nullable @MustCallAlias SocketChannel getChannel(@MustCallAlias Socket this) {
         return null;
     }
 
@@ -1054,7 +1065,7 @@ public class Socket implements java.io.Closeable {
      *
      * @revised 1.4
      */
-    public InputStream getInputStream() throws IOException {
+    public @MustCallAlias InputStream getInputStream(@MustCallAlias Socket this) throws IOException {
         int s = state;
         if (isClosed(s))
             throw new SocketException("Socket is closed");
@@ -1151,7 +1162,7 @@ public class Socket implements java.io.Closeable {
      *               output stream or if the socket is not connected.
      * @revised 1.4
      */
-    public OutputStream getOutputStream() throws IOException {
+    public @MustCallAlias OutputStream getOutputStream(@MustCallAlias Socket this) throws IOException {
         int s = state;
         if (isClosed(s))
             throw new SocketException("Socket is closed");
@@ -1846,6 +1857,7 @@ public class Socket implements java.io.Closeable {
      * @since 1.4
      * @see #close
      */
+    @EnsuresCalledMethodsIf(expression="this", result=true, methods={"close"})
     public boolean isClosed() {
         return isClosed(state);
     }
@@ -1915,7 +1927,7 @@ public class Socket implements java.io.Closeable {
      *    as a parameter.
      */
     @Deprecated(since = "17")
-    public static synchronized void setSocketImplFactory(SocketImplFactory fac)
+    public static synchronized void setSocketImplFactory(@Nullable SocketImplFactory fac)
         throws IOException
     {
         if (factory != null) {

@@ -25,6 +25,9 @@
  */
 package org.jcp.xml.dsig.internal.dom;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -81,6 +84,7 @@ public class DOMSubTreeData implements NodeSetData<Node> {
             this.withComments = !excludeComments;
         }
 
+        @Pure
         @Override
         public boolean hasNext() {
             if (nodeSet == null) {
@@ -90,6 +94,7 @@ public class DOMSubTreeData implements NodeSetData<Node> {
             return li.hasNext();
         }
 
+        @SideEffectsOnly("this")
         @Override
         public Node next() {
             if (nodeSet == null) {

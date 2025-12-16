@@ -26,6 +26,12 @@
 
 package javax.management.openmbean;
 
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
 import com.sun.jmx.mbeanserver.GetPropertyAction;
 import com.sun.jmx.mbeanserver.Util;
 import java.io.IOException;
@@ -220,6 +226,7 @@ public class TabularDataSupport
      *
      * @return  {@code true} if this {@code TabularData} indexes a row value with the specified key.
      */
+    @Pure
     public boolean containsKey(Object key) {
 
         // if key is not an array of Object instances, return false
@@ -243,6 +250,7 @@ public class TabularDataSupport
      *
      * @return  {@code true} if this {@code TabularData} indexes a row value with the specified key.
      */
+    @Pure
     public boolean containsKey(Object[] key) {
 
         return  ( key == null ? false : dataMap.containsKey(Arrays.asList(key)));
@@ -257,6 +265,7 @@ public class TabularDataSupport
      *
      * @return  {@code true} if this {@code TabularData} instance contains the specified row value.
      */
+    @Pure
     public boolean containsValue(CompositeData value) {
 
         return dataMap.containsValue(value);
@@ -270,6 +279,7 @@ public class TabularDataSupport
      *
      * @return  {@code true} if this {@code TabularData} instance contains the specified row value.
      */
+    @Pure
     public boolean containsValue(Object value) {
 
         return dataMap.containsValue(value);
@@ -697,7 +707,9 @@ public class TabularDataSupport
      *
      * @return  {@code true} if the specified object is equal to this {@code TabularDataSupport} instance.
      */
-    public boolean equals(Object obj) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object obj) {
 
         // if obj is null, return false
         //

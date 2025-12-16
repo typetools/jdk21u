@@ -25,6 +25,10 @@
 
 package java.lang.reflect;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.CFComment;
+
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandle;
 import java.lang.ref.WeakReference;
@@ -76,6 +80,7 @@ import sun.security.util.SecurityConstants;
  * @since 1.2
  * @revised 9
  */
+@AnnotatedFor({"nullness"})
 public class AccessibleObject implements AnnotatedElement {
     static {
         // AccessibleObject is initialized early in initPhase1
@@ -472,6 +477,7 @@ public class AccessibleObject implements AnnotatedElement {
      * @see #setAccessible(boolean)
      */
     @CallerSensitive
+    @CFComment("Sometimes null is forbidden; other times, it is required")
     public final boolean canAccess(Object obj) {
         if (!Member.class.isInstance(this)) {
             return override;
@@ -543,7 +549,7 @@ public class AccessibleObject implements AnnotatedElement {
      * @since 1.5
      */
     @Override
-    public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+    public <T extends Annotation> @Nullable T getAnnotation(Class<T> annotationClass) {
         throw new UnsupportedOperationException("All subclasses should override this method");
     }
 
@@ -599,7 +605,7 @@ public class AccessibleObject implements AnnotatedElement {
      * @since 1.8
      */
     @Override
-    public <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
+    public <T extends Annotation> @Nullable T getDeclaredAnnotation(Class<T> annotationClass) {
         // Only annotations on classes are inherited, for all other
         // objects getDeclaredAnnotation is the same as
         // getAnnotation.

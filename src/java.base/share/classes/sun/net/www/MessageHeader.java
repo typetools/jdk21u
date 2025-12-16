@@ -29,6 +29,9 @@
 
 package sun.net.www;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
+
 import java.io.*;
 import java.lang.reflect.Array;
 import java.net.ProtocolException;
@@ -214,6 +217,7 @@ class MessageHeader {
             key = k;
             this.lock = lock;
         }
+        @Pure
         public boolean hasNext () {
             synchronized (lock) {
                 if (haveNext) {
@@ -230,6 +234,7 @@ class MessageHeader {
                 return false;
             }
         }
+        @SideEffectsOnly("this")
         public String next() {
             synchronized (lock) {
                 if (haveNext) {

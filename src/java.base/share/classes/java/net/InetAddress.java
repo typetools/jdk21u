@@ -25,12 +25,17 @@
 
 package java.net;
 
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
 import java.net.spi.InetAddressResolver;
 import java.net.spi.InetAddressResolverProvider;
 import java.net.spi.InetAddressResolver.LookupPolicy;
 import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.List;
+import java.security.PrivilegedAction;import java.util.List;
 import java.util.NavigableSet;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -925,7 +930,9 @@ public sealed class InetAddress implements Serializable permits Inet4Address, In
      *          {@code false} otherwise.
      * @see     java.net.InetAddress#getAddress()
      */
-    public boolean equals(Object obj) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object obj) {
         return false;
     }
 

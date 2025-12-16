@@ -25,6 +25,9 @@
 
 package java.security;
 
+import org.checkerframework.checker.signedness.qual.PolySigned;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import jdk.internal.util.random.RandomSupport.RandomGeneratorProperties;
 import sun.security.jca.GetInstance;
 import sun.security.jca.GetInstance.Instance;
@@ -149,6 +152,7 @@ import java.util.regex.Pattern;
  * @since 1.1
  */
 
+@AnnotatedFor({"signedness"})
 @RandomGeneratorProperties(
         name = "SecureRandom",
         isStochastic = true
@@ -762,9 +766,8 @@ public class SecureRandom extends java.util.Random {
      * @throws NullPointerException if {@code bytes} is {@code null}
      */
     @Override
-    public void nextBytes(byte[] bytes) {
-        Objects.requireNonNull(bytes);
-        if (threadSafe) {
+    public void nextBytes(@PolySigned byte[] bytes) {
+        Objects.requireNonNull(bytes);        if (threadSafe) {
             secureRandomSpi.engineNextBytes(bytes);
         } else {
             synchronized (this) {

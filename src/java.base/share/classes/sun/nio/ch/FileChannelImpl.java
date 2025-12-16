@@ -25,8 +25,9 @@
 
 package sun.nio.ch;
 
-import java.io.Closeable;
-import java.io.FileDescriptor;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
+import java.io.Closeable;import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.foreign.MemorySegment;
@@ -62,6 +63,7 @@ import jdk.internal.ref.CleanerFactory;
 
 import jdk.internal.access.foreign.UnmapperProxy;
 
+@AnnotatedFor({"index"})
 public class FileChannelImpl
     extends FileChannel
 {

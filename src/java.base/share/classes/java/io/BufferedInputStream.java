@@ -25,6 +25,15 @@
 
 package java.io;
 
+import org.checkerframework.checker.index.qual.GTENegativeOne;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
+import org.checkerframework.checker.index.qual.LTLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.index.qual.Positive;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -53,6 +62,7 @@ import jdk.internal.util.ArraysSupport;
  * @author  Arthur van Hoff
  * @since   1.0
  */
+@AnnotatedFor({"index", "nullness", "mustcall"})
 public class BufferedInputStream extends FilterInputStream {
 
     private static final int DEFAULT_BUFFER_SIZE = 8192;
@@ -215,7 +225,7 @@ public class BufferedInputStream extends FilterInputStream {
      *
      * @param   in   the underlying input stream.
      */
-    public BufferedInputStream(InputStream in) {
+    public @MustCallAlias BufferedInputStream(@MustCallAlias InputStream in) {
         this(in, DEFAULT_BUFFER_SIZE);
     }
 
@@ -231,7 +241,7 @@ public class BufferedInputStream extends FilterInputStream {
      * @param   size   the buffer size.
      * @throws  IllegalArgumentException if {@code size <= 0}.
      */
-    public BufferedInputStream(InputStream in, int size) {
+    public @MustCallAlias BufferedInputStream(@MustCallAlias InputStream in, @Positive int size) {
         super(in);
         if (size <= 0) {
             throw new IllegalArgumentException("Buffer size <= 0");
@@ -305,7 +315,7 @@ public class BufferedInputStream extends FilterInputStream {
      *                          or an I/O error occurs.
      * @see        java.io.FilterInputStream#in
      */
-    public int read() throws IOException {
+    public @GTENegativeOne int read() throws IOException {
         if (lock != null) {
             lock.lock();
             try {
@@ -320,8 +330,7 @@ public class BufferedInputStream extends FilterInputStream {
         }
     }
 
-    private int implRead() throws IOException {
-        if (pos >= count) {
+    private int implRead() throws IOException {        if (pos >= count) {
             fill();
             if (pos >= count)
                 return -1;
@@ -392,7 +401,7 @@ public class BufferedInputStream extends FilterInputStream {
      *                          or an I/O error occurs.
      * @throws     IndexOutOfBoundsException {@inheritDoc}
      */
-    public int read(byte[] b, int off, int len) throws IOException {
+    public @GTENegativeOne @LTEqLengthOf({"#1"}) int read(byte[] b, @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) throws IOException {
         if (lock != null) {
             lock.lock();
             try {
@@ -439,7 +448,7 @@ public class BufferedInputStream extends FilterInputStream {
      *                      {@code in.skip(n)} throws an IOException,
      *                      or an I/O error occurs.
      */
-    public long skip(long n) throws IOException {
+    public @NonNegative long skip(long n) throws IOException {
         if (lock != null) {
             lock.lock();
             try {
@@ -495,7 +504,7 @@ public class BufferedInputStream extends FilterInputStream {
      *                          invoking its {@link #close()} method,
      *                          or an I/O error occurs.
      */
-    public int available() throws IOException {
+    public @NonNegative int available() throws IOException {
         if (lock != null) {
             lock.lock();
             try {
@@ -510,8 +519,7 @@ public class BufferedInputStream extends FilterInputStream {
         }
     }
 
-    private int implAvailable() throws IOException {
-        int n = count - pos;
+    private int implAvailable() throws IOException {        int n = count - pos;
         int avail = getInIfOpen().available();
         return n > (Integer.MAX_VALUE - avail)
                     ? Integer.MAX_VALUE

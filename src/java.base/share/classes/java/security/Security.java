@@ -25,8 +25,10 @@
 
 package java.security;
 
-import java.net.MalformedURLException;
-import java.util.*;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
+import java.net.MalformedURLException;import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.io.*;
 import java.net.URL;
@@ -56,7 +58,8 @@ import sun.security.jca.*;
  * @since 1.1
  */
 
-public final class Security {
+@AnnotatedFor({"interning"})
+public final @UsesObjectEquals class Security {
 
     /* Are we debugging? -- for developers */
     private static final Debug sdebug =

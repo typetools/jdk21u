@@ -25,6 +25,16 @@
 
 package java.lang;
 
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.CFComment;
+
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -74,7 +84,8 @@ import jdk.internal.misc.VM;
  *
  * @since   1.0
  */
-public class ThreadGroup implements Thread.UncaughtExceptionHandler {
+@AnnotatedFor({"index", "interning", "lock", "nullness"})
+public @UsesObjectEquals class ThreadGroup implements Thread.UncaughtExceptionHandler {
     /**
      * All fields are accessed directly by the VM and from JVMTI functions.
      * Operations that require synchronization on more than one group in the
@@ -87,7 +98,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
     private volatile boolean daemon;
 
     // strongly reachable from this group
-    private int ngroups;
+    private @LTEqLengthOf({"groups"}) @NonNegative int ngroups;
     private ThreadGroup[] groups;
 
     // weakly reachable from this group
@@ -145,7 +156,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      *               thread in the specified thread group.
      * @see     java.lang.ThreadGroup#checkAccess()
      */
-    public ThreadGroup(String name) {
+    public ThreadGroup(@Nullable String name) {
         this(Thread.currentThread().getThreadGroup(), name);
     }
 
@@ -162,7 +173,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      *               thread in the specified thread group.
      * @see     java.lang.ThreadGroup#checkAccess()
      */
-    public ThreadGroup(ThreadGroup parent, String name) {
+    public ThreadGroup(ThreadGroup parent, @Nullable String name) {
         this(checkParentAccess(parent), parent, name);
     }
 
@@ -171,7 +182,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      *
      * @return  the name of this thread group, may be {@code null}
      */
-    public final String getName() {
+    public final @Nullable String getName() {
         return name;
     }
 
@@ -190,7 +201,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      * @see        java.lang.SecurityException
      * @see        java.lang.RuntimePermission
      */
-    public final ThreadGroup getParent() {
+    public final @Nullable ThreadGroup getParent() {
         if (parent != null)
             parent.checkAccess();
         return parent;
@@ -218,8 +229,9 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      *             A thread group is eligible to be GC'ed when there are no
      *             live threads in the group and it is otherwise unreachable.
      */
+    @Pure
     @Deprecated(since="16", forRemoval=true)
-    public final boolean isDaemon() {
+    public final boolean isDaemon(@GuardSatisfied ThreadGroup this) {
         return daemon;
     }
 
@@ -236,8 +248,9 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      *
      * @since   1.1
      */
+    @Pure
     @Deprecated(since="16", forRemoval=true)
-    public boolean isDestroyed() {
+    public boolean isDestroyed(@GuardSatisfied ThreadGroup this) {
         return false;
     }
 
@@ -297,6 +310,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      * @see        java.lang.SecurityException
      * @see        java.lang.ThreadGroup#checkAccess()
      */
+    @SuppressWarnings("index:array.access.unsafe.high")
     public final void setMaxPriority(int pri) {
         checkAccess();
         if (pri >= Thread.MIN_PRIORITY && pri <= Thread.MAX_PRIORITY) {
@@ -372,7 +386,8 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      *          group and in any other thread group that has this thread
      *          group as an ancestor
      */
-    public int activeCount() {
+    @SuppressWarnings("index:array.access.unsafe.high")
+    public @NonNegative int activeCount() {
         int n = 0;
         for (Thread thread : Thread.getAllThreads()) {
             ThreadGroup g = thread.getThreadGroup();
@@ -404,7 +419,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      *          if {@linkplain #checkAccess checkAccess} determines that
      *          the current thread cannot access this thread group
      */
-    public int enumerate(Thread[] list) {
+    public @NonNegative int enumerate(Thread[] list) {
         return enumerate(list, true);
     }
 
@@ -439,9 +454,8 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      *          if {@linkplain #checkAccess checkAccess} determines that
      *          the current thread cannot access this thread group
      */
-    public int enumerate(Thread[] list, boolean recurse) {
-        Objects.requireNonNull(list);
-        checkAccess();
+    public @NonNegative int enumerate(Thread[] list, boolean recurse) {
+        Objects.requireNonNull(list);        checkAccess();
         int n = 0;
         if (list.length > 0) {
             for (Thread thread : Thread.getAllThreads()) {
@@ -470,6 +484,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      * @return  the number of thread groups with this thread group as
      *          an ancestor
      */
+    @SuppressWarnings("index:array.access.unsafe.high")
     public int activeGroupCount() {
         int n = 0;
         for (ThreadGroup group : synchronizedSubgroups()) {
@@ -498,7 +513,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      *          if {@linkplain #checkAccess checkAccess} determines that
      *          the current thread cannot access this thread group
      */
-    public int enumerate(ThreadGroup[] list) {
+    public @NonNegative int enumerate(ThreadGroup[] list) {
         return enumerate(list, true);
     }
 
@@ -532,9 +547,8 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      *          if {@linkplain #checkAccess checkAccess} determines that
      *          the current thread cannot access this thread group
      */
-    public int enumerate(ThreadGroup[] list, boolean recurse) {
-        Objects.requireNonNull(list);
-        checkAccess();
+    public @NonNegative int enumerate(ThreadGroup[] list, boolean recurse) {
+        Objects.requireNonNull(list);        checkAccess();
         return enumerate(list, 0, recurse);
     }
 
@@ -542,7 +556,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      * Add a reference to each subgroup to the given array, starting at
      * the given index. Returns the new index.
      */
-    private int enumerate(ThreadGroup[] list, int i, boolean recurse) {
+    private @NonNegative int enumerate(ThreadGroup[] list, @NonNegative int i, boolean recurse) {
         List<ThreadGroup> subgroups = synchronizedSubgroups();
         for (int j = 0; j < subgroups.size() && i < list.length; j++) {
             ThreadGroup group = subgroups.get(j);
@@ -577,6 +591,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      * @see        java.lang.ThreadGroup#checkAccess()
      * @since      1.2
      */
+    @SuppressWarnings("index:array.access.unsafe.high")
     public final void interrupt() {
         checkAccess();
         for (Thread thread : Thread.getAllThreads()) {
@@ -605,6 +620,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      *             in the thread group.
      */
     @Deprecated(since="1.2", forRemoval=true)
+    @SuppressWarnings({"removal", "index:array.access.unsafe.high"})
     public final void resume() {
         throw new UnsupportedOperationException();
     }
@@ -618,6 +634,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      *             there are no live threads in the group and it is otherwise
      *             unreachable.
      */
+    @SuppressWarnings("index:array.access.unsafe.high")
     @Deprecated(since="16", forRemoval=true)
     public final void destroy() {
     }
@@ -626,6 +643,7 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      * Prints information about this thread group to the standard
      * output. This method is useful only for debugging.
      */
+    @SuppressWarnings("index:array.access.unsafe.high")
     public void list() {
         Map<ThreadGroup, List<Thread>> map = new HashMap<>();
         for (Thread thread : Thread.getAllThreads()) {
@@ -705,7 +723,8 @@ public class ThreadGroup implements Thread.UncaughtExceptionHandler {
      *
      * @return  a string representation of this thread group.
      */
-    public String toString() {
+    @SideEffectFree
+    public String toString(@GuardSatisfied ThreadGroup this) {
         return getClass().getName()
                 + "[name=" + getName()
                 + ",maxpri=" + getMaxPriority()

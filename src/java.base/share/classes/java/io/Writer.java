@@ -25,6 +25,14 @@
 
 package java.io;
 
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.Objects;
 import jdk.internal.misc.InternalLock;
 
@@ -48,7 +56,8 @@ import jdk.internal.misc.InternalLock;
  * @since       1.1
  */
 
-public abstract class Writer implements Appendable, Closeable, Flushable {
+@AnnotatedFor({"index", "interning", "mustcall", "nullness"})
+public abstract @UsesObjectEquals class Writer implements Appendable, Closeable, Flushable {
 
     /**
      * Temporary buffer used to hold writes of strings and single characters
@@ -263,7 +272,7 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
      * @throws  IOException
      *          If an I/O error occurs
      */
-    public abstract void write(char[] cbuf, int off, int len) throws IOException;
+    public abstract void write(char[] cbuf, @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) throws IOException;
 
     /**
      * Writes a string.
@@ -304,7 +313,7 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
      * @throws  IOException
      *          If an I/O error occurs
      */
-    public void write(String str, int off, int len) throws IOException {
+    public void write(String str, @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) throws IOException {
         Object lock = this.lock;
         if (lock instanceof InternalLock locker) {
             locker.lock();
@@ -321,7 +330,7 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
     }
 
     private void implWrite(String str, int off, int len) throws IOException {
-        char cbuf[];
+        char[] cbuf;
         if (len <= WRITE_BUFFER_SIZE) {
             if (writeBuffer == null) {
                 writeBuffer = new char[WRITE_BUFFER_SIZE];
@@ -362,7 +371,7 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
      *
      * @since  1.5
      */
-    public Writer append(CharSequence csq) throws IOException {
+    public @MustCallAlias Writer append(@MustCallAlias Writer this, @Nullable CharSequence csq) throws IOException {
         write(String.valueOf(csq));
         return this;
     }
@@ -405,7 +414,7 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
      *
      * @since  1.5
      */
-    public Writer append(CharSequence csq, int start, int end) throws IOException {
+    public @MustCallAlias Writer append(@MustCallAlias Writer this, @Nullable CharSequence csq, @IndexOrHigh({"#1"}) int start, @IndexOrHigh({"#1"}) int end) throws IOException {
         if (csq == null) csq = "null";
         return append(csq.subSequence(start, end));
     }
@@ -430,7 +439,7 @@ public abstract class Writer implements Appendable, Closeable, Flushable {
      *
      * @since 1.5
      */
-    public Writer append(char c) throws IOException {
+    public @MustCallAlias Writer append(@MustCallAlias Writer this, char c) throws IOException {
         write(c);
         return this;
     }

@@ -25,6 +25,14 @@
 
 package java.lang;
 
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.signature.qual.FullyQualifiedName;
+import org.checkerframework.checker.signature.qual.Identifier;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import jdk.internal.loader.BuiltinClassLoader;
 import jdk.internal.misc.VM;
 import jdk.internal.module.ModuleHashes;
@@ -50,6 +58,7 @@ import java.util.Set;
  * @since  1.4
  * @author Josh Bloch
  */
+@AnnotatedFor({"lock", "nullness", "signature"})
 public final class StackTraceElement implements java.io.Serializable {
 
     private static final String NATIVE_METHOD = "Native Method";
@@ -119,8 +128,8 @@ public final class StackTraceElement implements java.io.Serializable {
      * @since 1.5
      * @revised 9
      */
-    public StackTraceElement(String declaringClass, String methodName,
-                             String fileName, int lineNumber) {
+    public StackTraceElement(@FullyQualifiedName String declaringClass, @Identifier String methodName,
+                             @Nullable String fileName, int lineNumber) {
         this(null, null, null, declaringClass, methodName, fileName, lineNumber);
     }
 
@@ -157,7 +166,7 @@ public final class StackTraceElement implements java.io.Serializable {
      */
     public StackTraceElement(String classLoaderName,
                              String moduleName, String moduleVersion,
-                             String declaringClass, String methodName,
+                             String declaringClass, @Identifier String methodName,
                              String fileName, int lineNumber) {
         this.classLoaderName = classLoaderName;
         this.moduleName      = moduleName;
@@ -186,7 +195,7 @@ public final class StackTraceElement implements java.io.Serializable {
      *         represented by this stack trace element, or {@code null} if
      *         this information is unavailable.
      */
-    public String getFileName() {
+    public @Nullable String getFileName(@GuardSatisfied StackTraceElement this) {
         return fileName;
     }
 
@@ -201,7 +210,7 @@ public final class StackTraceElement implements java.io.Serializable {
      *         point represented by this stack trace element, or a negative
      *         number if this information is unavailable.
      */
-    public int getLineNumber() {
+    public int getLineNumber(@GuardSatisfied StackTraceElement this) {
         return lineNumber;
     }
 
@@ -255,7 +264,7 @@ public final class StackTraceElement implements java.io.Serializable {
      * @return the fully qualified name of the {@code Class} containing
      *         the execution point represented by this stack trace element.
      */
-    public String getClassName() {
+    public @FullyQualifiedName String getClassName(@GuardSatisfied StackTraceElement this) {
         return declaringClass;
     }
 
@@ -270,7 +279,7 @@ public final class StackTraceElement implements java.io.Serializable {
      * @return the name of the method containing the execution point
      *         represented by this stack trace element.
      */
-    public String getMethodName() {
+    public @Identifier String getMethodName(@GuardSatisfied StackTraceElement this) {
         return methodName;
     }
 
@@ -281,7 +290,8 @@ public final class StackTraceElement implements java.io.Serializable {
      * @return {@code true} if the method containing the execution point
      *         represented by this stack trace element is a native method.
      */
-    public boolean isNativeMethod() {
+    @Pure
+    public boolean isNativeMethod(@GuardSatisfied StackTraceElement this) {
         return lineNumber == -2;
     }
 
@@ -358,8 +368,9 @@ public final class StackTraceElement implements java.io.Serializable {
      * @revised 9
      * @see    Throwable#printStackTrace()
      */
+    @SideEffectFree
     @Override
-    public String toString() {
+    public String toString(@GuardSatisfied StackTraceElement this) {
         int estimatedLength = length(classLoaderName) + 1
                 + length(moduleName) + 1
                 + length(moduleVersion) + 1
@@ -429,7 +440,8 @@ public final class StackTraceElement implements java.io.Serializable {
      *
      * @revised 9
      */
-    public boolean equals(Object obj) {
+    @Pure
+    public boolean equals(@GuardSatisfied StackTraceElement this, @GuardSatisfied @Nullable Object obj) {
         if (obj==this)
             return true;
         return (obj instanceof StackTraceElement e)
@@ -445,7 +457,8 @@ public final class StackTraceElement implements java.io.Serializable {
     /**
      * Returns a hash code value for this stack trace element.
      */
-    public int hashCode() {
+    @Pure
+    public int hashCode(@GuardSatisfied StackTraceElement this) {
         int result = 31*declaringClass.hashCode() + methodName.hashCode();
         result = 31*result + Objects.hashCode(classLoaderName);
         result = 31*result + Objects.hashCode(moduleName);
@@ -547,6 +560,7 @@ public final class StackTraceElement implements java.io.Serializable {
             return Set.of();
         }
 
+        @Pure
         static boolean contains(Module m) {
             return HASHED_MODULES.contains(m.getName());
         }

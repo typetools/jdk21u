@@ -24,6 +24,10 @@
  */
 package java.util;
 
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.IntConsumer;
@@ -65,6 +69,7 @@ import java.util.function.LongConsumer;
  *
  * @since 1.8
  */
+@AnnotatedFor({"lock", "nullness"})
 public interface PrimitiveIterator<T, T_CONS> extends Iterator<T> {
 
     /**
@@ -100,7 +105,7 @@ public interface PrimitiveIterator<T, T_CONS> extends Iterator<T> {
          * @return the next {@code int} element in the iteration
          * @throws NoSuchElementException if the iteration has no more elements
          */
-        int nextInt();
+        int nextInt(@NonEmpty OfInt this);
 
         /**
          * {@inheritDoc}
@@ -124,7 +129,7 @@ public interface PrimitiveIterator<T, T_CONS> extends Iterator<T> {
          * {@link #nextInt()}, and returns that boxed result.
          */
         @Override
-        default Integer next() {
+        default Integer next(PrimitiveIterator.@GuardSatisfied OfInt this) {
             if (Tripwire.ENABLED)
                 Tripwire.trip(getClass(), "{0} calling PrimitiveIterator.OfInt.nextInt()");
             return nextInt();
@@ -168,7 +173,7 @@ public interface PrimitiveIterator<T, T_CONS> extends Iterator<T> {
          * @return the next {@code long} element in the iteration
          * @throws NoSuchElementException if the iteration has no more elements
          */
-        long nextLong();
+        long nextLong(@NonEmpty OfLong this);
 
         /**
          * {@inheritDoc}
@@ -192,7 +197,7 @@ public interface PrimitiveIterator<T, T_CONS> extends Iterator<T> {
          * {@link #nextLong()}, and returns that boxed result.
          */
         @Override
-        default Long next() {
+        default Long next(PrimitiveIterator.@GuardSatisfied OfLong this) {
             if (Tripwire.ENABLED)
                 Tripwire.trip(getClass(), "{0} calling PrimitiveIterator.OfLong.nextLong()");
             return nextLong();
@@ -235,7 +240,7 @@ public interface PrimitiveIterator<T, T_CONS> extends Iterator<T> {
          * @return the next {@code double} element in the iteration
          * @throws NoSuchElementException if the iteration has no more elements
          */
-        double nextDouble();
+        double nextDouble(@NonEmpty OfDouble this);
 
         /**
          * {@inheritDoc}
@@ -259,7 +264,7 @@ public interface PrimitiveIterator<T, T_CONS> extends Iterator<T> {
          * {@link #nextDouble()}, and returns that boxed result.
          */
         @Override
-        default Double next() {
+        default Double next(PrimitiveIterator.@GuardSatisfied OfDouble this) {
             if (Tripwire.ENABLED)
                 Tripwire.trip(getClass(), "{0} calling PrimitiveIterator.OfDouble.nextLong()");
             return nextDouble();

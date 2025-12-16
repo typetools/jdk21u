@@ -731,6 +731,8 @@ javax/swing/JMenuItem/ActionListenerCalledTwice/ActionListenerCalledTwiceTest.ja
 
 # core_svc
 
+tools/pack200/Pack200Test.java                                  8152622 generic-all
+
 ############################################################################
 
 # jdk_jdi

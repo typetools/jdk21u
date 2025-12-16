@@ -25,6 +25,20 @@
 
 package java.util;
 
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
+import org.checkerframework.checker.nullness.qual.KeyFor;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.checker.signedness.qual.UnknownSignedness;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.function.Consumer;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -173,6 +187,7 @@ import java.util.function.Function;
  * @see     Hashtable
  * @since   1.4
  */
+@AnnotatedFor({"lock", "nullness", "index"})
 public class LinkedHashMap<K,V>
     extends HashMap<K,V>
     implements SequencedMap<K,V>
@@ -435,7 +450,7 @@ public class LinkedHashMap<K,V>
      * @throws IllegalArgumentException if the initial capacity is negative
      *         or the load factor is nonpositive
      */
-    public LinkedHashMap(int initialCapacity, float loadFactor) {
+    public LinkedHashMap(@NonNegative int initialCapacity, float loadFactor) {
         super(initialCapacity, loadFactor);
         accessOrder = false;
     }
@@ -451,7 +466,7 @@ public class LinkedHashMap<K,V>
      * @param  initialCapacity the initial capacity
      * @throws IllegalArgumentException if the initial capacity is negative
      */
-    public LinkedHashMap(int initialCapacity) {
+    public LinkedHashMap(@NonNegative int initialCapacity) {
         super(initialCapacity);
         accessOrder = false;
     }
@@ -474,7 +489,7 @@ public class LinkedHashMap<K,V>
      * @param  m the map whose mappings are to be placed in this map
      * @throws NullPointerException if the specified map is null
      */
-    public LinkedHashMap(Map<? extends K, ? extends V> m) {
+    public @PolyNonEmpty LinkedHashMap(@PolyNonEmpty Map<? extends K, ? extends V> m) {
         super();
         accessOrder = false;
         putMapEntries(m, false);
@@ -491,7 +506,7 @@ public class LinkedHashMap<K,V>
      * @throws IllegalArgumentException if the initial capacity is negative
      *         or the load factor is nonpositive
      */
-    public LinkedHashMap(int initialCapacity,
+    public LinkedHashMap(@NonNegative int initialCapacity,
                          float loadFactor,
                          boolean accessOrder) {
         super(initialCapacity, loadFactor);
@@ -507,7 +522,8 @@ public class LinkedHashMap<K,V>
      * @return {@code true} if this map maps one or more keys to the
      *         specified value
      */
-    public boolean containsValue(Object value) {
+    @Pure
+    public boolean containsValue(@GuardSatisfied LinkedHashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object value) {
         for (LinkedHashMap.Entry<K,V> e = head; e != null; e = e.after) {
             V v = e.value;
             if (v == value || (value != null && value.equals(v)))
@@ -531,7 +547,8 @@ public class LinkedHashMap<K,V>
      * The {@link #containsKey containsKey} operation may be used to
      * distinguish these two cases.
      */
-    public V get(Object key) {
+    @Pure
+    public @Nullable V get(@GuardSatisfied LinkedHashMap<K, V> this, @UnknownSignedness @GuardSatisfied @Nullable Object key) {
         Node<K,V> e;
         if ((e = getNode(key)) == null)
             return null;
@@ -543,7 +560,8 @@ public class LinkedHashMap<K,V>
     /**
      * {@inheritDoc}
      */
-    public V getOrDefault(Object key, V defaultValue) {
+    @Pure
+    public V getOrDefault(@Nullable Object key, V defaultValue) {
        Node<K,V> e;
        if ((e = getNode(key)) == null)
            return defaultValue;
@@ -555,7 +573,7 @@ public class LinkedHashMap<K,V>
     /**
      * {@inheritDoc}
      */
-    public void clear() {
+    public void clear(@GuardSatisfied LinkedHashMap<K, V> this) {
         super.clear();
         head = tail = null;
     }
@@ -601,7 +619,7 @@ public class LinkedHashMap<K,V>
      * @return   {@code true} if the eldest entry should be removed
      *           from the map; {@code false} if it should be retained.
      */
-    protected boolean removeEldestEntry(Map.Entry<K,V> eldest) {
+    protected boolean removeEldestEntry(@GuardSatisfied LinkedHashMap<K, V> this, Map.Entry<K,V> eldest) {
         return false;
     }
 
@@ -624,7 +642,8 @@ public class LinkedHashMap<K,V>
      *
      * @return a set view of the keys contained in this map
      */
-    public Set<K> keySet() {
+    @SideEffectFree
+    public Set<@KeyFor({"this"}) K> keySet() {
         return sequencedKeySet();
     }
 
@@ -637,8 +656,7 @@ public class LinkedHashMap<K,V>
      * @return {@inheritDoc}
      * @since 21
      */
-    public SequencedSet<K> sequencedKeySet() {
-        Set<K> ks = keySet;
+    public SequencedSet<K> sequencedKeySet() {        Set<K> ks = keySet;
         if (ks == null) {
             SequencedSet<K> sks = new LinkedKeySet(false);
             keySet = sks;
@@ -694,15 +712,20 @@ public class LinkedHashMap<K,V>
     final class LinkedKeySet extends AbstractSet<K> implements SequencedSet<K> {
         final boolean reversed;
         LinkedKeySet(boolean reversed)          { this.reversed = reversed; }
+        @Pure
         public final int size()                 { return size; }
         public final void clear()               { LinkedHashMap.this.clear(); }
+        @SideEffectFree
         public final Iterator<K> iterator() {
             return new LinkedKeyIterator(reversed);
         }
-        public final boolean contains(Object o) { return containsKey(o); }
-        public final boolean remove(Object key) {
+        @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
+        public final boolean contains(@Nullable @UnknownSignedness Object o) { return containsKey(o); }
+        public final boolean remove(@Nullable @UnknownSignedness Object key) {
             return removeNode(hash(key), key, null, false, true) != null;
         }
+        @SideEffectFree
         public final Spliterator<K> spliterator()  {
             return Spliterators.spliterator(this, Spliterator.SIZED |
                                             Spliterator.ORDERED |
@@ -713,7 +736,7 @@ public class LinkedHashMap<K,V>
             return keysToArray(new Object[size], reversed);
         }
 
-        public <T> T[] toArray(T[] a) {
+        public <T> @Nullable T[] toArray(@PolyNull T[] a) {
             return keysToArray(prepareArray(a), reversed);
         }
 
@@ -802,12 +825,17 @@ public class LinkedHashMap<K,V>
     final class LinkedValues extends AbstractCollection<V> implements SequencedCollection<V> {
         final boolean reversed;
         LinkedValues(boolean reversed)          { this.reversed = reversed; }
+        @Pure
         public final int size()                 { return size; }
         public final void clear()               { LinkedHashMap.this.clear(); }
+        @SideEffectFree
         public final Iterator<V> iterator() {
             return new LinkedValueIterator(reversed);
         }
-        public final boolean contains(Object o) { return containsValue(o); }
+        @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
+        public final boolean contains(@Nullable @UnknownSignedness Object o) { return containsValue(o); }
+        @SideEffectFree
         public final Spliterator<V> spliterator() {
             return Spliterators.spliterator(this, Spliterator.SIZED |
                                             Spliterator.ORDERED);
@@ -817,7 +845,7 @@ public class LinkedHashMap<K,V>
             return valuesToArray(new Object[size], reversed);
         }
 
-        public <T> T[] toArray(T[] a) {
+        public <T> @Nullable T[] toArray(@PolyNull T[] a) {
             return valuesToArray(prepareArray(a), reversed);
         }
 
@@ -878,7 +906,8 @@ public class LinkedHashMap<K,V>
      *
      * @return a set view of the mappings contained in this map
      */
-    public Set<Map.Entry<K,V>> entrySet() {
+    @SideEffectFree
+    public Set<Map.Entry<@KeyFor({"this"}) K,V>> entrySet(@GuardSatisfied LinkedHashMap<K, V> this) {
         return sequencedEntrySet();
     }
 
@@ -908,19 +937,23 @@ public class LinkedHashMap<K,V>
         implements SequencedSet<Map.Entry<K,V>> {
         final boolean reversed;
         LinkedEntrySet(boolean reversed)        { this.reversed = reversed; }
+        @Pure
         public final int size()                 { return size; }
         public final void clear()               { LinkedHashMap.this.clear(); }
+        @SideEffectFree
         public final Iterator<Map.Entry<K,V>> iterator() {
             return new LinkedEntryIterator(reversed);
         }
-        public final boolean contains(Object o) {
+        @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
+        public final boolean contains(@Nullable @UnknownSignedness Object o) {
             if (!(o instanceof Map.Entry<?, ?> e))
                 return false;
             Object key = e.getKey();
             Node<K,V> candidate = getNode(key);
             return candidate != null && candidate.equals(e);
         }
-        public final boolean remove(Object o) {
+        public final boolean remove(@Nullable @UnknownSignedness Object o) {
             if (o instanceof Map.Entry<?, ?> e) {
                 Object key = e.getKey();
                 Object value = e.getValue();
@@ -928,6 +961,7 @@ public class LinkedHashMap<K,V>
             }
             return false;
         }
+        @SideEffectFree
         public final Spliterator<Map.Entry<K,V>> spliterator() {
             return Spliterators.spliterator(this, Spliterator.SIZED |
                                             Spliterator.ORDERED |
@@ -1013,11 +1047,14 @@ public class LinkedHashMap<K,V>
             current = null;
         }
 
+        @Pure
+        @EnsuresNonEmptyIf(result = true, expression = "this")
         public final boolean hasNext() {
             return next != null;
         }
 
-        final LinkedHashMap.Entry<K,V> nextNode() {
+        @SideEffectsOnly("this")
+        final LinkedHashMap.Entry<K,V> nextNode(@NonEmpty LinkedHashIterator this) {
             LinkedHashMap.Entry<K,V> e = next;
             if (modCount != expectedModCount)
                 throw new ConcurrentModificationException();
@@ -1043,19 +1080,19 @@ public class LinkedHashMap<K,V>
     final class LinkedKeyIterator extends LinkedHashIterator
         implements Iterator<K> {
         LinkedKeyIterator(boolean reversed) { super(reversed); }
-        public final K next() { return nextNode().getKey(); }
+        public final K next(@NonEmpty LinkedKeyIterator this) { return nextNode().getKey(); }
     }
 
     final class LinkedValueIterator extends LinkedHashIterator
         implements Iterator<V> {
         LinkedValueIterator(boolean reversed) { super(reversed); }
-        public final V next() { return nextNode().value; }
+        public final V next(@NonEmpty LinkedValueIterator this) { return nextNode().value; }
     }
 
     final class LinkedEntryIterator extends LinkedHashIterator
         implements Iterator<Map.Entry<K,V>> {
         LinkedEntryIterator(boolean reversed) { super(reversed); }
-        public final Map.Entry<K,V> next() { return nextNode(); }
+        public final Map.Entry<K,V> next(@NonEmpty LinkedEntryIterator this) { return nextNode(); }
     }
 
     /**

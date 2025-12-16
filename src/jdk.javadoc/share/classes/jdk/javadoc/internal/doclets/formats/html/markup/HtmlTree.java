@@ -25,6 +25,7 @@
 
 package jdk.javadoc.internal.doclets.formats.html.markup;
 
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
@@ -981,6 +982,7 @@ public class HtmlTree extends Content {
     }
 
     @Override
+    @Pure
     public boolean isEmpty() {
         return (!hasContent() && !hasAttrs());
     }
@@ -1022,6 +1024,7 @@ public class HtmlTree extends Content {
      * @return true if the HTML tree can be discarded without affecting the output
      */
     @Override
+    @Pure
     public boolean isDiscardable() {
         return !isVoid()
             && !hasContent()
@@ -1036,6 +1039,7 @@ public class HtmlTree extends Content {
      *
      * @see <a href="https://www.w3.org/TR/html51/dom.html#kinds-of-content-phrasing-content">Phrasing Content</a>
      */
+    @Pure
     public boolean isInline() {
         return switch (tagName) {
             case A, BUTTON, BR, CODE, EM, I, IMG, LABEL, SMALL, SPAN, STRONG, SUB, SUP, WBR -> true;

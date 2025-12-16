@@ -25,6 +25,12 @@
 
 package java.net;
 
+import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethodsIf;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.checker.mustcall.qual.CreatesMustCallFor;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -77,7 +83,8 @@ import sun.net.PlatformSocketImpl;
  * @see     java.nio.channels.ServerSocketChannel
  * @since   1.0
  */
-public class ServerSocket implements java.io.Closeable {
+@AnnotatedFor({"calledmethods", "interning", "mustcall"})
+public @UsesObjectEquals class ServerSocket implements java.io.Closeable {
     // the underlying SocketImpl
     private final SocketImpl impl;
 
@@ -338,6 +345,7 @@ public class ServerSocket implements java.io.Closeable {
      *          SocketAddress subclass not supported by this socket
      * @since 1.4
      */
+    @CreatesMustCallFor
     public void bind(SocketAddress endpoint) throws IOException {
         bind(endpoint, 50);
     }
@@ -367,6 +375,7 @@ public class ServerSocket implements java.io.Closeable {
      *          SocketAddress subclass not supported by this socket
      * @since 1.4
      */
+    @CreatesMustCallFor
     public void bind(SocketAddress endpoint, int backlog) throws IOException {
         if (isClosed())
             throw new SocketException("Socket is closed");
@@ -771,7 +780,7 @@ public class ServerSocket implements java.io.Closeable {
      *
      * @since 1.4
      */
-    public ServerSocketChannel getChannel() {
+    public @MustCallAlias ServerSocketChannel getChannel(@MustCallAlias ServerSocket this) {
         return null;
     }
 
@@ -795,6 +804,7 @@ public class ServerSocket implements java.io.Closeable {
      * @return true if the socket has been closed
      * @since 1.4
      */
+    @EnsuresCalledMethodsIf(expression="this", result=true, methods={"close"})
     public boolean isClosed() {
         return closed;
     }

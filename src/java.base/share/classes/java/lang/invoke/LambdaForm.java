@@ -25,6 +25,13 @@
 
 package java.lang.invoke;
 
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
 import jdk.internal.perf.PerfCounter;
 import jdk.internal.vm.annotation.DontInline;
 import jdk.internal.vm.annotation.Hidden;
@@ -1019,6 +1026,7 @@ class LambdaForm {
         return true;
     }
 
+    @EnsuresNonEmptyIf(result = false, expression = "this")
     private boolean isEmpty() {
         if (result < 0)
             return (names.length == arity);
@@ -1060,7 +1068,9 @@ class LambdaForm {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object obj) {
         return obj instanceof LambdaForm && equals((LambdaForm)obj);
     }
     public boolean equals(LambdaForm that) {
@@ -1074,6 +1084,7 @@ class LambdaForm {
         return LambdaFormEditor.lambdaFormEditor(this);
     }
 
+    @Pure
     boolean contains(Name name) {
         int pos = name.index();
         if (pos >= 0) {

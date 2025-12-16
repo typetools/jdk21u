@@ -25,6 +25,9 @@
 
 package java.io;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 /**
  * Signals that one of the ObjectStreamExceptions was thrown during a
  * write operation.  Thrown during a read operation when one of the
@@ -35,6 +38,7 @@ package java.io;
  *
  * @since   1.1
  */
+@AnnotatedFor({"nullness"})
 public class WriteAbortedException extends ObjectStreamException {
     @java.io.Serial
     private static final long serialVersionUID = -3326426625597282442L;
@@ -49,7 +53,7 @@ public class WriteAbortedException extends ObjectStreamException {
      * @serial
      */
     @Deprecated(since="17")
-    public Exception detail;
+    public @Nullable Exception detail;
 
     /**
      * Constructs a WriteAbortedException with a string describing
@@ -57,7 +61,7 @@ public class WriteAbortedException extends ObjectStreamException {
      * @param s   String describing the exception.
      * @param ex  Exception causing the abort.
      */
-    public WriteAbortedException(String s, Exception ex) {
+    public WriteAbortedException(@Nullable String s, @Nullable Exception ex) {
         super(s);
         initCause(null);  // Disallow subsequent initCause
         detail = ex;
@@ -82,7 +86,7 @@ public class WriteAbortedException extends ObjectStreamException {
      * @since   1.4
      */
     @Override
-    public Throwable getCause() {
+    public @Nullable Throwable getCause() {
         return detail;
     }
 }

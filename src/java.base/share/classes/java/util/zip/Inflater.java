@@ -25,6 +25,12 @@
 
 package java.util.zip;
 
+import org.checkerframework.checker.index.qual.GTENegativeOne;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.lang.ref.Cleaner.Cleanable;
 import java.nio.ByteBuffer;
 import java.nio.ReadOnlyBufferException;
@@ -95,7 +101,8 @@ import static java.util.zip.ZipUtils.NIO_ACCESS;
  *
  */
 
-public class Inflater {
+@AnnotatedFor({"index", "interning"})
+public @UsesObjectEquals class Inflater {
 
     private final InflaterZStreamRef zsRef;
     private ByteBuffer input = ZipUtils.defaultBuf;
@@ -153,7 +160,7 @@ public class Inflater {
      * @param len the length of the input data
      * @see Inflater#needsInput
      */
-    public void setInput(byte[] input, int off, int len) {
+    public void setInput(byte[] input, @IndexOrHigh({"#1"}) int off, @IndexOrHigh({"#1"}) int len) {
         Preconditions.checkFromIndexSize(off, len, input.length, Preconditions.AIOOBE_FORMATTER);
         synchronized (zsRef) {
             this.input = null;
@@ -218,7 +225,7 @@ public class Inflater {
      * @see Inflater#needsDictionary
      * @see Inflater#getAdler
      */
-    public void setDictionary(byte[] dictionary, int off, int len) {
+    public void setDictionary(byte[] dictionary, @IndexOrHigh({"#1"}) int off, @IndexOrHigh({"#1"}) int len) {
         Preconditions.checkFromIndexSize(off, len, dictionary.length, Preconditions.AIOOBE_FORMATTER);
         synchronized (zsRef) {
             ensureOpen();
@@ -283,7 +290,7 @@ public class Inflater {
      * buffer after decompression has finished.
      * @return the total number of bytes remaining in the input buffer
      */
-    public int getRemaining() {
+    public @NonNegative int getRemaining() {
         synchronized (zsRef) {
             ByteBuffer input = this.input;
             return input == null ? inputLim - inputPos : input.remaining();
@@ -360,7 +367,7 @@ public class Inflater {
      * @see Inflater#needsInput
      * @see Inflater#needsDictionary
      */
-    public int inflate(byte[] output, int off, int len)
+    public @GTENegativeOne int inflate(byte[] output, @IndexOrHigh({"#1"}) int off, @IndexOrHigh({"#1"}) int len)
         throws DataFormatException
     {
         Preconditions.checkFromIndexSize(off, len, output.length, Preconditions.AIOOBE_FORMATTER);
@@ -466,7 +473,7 @@ public class Inflater {
      * @see Inflater#needsInput
      * @see Inflater#needsDictionary
      */
-    public int inflate(byte[] output) throws DataFormatException {
+    public @GTENegativeOne int inflate(byte[] output) throws DataFormatException {
         return inflate(output, 0, output.length);
     }
 

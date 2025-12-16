@@ -25,6 +25,13 @@
 
 package java.util.zip;
 
+import org.checkerframework.checker.index.qual.GTENegativeOne;
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
+import org.checkerframework.checker.index.qual.Positive;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.io.FilterInputStream;
 import java.io.InputStream;
 import java.io.IOException;
@@ -40,6 +47,7 @@ import java.util.Objects;
  * @author      David Connelly
  * @since 1.1
  */
+@AnnotatedFor({"nullness", "index"})
 public class InflaterInputStream extends FilterInputStream {
     /**
      * Decompressor for this stream.
@@ -78,7 +86,7 @@ public class InflaterInputStream extends FilterInputStream {
      * @param size the input buffer size
      * @throws    IllegalArgumentException if {@code size <= 0}
      */
-    public InflaterInputStream(InputStream in, Inflater inf, int size) {
+    public @MustCallAlias InflaterInputStream(@MustCallAlias InputStream in, Inflater inf, @Positive int size) {
         super(in);
         if (in == null || inf == null) {
             throw new NullPointerException();
@@ -95,7 +103,7 @@ public class InflaterInputStream extends FilterInputStream {
      * @param in the input stream
      * @param inf the decompressor ("inflater")
      */
-    public InflaterInputStream(InputStream in, Inflater inf) {
+    public @MustCallAlias InflaterInputStream(@MustCallAlias InputStream in, Inflater inf) {
         this(in, inf, 512);
     }
 
@@ -105,7 +113,7 @@ public class InflaterInputStream extends FilterInputStream {
      * Creates a new input stream with a default decompressor and buffer size.
      * @param in the input stream
      */
-    public InflaterInputStream(InputStream in) {
+    public @MustCallAlias InflaterInputStream(@MustCallAlias InputStream in) {
         this(in, in != null ? new Inflater() : null);
         usesDefaultInflater = true;
     }
@@ -150,7 +158,7 @@ public class InflaterInputStream extends FilterInputStream {
      * @throws    ZipException if a ZIP format error has occurred
      * @throws    IOException if an I/O error has occurred
      */
-    public int read(byte[] b, int off, int len) throws IOException {
+    public @GTENegativeOne @LTEqLengthOf({"#1"}) int read(byte[] b, @IndexOrHigh({"#1"}) int off, @IndexOrHigh({"#1"}) int len) throws IOException {
         ensureOpen();
         if (b == null) {
             throw new NullPointerException();

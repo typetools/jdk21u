@@ -25,6 +25,7 @@
 
 package jdk.javadoc.internal.doclets.formats.html.markup;
 
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -124,6 +125,7 @@ public class RawHtml extends Content {
         rawHtmlContent = rawHtml.toString();
     }
 
+    @Pure
     @Override
     public boolean isEmpty() {
         return rawHtmlContent.isEmpty();

@@ -24,6 +24,20 @@
  */
 package java.lang;
 
+import org.checkerframework.checker.index.qual.LTLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.mustcall.qual.MustCall;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.checker.signedness.qual.PolySigned;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.TerminatesExecution;
+import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.CFComment;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.Console;
@@ -109,7 +123,8 @@ import sun.security.util.SecurityConstants;
  *
  * @since   1.0
  */
-public final class System {
+@AnnotatedFor({"index", "interning", "lock", "mustcall", "nullness", "signedness"})
+public final @UsesObjectEquals class System {
     /* Register the natives via the static initializer.
      *
      * The VM will invoke the initPhase1 method to complete the initialization
@@ -136,7 +151,8 @@ public final class System {
      * @see Console#charset()
      * @see Console#reader()
      */
-    public static final InputStream in = null;
+    @CFComment("This field can be null. The Checker Framework conservatively annotates it as @NonNull, forbidding programs that set it to null.")
+    public static final @MustCall({}) InputStream in = null;
 
     /**
      * The "standard" output stream. This stream is already
@@ -168,7 +184,8 @@ public final class System {
      * @see     Console#charset()
      * @see     <a href="#stdout.encoding">stdout.encoding</a>
      */
-    public static final PrintStream out = null;
+    @CFComment("This field can be null. The Checker Framework conservatively annotates it as @NonNull, forbidding programs that set it to null.")
+    public static final @MustCall({}) PrintStream out = null;
 
     /**
      * The "standard" error output stream. This stream is already
@@ -188,7 +205,8 @@ public final class System {
      * @see     Console#charset()
      * @see     <a href="#stderr.encoding">stderr.encoding</a>
      */
-    public static final PrintStream err = null;
+    @CFComment("This field can be null. The Checker Framework conservatively annotates it as @NonNull, forbidding programs that set it to null.")
+    public static final @MustCall({}) PrintStream err = null;
 
     // Holder for the initial value of `in`, set within `initPhase1()`.
     private static InputStream initialIn;
@@ -231,6 +249,7 @@ public final class System {
      *
      * @since   1.1
      */
+    @CFComment("Null is a legal argument. The Checker Framework conservatively forbids programs that pass null.")
     public static void setIn(InputStream in) {
         checkIO();
         setIn0(in);
@@ -255,6 +274,7 @@ public final class System {
      *
      * @since   1.1
      */
+    @CFComment("Null is a legal argument. The Checker Framework conservatively forbids programs that pass null.")
     public static void setOut(PrintStream out) {
         checkIO();
         setOut0(out);
@@ -279,6 +299,7 @@ public final class System {
      *
      * @since   1.1
      */
+    @CFComment("Null is a legal argument. The Checker Framework conservatively forbids programs that pass null.")
     public static void setErr(PrintStream err) {
         checkIO();
         setErr0(err);
@@ -294,7 +315,7 @@ public final class System {
      *
      * @since   1.6
      */
-     public static Console console() {
+     public static @Nullable Console console() {
          Console c;
          if ((c = cons) == null) {
              synchronized (System.class) {
@@ -331,7 +352,7 @@ public final class System {
      *
      * @since 1.5
      */
-    public static Channel inheritedChannel() throws IOException {
+    public static @Nullable Channel inheritedChannel() throws IOException {
         return SelectorProvider.provider().inheritedChannel();
     }
 
@@ -405,7 +426,7 @@ public final class System {
      */
     @Deprecated(since="17", forRemoval=true)
     @CallerSensitive
-    public static void setSecurityManager(@SuppressWarnings("removal") SecurityManager sm) {
+    public static void setSecurityManager(@SuppressWarnings("removal") @Nullable SecurityManager sm) {
         if (allowSecurityManager()) {
             var callerClass = Reflection.getCallerClass();
             if (CallersHolder.callers.putIfAbsent(callerClass, true) == null) {
@@ -500,7 +521,7 @@ public final class System {
      */
     @SuppressWarnings("removal")
     @Deprecated(since="17", forRemoval=true)
-    public static SecurityManager getSecurityManager() {
+    public static @Nullable SecurityManager getSecurityManager() {
         if (allowSecurityManager()) {
             return security;
         } else {
@@ -663,10 +684,11 @@ public final class System {
      * @throws     NullPointerException if either {@code src} or
      *             {@code dest} is {@code null}.
      */
+    @SideEffectFree
     @IntrinsicCandidate
-    public static native void arraycopy(Object src,  int  srcPos,
-                                        Object dest, int destPos,
-                                        int length);
+    public static native void arraycopy(@PolySigned @GuardSatisfied Object src,  @NonNegative int  srcPos,
+                                        @PolySigned @GuardSatisfied Object dest, @NonNegative int destPos,
+                                        @LTLengthOf(value={"#1", "#3"}, offset={"#2 - 1", "#4 - 1"}) @NonNegative int length);
 
     /**
      * Returns the same hash code for the given object as
@@ -681,8 +703,9 @@ public final class System {
      * @see Object#hashCode
      * @see java.util.Objects#hashCode(Object)
      */
+    @Pure
     @IntrinsicCandidate
-    public static native int identityHashCode(Object x);
+    public static native int identityHashCode(@GuardSatisfied @Nullable Object x);
 
     /**
      * System properties.
@@ -882,6 +905,7 @@ public final class System {
      * @return the system-dependent line separator string
      * @since 1.7
      */
+    @Pure
     public static String lineSeparator() {
         return lineSeparator;
     }
@@ -914,7 +938,7 @@ public final class System {
      * @see        java.lang.SecurityException
      * @see        java.lang.SecurityManager#checkPropertiesAccess()
      */
-    public static void setProperties(Properties props) {
+    public static void setProperties(@Nullable Properties props) {
         @SuppressWarnings("removal")
         SecurityManager sm = getSecurityManager();
         if (sm != null) {
@@ -959,7 +983,8 @@ public final class System {
      * @see        java.lang.SecurityManager#checkPropertyAccess(java.lang.String)
      * @see        java.lang.System#getProperties()
      */
-    public static String getProperty(String key) {
+    @Pure
+    public static @Nullable String getProperty(String key) {
         checkKey(key);
         @SuppressWarnings("removal")
         SecurityManager sm = getSecurityManager();
@@ -995,7 +1020,8 @@ public final class System {
      * @see        java.lang.SecurityManager#checkPropertyAccess(java.lang.String)
      * @see        java.lang.System#getProperties()
      */
-    public static String getProperty(String key, String def) {
+    @Pure
+    public static @PolyNull String getProperty(String key, @PolyNull String def) {
         checkKey(key);
         @SuppressWarnings("removal")
         SecurityManager sm = getSecurityManager();
@@ -1039,7 +1065,7 @@ public final class System {
      * @see        SecurityManager#checkPermission
      * @since      1.2
      */
-    public static String setProperty(String key, String value) {
+    public static @Nullable String setProperty(String key, String value) {
         checkKey(key);
         @SuppressWarnings("removal")
         SecurityManager sm = getSecurityManager();
@@ -1081,7 +1107,7 @@ public final class System {
      * @see        java.lang.SecurityManager#checkPropertiesAccess()
      * @since 1.5
      */
-    public static String clearProperty(String key) {
+    public static @Nullable String clearProperty(String key) {
         checkKey(key);
         @SuppressWarnings("removal")
         SecurityManager sm = getSecurityManager();
@@ -1147,7 +1173,7 @@ public final class System {
      * @see    #getenv()
      * @see    ProcessBuilder#environment()
      */
-    public static String getenv(String name) {
+    public static @Nullable String getenv(String name) {
         @SuppressWarnings("removal")
         SecurityManager sm = getSecurityManager();
         if (sm != null) {
@@ -1916,6 +1942,7 @@ public final class System {
      *         doesn't allow exit with the specified status.
      * @see    java.lang.Runtime#exit(int)
      */
+    @TerminatesExecution
     public static void exit(int status) {
         Runtime.getRuntime().exit(status);
     }

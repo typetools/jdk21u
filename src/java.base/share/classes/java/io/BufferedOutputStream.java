@@ -25,6 +25,14 @@
 
 package java.io;
 
+import org.checkerframework.checker.index.qual.IndexOrHigh;
+import org.checkerframework.checker.index.qual.LTLengthOf;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.index.qual.Positive;
+import org.checkerframework.checker.mustcall.qual.MustCallAlias;
+import org.checkerframework.checker.signedness.qual.PolySigned;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.Arrays;
 import jdk.internal.misc.InternalLock;
 import jdk.internal.misc.VM;
@@ -38,6 +46,7 @@ import jdk.internal.misc.VM;
  * @author  Arthur van Hoff
  * @since   1.0
  */
+@AnnotatedFor({"index", "nullness", "mustcall", "signedness"})
 public class BufferedOutputStream extends FilterOutputStream {
     private static final int DEFAULT_INITIAL_BUFFER_SIZE = 512;
     private static final int DEFAULT_MAX_BUFFER_SIZE = 8192;
@@ -102,7 +111,7 @@ public class BufferedOutputStream extends FilterOutputStream {
      *
      * @param   out   the underlying output stream.
      */
-    public BufferedOutputStream(OutputStream out) {
+    public @MustCallAlias BufferedOutputStream(@MustCallAlias OutputStream out) {
         this(out, initialBufferSize(), DEFAULT_MAX_BUFFER_SIZE);
     }
 
@@ -115,7 +124,7 @@ public class BufferedOutputStream extends FilterOutputStream {
      * @param   size   the buffer size.
      * @throws  IllegalArgumentException if size &lt;= 0.
      */
-    public BufferedOutputStream(OutputStream out, int size) {
+    public @MustCallAlias BufferedOutputStream(@MustCallAlias OutputStream out, @Positive int size) {
         this(out, size, size);
     }
 
@@ -152,7 +161,7 @@ public class BufferedOutputStream extends FilterOutputStream {
      * @throws     IOException  if an I/O error occurs.
      */
     @Override
-    public void write(int b) throws IOException {
+    public void write(@PolySigned int b) throws IOException {
         if (lock != null) {
             lock.lock();
             try {
@@ -193,7 +202,7 @@ public class BufferedOutputStream extends FilterOutputStream {
      * @throws     IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public void write(byte[] b, int off, int len) throws IOException {
+    public void write(@PolySigned byte[] b, @IndexOrHigh({"#1"}) int off, @LTLengthOf(value={"#1"}, offset={"#2 - 1"}) @NonNegative int len) throws IOException {
         if (lock != null) {
             lock.lock();
             try {

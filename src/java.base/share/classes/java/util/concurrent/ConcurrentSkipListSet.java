@@ -35,6 +35,20 @@
 
 package java.util.concurrent;
 
+import org.checkerframework.checker.index.qual.PolyGrowShrink;
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
+import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
+import org.checkerframework.checker.nonempty.qual.NonEmpty;
+import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.signedness.qual.UnknownSignedness;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.lang.reflect.Field;
 import java.util.AbstractSet;
 import java.util.Collection;
@@ -92,7 +106,8 @@ import java.util.Spliterator;
  * @param <E> the type of elements maintained by this set
  * @since 1.6
  */
-public class ConcurrentSkipListSet<E>
+@AnnotatedFor({"nullness"})
+public class ConcurrentSkipListSet<E extends @NonNull Object>
     extends AbstractSet<E>
     implements NavigableSet<E>, Cloneable, java.io.Serializable {
 
@@ -122,7 +137,7 @@ public class ConcurrentSkipListSet<E>
      *        If {@code null}, the {@linkplain Comparable natural
      *        ordering} of the elements will be used.
      */
-    public ConcurrentSkipListSet(Comparator<? super E> comparator) {
+    public ConcurrentSkipListSet(@Nullable Comparator<? super E> comparator) {
         m = new ConcurrentSkipListMap<E,Object>(comparator);
     }
 
@@ -168,6 +183,7 @@ public class ConcurrentSkipListSet<E>
      *
      * @return a shallow copy of this set
      */
+    @SideEffectFree
     public ConcurrentSkipListSet<E> clone() {
         try {
             @SuppressWarnings("unchecked")
@@ -198,6 +214,7 @@ public class ConcurrentSkipListSet<E>
      *
      * @return the number of elements in this set
      */
+    @Pure
     public int size() {
         return m.size();
     }
@@ -206,6 +223,8 @@ public class ConcurrentSkipListSet<E>
      * Returns {@code true} if this set contains no elements.
      * @return {@code true} if this set contains no elements
      */
+    @Pure
+    @EnsuresNonEmptyIf(result = false, expression = "this")
     public boolean isEmpty() {
         return m.isEmpty();
     }
@@ -221,7 +240,9 @@ public class ConcurrentSkipListSet<E>
      *         compared with the elements currently in this set
      * @throws NullPointerException if the specified element is null
      */
-    public boolean contains(Object o) {
+    @Pure
+    @EnsuresNonEmptyIf(result = true, expression = "this")
+    public boolean contains(@GuardSatisfied @UnknownSignedness Object o) {
         return m.containsKey(o);
     }
 
@@ -239,6 +260,7 @@ public class ConcurrentSkipListSet<E>
      *         with the elements currently in this set
      * @throws NullPointerException if the specified element is null
      */
+    @EnsuresNonEmpty("this")
     public boolean add(E e) {
         return m.putIfAbsent(e, Boolean.TRUE) == null;
     }
@@ -257,7 +279,7 @@ public class ConcurrentSkipListSet<E>
      *         with the elements currently in this set
      * @throws NullPointerException if the specified element is null
      */
-    public boolean remove(Object o) {
+    public boolean remove(@GuardSatisfied @UnknownSignedness Object o) {
         return m.remove(o, Boolean.TRUE);
     }
 
@@ -273,7 +295,8 @@ public class ConcurrentSkipListSet<E>
      *
      * @return an iterator over the elements in this set in ascending order
      */
-    public Iterator<E> iterator() {
+    @SideEffectFree
+    public @PolyGrowShrink @PolyNonEmpty Iterator<E> iterator(@PolyGrowShrink @PolyNonEmpty ConcurrentSkipListSet<E> this) {
         return m.navigableKeySet().iterator();
     }
 
@@ -282,7 +305,7 @@ public class ConcurrentSkipListSet<E>
      *
      * @return an iterator over the elements in this set in descending order
      */
-    public Iterator<E> descendingIterator() {
+    public @PolyGrowShrink @PolyNonEmpty Iterator<E> descendingIterator(@PolyGrowShrink @PolyNonEmpty ConcurrentSkipListSet<E> this) {
         return m.descendingKeySet().iterator();
     }
 
@@ -301,7 +324,9 @@ public class ConcurrentSkipListSet<E>
      * @param o the object to be compared for equality with this set
      * @return {@code true} if the specified object is equal to this set
      */
-    public boolean equals(Object o) {
+    @Pure
+    @EnsuresNonNullIf(expression="#1", result=true)
+    public boolean equals(@Nullable Object o) {
         // Override AbstractSet version to avoid calling size()
         if (o == this)
             return true;
@@ -329,7 +354,7 @@ public class ConcurrentSkipListSet<E>
      * @throws NullPointerException if the specified collection or any
      *         of its elements are null
      */
-    public boolean removeAll(Collection<?> c) {
+    public boolean removeAll(Collection<? extends @NonNull @UnknownSignedness Object> c) {
         // Override AbstractSet version to avoid unnecessary call to size()
         boolean modified = false;
         for (Object e : c)
@@ -372,12 +397,12 @@ public class ConcurrentSkipListSet<E>
         return m.higherKey(e);
     }
 
-    public E pollFirst() {
+    public @Nullable E pollFirst() {
         Map.Entry<E,Object> e = m.pollFirstEntry();
         return (e == null) ? null : e.getKey();
     }
 
-    public E pollLast() {
+    public @Nullable E pollLast() {
         Map.Entry<E,Object> e = m.pollLastEntry();
         return (e == null) ? null : e.getKey();
     }
@@ -385,21 +410,22 @@ public class ConcurrentSkipListSet<E>
 
     /* ---------------- SortedSet operations -------------- */
 
-    public Comparator<? super E> comparator() {
+    @Pure
+    public @Nullable Comparator<? super E> comparator() {
         return m.comparator();
     }
 
     /**
      * @throws java.util.NoSuchElementException {@inheritDoc}
      */
-    public E first() {
+    public E first(@NonEmpty ConcurrentSkipListSet<E> this) {
         return m.firstKey();
     }
 
     /**
      * @throws java.util.NoSuchElementException {@inheritDoc}
      */
-    public E last() {
+    public E last(@NonEmpty ConcurrentSkipListSet<E> this) {
         return m.lastKey();
     }
 
@@ -433,7 +459,7 @@ public class ConcurrentSkipListSet<E>
      *         {@code toElement} is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
-    public NavigableSet<E> subSet(E fromElement,
+    public @PolyGrowShrink @PolyNonEmpty NavigableSet<E> subSet(@PolyGrowShrink @PolyNonEmpty ConcurrentSkipListSet<E> this, E fromElement,
                                   boolean fromInclusive,
                                   E toElement,
                                   boolean toInclusive) {
@@ -447,7 +473,7 @@ public class ConcurrentSkipListSet<E>
      * @throws NullPointerException if {@code toElement} is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
-    public NavigableSet<E> headSet(E toElement, boolean inclusive) {
+    public @PolyGrowShrink @PolyNonEmpty NavigableSet<E> headSet(@PolyGrowShrink @PolyNonEmpty ConcurrentSkipListSet<E> this, E toElement, boolean inclusive) {
         return new ConcurrentSkipListSet<E>(m.headMap(toElement, inclusive));
     }
 
@@ -456,7 +482,7 @@ public class ConcurrentSkipListSet<E>
      * @throws NullPointerException if {@code fromElement} is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
-    public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
+    public @PolyGrowShrink @PolyNonEmpty NavigableSet<E> tailSet(@PolyGrowShrink @PolyNonEmpty ConcurrentSkipListSet<E> this, E fromElement, boolean inclusive) {
         return new ConcurrentSkipListSet<E>(m.tailMap(fromElement, inclusive));
     }
 
@@ -466,7 +492,7 @@ public class ConcurrentSkipListSet<E>
      *         {@code toElement} is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
-    public NavigableSet<E> subSet(E fromElement, E toElement) {
+    public @PolyGrowShrink @PolyNonEmpty NavigableSet<E> subSet(@PolyGrowShrink @PolyNonEmpty ConcurrentSkipListSet<E> this, E fromElement, E toElement) {
         return subSet(fromElement, true, toElement, false);
     }
 
@@ -475,7 +501,7 @@ public class ConcurrentSkipListSet<E>
      * @throws NullPointerException if {@code toElement} is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
-    public NavigableSet<E> headSet(E toElement) {
+    public @PolyGrowShrink @PolyNonEmpty NavigableSet<E> headSet(@PolyGrowShrink @PolyNonEmpty ConcurrentSkipListSet<E> this, E toElement) {
         return headSet(toElement, false);
     }
 
@@ -484,7 +510,7 @@ public class ConcurrentSkipListSet<E>
      * @throws NullPointerException if {@code fromElement} is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
-    public NavigableSet<E> tailSet(E fromElement) {
+    public @PolyGrowShrink @PolyNonEmpty NavigableSet<E> tailSet(@PolyGrowShrink @PolyNonEmpty ConcurrentSkipListSet<E> this, E fromElement) {
         return tailSet(fromElement, true);
     }
 
@@ -500,7 +526,7 @@ public class ConcurrentSkipListSet<E>
      *
      * @return a reverse order view of this set
      */
-    public NavigableSet<E> descendingSet() {
+    public @PolyGrowShrink @PolyNonEmpty NavigableSet<E> descendingSet(@PolyGrowShrink @PolyNonEmpty ConcurrentSkipListSet<E> this) {
         return new ConcurrentSkipListSet<E>(m.descendingMap());
     }
 
@@ -522,6 +548,8 @@ public class ConcurrentSkipListSet<E>
      * @return a {@code Spliterator} over the elements in this set
      * @since 1.8
      */
+    @SuppressWarnings({"unchecked"})
+    @SideEffectFree
     public Spliterator<E> spliterator() {
         return (m instanceof ConcurrentSkipListMap)
             ? ((ConcurrentSkipListMap<E,?>)m).keySpliterator()

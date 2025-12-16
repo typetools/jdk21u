@@ -25,8 +25,10 @@
 
 package java.net;
 
-import jdk.internal.util.StaticProperty;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
 
+import jdk.internal.util.StaticProperty;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
@@ -83,7 +85,8 @@ import java.util.Objects;
  * @since   1.2
  */
 
-public class URLDecoder {
+@AnnotatedFor({"interning"})
+public @UsesObjectEquals class URLDecoder {
 
     /**
      * Do not call.

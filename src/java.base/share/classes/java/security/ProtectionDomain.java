@@ -25,6 +25,11 @@
 
 package java.security;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Deterministic;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -58,7 +63,8 @@ import sun.security.util.SecurityConstants;
  * @since 1.2
  */
 
-public class ProtectionDomain {
+@AnnotatedFor({"interning", "nullness"})
+public @UsesObjectEquals class ProtectionDomain {
 
     /**
      * If {@code true}, {@link #impliesWithAltFilePerm} will try to be
@@ -135,16 +141,16 @@ public class ProtectionDomain {
     }
 
     /* CodeSource */
-    private final CodeSource codesource ;
+    private final @Nullable CodeSource codesource ;
 
     /* ClassLoader the protection domain was consed from */
-    private final ClassLoader classloader;
+    private final @Nullable ClassLoader classloader;
 
     /* Principals running-as within this protection domain */
     private final Principal[] principals;
 
     /* the rights this protection domain is granted */
-    private PermissionCollection permissions;
+    private @Nullable PermissionCollection permissions;
 
     /* if the permissions object has AllPermission */
     private boolean hasAllPerm = false;
@@ -173,8 +179,8 @@ public class ProtectionDomain {
      * @param codesource the codesource associated with this domain
      * @param permissions the permissions granted to this domain
      */
-    public ProtectionDomain(CodeSource codesource,
-                            PermissionCollection permissions) {
+    public ProtectionDomain(@Nullable CodeSource codesource,
+                            @Nullable PermissionCollection permissions) {
         this.codesource = codesource;
         if (permissions != null) {
             this.permissions = permissions;
@@ -220,9 +226,9 @@ public class ProtectionDomain {
      * @see Policy#getPermissions(ProtectionDomain)
      * @since 1.4
      */
-    public ProtectionDomain(CodeSource codesource,
-                            PermissionCollection permissions,
-                            ClassLoader classloader,
+    public ProtectionDomain(@Nullable CodeSource codesource,
+                            @Nullable PermissionCollection permissions,
+                            @Nullable ClassLoader classloader,
                             Principal[] principals) {
         this.codesource = codesource;
         if (permissions != null) {
@@ -244,7 +250,8 @@ public class ProtectionDomain {
      * @return the {@code CodeSource} of this domain which may be {@code null}.
      * @since 1.2
      */
-    public final CodeSource getCodeSource() {
+    @Deterministic
+    public final @Nullable CodeSource getCodeSource() {
         return this.codesource;
     }
 
@@ -255,7 +262,7 @@ public class ProtectionDomain {
      *
      * @since 1.4
      */
-    public final ClassLoader getClassLoader() {
+    public final @Nullable ClassLoader getClassLoader() {
         return this.classloader;
     }
 
@@ -279,7 +286,7 @@ public class ProtectionDomain {
      * @see Policy#refresh
      * @see Policy#getPermissions(ProtectionDomain)
      */
-    public final PermissionCollection getPermissions() {
+    public final @Nullable PermissionCollection getPermissions() {
         return permissions;
     }
 

@@ -35,8 +35,10 @@
 
 package java.util.concurrent.locks;
 
-import jdk.internal.misc.VirtualThreads;
-import jdk.internal.misc.Unsafe;
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
+import jdk.internal.misc.VirtualThreads;import jdk.internal.misc.Unsafe;
 
 /**
  * Basic thread blocking primitives for creating locks and other
@@ -137,7 +139,8 @@ import jdk.internal.misc.Unsafe;
  *
  * @since 1.5
  */
-public class LockSupport {
+@AnnotatedFor({"interning"})
+public @UsesObjectEquals class LockSupport {
     private LockSupport() {} // Cannot be instantiated.
 
     private static void setBlocker(Thread t, Object arg) {

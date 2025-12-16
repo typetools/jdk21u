@@ -35,6 +35,11 @@
 
 package java.util.concurrent;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import static java.lang.ref.Reference.reachabilityFence;
 import java.lang.ref.Cleaner.Cleanable;
 import java.security.AccessControlContext;
@@ -73,7 +78,8 @@ import sun.security.util.SecurityConstants;
  * @since 1.5
  * @author Doug Lea
  */
-public class Executors {
+@AnnotatedFor({"interning", "nullness"})
+public @UsesObjectEquals class Executors {
 
     /**
      * Creates a thread pool that reuses a fixed number of threads
@@ -459,7 +465,7 @@ public class Executors {
      * @return a callable object
      * @throws NullPointerException if task null
      */
-    public static Callable<Object> callable(Runnable task) {
+    public static Callable<@Nullable Object> callable(Runnable task) {
         if (task == null)
             throw new NullPointerException();
         return new RunnableAdapter<Object>(task, null);
@@ -472,7 +478,7 @@ public class Executors {
      * @return a callable object
      * @throws NullPointerException if action null
      */
-    public static Callable<Object> callable(final PrivilegedAction<?> action) {
+    public static Callable<@PolyNull Object> callable(final PrivilegedAction<@PolyNull ?> action) {
         if (action == null)
             throw new NullPointerException();
         return new Callable<Object>() {
@@ -487,7 +493,7 @@ public class Executors {
      * @return a callable object
      * @throws NullPointerException if action null
      */
-    public static Callable<Object> callable(final PrivilegedExceptionAction<?> action) {
+    public static Callable<@PolyNull Object> callable(final PrivilegedExceptionAction<@PolyNull ?> action) {
         if (action == null)
             throw new NullPointerException();
         return new Callable<Object>() {

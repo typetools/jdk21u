@@ -25,6 +25,9 @@
 
 package java.lang.invoke;
 
+import org.checkerframework.checker.interning.qual.UsesObjectEquals;
+import org.checkerframework.framework.qual.AnnotatedFor;
+
 import jdk.internal.access.SharedSecrets;
 import jdk.internal.foreign.Utils;
 import jdk.internal.javac.PreviewFeature;

@@ -25,8 +25,14 @@
 
 package java.lang.ref;
 
-import jdk.internal.misc.Unsafe;
-import jdk.internal.vm.annotation.ForceInline;
+import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.CFComment;
+
+import jdk.internal.misc.Unsafe;import jdk.internal.vm.annotation.ForceInline;
 import jdk.internal.vm.annotation.IntrinsicCandidate;
 import jdk.internal.access.JavaLangRefAccess;
 import jdk.internal.access.SharedSecrets;
@@ -44,6 +50,8 @@ import jdk.internal.ref.Cleaner;
  * @sealedGraph
  */
 
+@AnnotatedFor({"lock", "nullness"})
+@SuppressWarnings({"rawtypes"})
 public abstract sealed class Reference<T>
     permits PhantomReference, SoftReference, WeakReference, FinalReference {
 
@@ -198,6 +206,7 @@ public abstract sealed class Reference<T>
             super(g, null, name, 0, false);
         }
 
+        @SuppressWarnings({"unchecked"})
         public void run() {
             // pre-load and initialize Cleaner class so that we don't
             // get into trouble later in the run loop if there's
@@ -357,8 +366,9 @@ public abstract sealed class Reference<T>
      *           {@code null} if this reference object has been cleared
      * @see #refersTo
      */
+    @SideEffectFree
     @IntrinsicCandidate
-    public T get() {
+    public @Nullable T get(@GuardSatisfied Reference<T> this) {
         return this.referent;
     }
 
@@ -371,6 +381,7 @@ public abstract sealed class Reference<T>
      * @return {@code true} if {@code obj} is the referent of this reference object
      * @since 16
      */
+    @Pure
     public final boolean refersTo(T obj) {
         return refersToImpl(obj);
     }
@@ -505,6 +516,7 @@ public abstract sealed class Reference<T>
         this(referent, null);
     }
 
+    @SuppressWarnings({"unchecked"})
     Reference(T referent, ReferenceQueue<? super T> queue) {
         this.referent = referent;
         this.queue = (queue == null) ? ReferenceQueue.NULL : queue;
@@ -619,6 +631,7 @@ public abstract sealed class Reference<T>
      * @since 9
      */
     @ForceInline
+    @CFComment("nullness: Docs say the parameter can be null, but in practice, calls pass `this`")
     public static void reachabilityFence(Object ref) {
         // Does nothing. This method is annotated with @ForceInline to eliminate
         // most of the overhead that using @DontInline would cause with the
