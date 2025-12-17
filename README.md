@@ -238,7 +238,7 @@ The [jdk21u](https://github.com/openjdk/jdk21u) repository is used for rampdown 
 
 For more OpenJDK 21 updates specific information such as timelines and contribution guidelines see the [project wiki page](https://wiki.openjdk.org/display/JDKUpdates/JDK+21u/).
 
-# Welcome to the JDK
+# Welcome to the JDK!
 
 For build instructions please see the
 [online documentation](https://openjdk.org/groups/build/doc/building.html),

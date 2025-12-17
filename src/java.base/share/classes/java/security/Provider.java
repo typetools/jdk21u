@@ -29,9 +29,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 
+import javax.security.auth.login.Configuration;
 import jdk.internal.event.SecurityProviderServiceEvent;
 
-import javax.security.auth.login.Configuration;
 import java.io.*;
 import java.security.cert.CertStoreParameters;
 import java.util.*;
