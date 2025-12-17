@@ -169,10 +169,6 @@ Whenever Oracle releases a new version of Java, this repository should be
 updated to pull in more commits from upstream.  Here are some commands to run
 when updating to JDK ${VER}.
 
-Whenever Oracle releases a new version of Java, this repository should be
-updated to pull in more commits from upstream.  Here are some commands to run
-when updating to JDK ${VER}.
-
 Fork into typetools:  <https://github.com/openjdk/jdk${VER}u>
 
 Clone jdk${VER}u repositories into, say, $t/libraries/ .
@@ -209,10 +205,16 @@ Follow the instructions in "The typetools/jdk21u repository" above, except
 replace `git pull https://github.com/typetools/jdk.git` by the JDK you are
 currently working on.
 
-Build JDK 21u (not the main JDK!) to detect errors.
+Build JDK 21u (not the main JDK!).
 
-Diff JDK 21 with the upstream commit of OpenJDK, to detect errors and to copy
-back changes.
+Diff JDK 21 with the upstream commit of OpenJDK, to detect unintentional edits.
+
+```sh
+cd jdk21u-fork-typetools
+git pull ../jdk-fork-${USER}-branch-jdk21
+```
+
+Push and wait for CI to pass.
 
 ## Design
 
