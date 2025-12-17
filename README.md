@@ -169,6 +169,10 @@ Whenever Oracle releases a new version of Java, this repository should be
 updated to pull in more commits from upstream.  Here are some commands to run
 when updating to JDK ${VER}.
 
+Whenever Oracle releases a new version of Java, this repository should be
+updated to pull in more commits from upstream.  Here are some commands to run
+when updating to JDK ${VER}.
+
 Fork into typetools:  <https://github.com/openjdk/jdk${VER}u>
 
 Clone jdk${VER}u repositories into, say, $t/libraries/ .
@@ -232,14 +236,14 @@ The [jdk21u](https://github.com/openjdk/jdk21u) repository is used for rampdown 
 
 For more OpenJDK 21 updates specific information such as timelines and contribution guidelines see the [project wiki page](https://wiki.openjdk.org/display/JDKUpdates/JDK+21u/).
 
-# Welcome to the JDK!
+# Welcome to the JDK
 
 For build instructions please see the
 [online documentation](https://openjdk.org/groups/build/doc/building.html),
 or either of these files:
 
-- [doc/building.html](doc/building.html) (html version)
-- [doc/building.md](doc/building.md) (markdown version)
+* [doc/building.html](doc/building.html) (html version)
+* [doc/building.md](doc/building.md) (markdown version)
 
 See <https://openjdk.org/> for more information about the OpenJDK
 Community and the JDK and see <https://bugs.openjdk.org> for JDK issue
