@@ -68,7 +68,7 @@ jobs:
       ls -al .. || true
       ls -al ../jdk21u || true
       df .
-      /tmp/$USER/git-scripts/git-clone-related typetools jdk21u ../jdk21u --depth 999
+      GIT_CLONE_ARGS="--single-branch" /tmp/$USER/git-scripts/git-clone-related typetools jdk21u ../jdk21u
       git config --global user.email "you@example.com"
       git config --global user.name "Your Name"
       git config --global core.longpaths true
@@ -78,6 +78,12 @@ jobs:
       echo $?
     displayName: clone-related-jdk21u
   - bash: |
+      cd ../jdk21u && git status
+      eval $(/tmp/$USER/plume-scripts/ci-info typetools)
+      set
+      echo "About to run: git pull --no-edit https://github.com/${CI_ORGANIZATION}/jdk ${CI_BRANCH_NAME}"
+    displayName: git merge plan
+  - bash: |
       set -ex
       git config --global user.email "you@example.com"
       git config --global user.name "Your Name"
@@ -85,10 +91,11 @@ jobs:
       git config --global pull.rebase false
       git config --global core.longpaths true
       git config --global core.protectNTFS false
-      eval $(/tmp/$USER/plume-scripts/ci-info typetools)
       cd ../jdk21u && git status
-      echo "About to run: git pull --no-edit https://github.com/${CI_ORGANIZATION}/jdk ${CI_BRANCH}"
-      cd ../jdk21u && git pull --no-edit https://github.com/${CI_ORGANIZATION}/jdk ${CI_BRANCH} || (git --version && git show && git status && echo "Merge failed; see 'Pull request merge conflicts' at https://github.com/typetools/jdk/blob/master/README.md" && false)
+      eval $(/tmp/$USER/plume-scripts/ci-info typetools)
+      set
+      echo "About to run: git pull --no-edit https://github.com/${CI_ORGANIZATION}/jdk ${CI_BRANCH_NAME}"
+      cd ../jdk21u && git pull --no-edit https://github.com/${CI_ORGANIZATION}/jdk ${CI_BRANCH_NAME} || (git --version && git show | head -100 && git status && echo "Merge failed; see 'Pull request merge conflicts' at https://github.com/typetools/jdk/blob/master/README.md" && false)
     displayName: git merge
   - bash: cd ../jdk21u && export JT_HOME=/usr/share/jtreg && bash ./configure --with-jtreg --disable-warnings-as-errors
     displayName: configure
