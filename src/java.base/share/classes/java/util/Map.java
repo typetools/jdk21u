@@ -28,6 +28,14 @@ package java.util;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.lock.qual.ReleasesNoLocks;
+import org.checkerframework.checker.modifiability.qual.UnknownModifiability;
+import org.checkerframework.checker.modifiability.qual.Modifiable;
+import org.checkerframework.checker.modifiability.qual.Replaceable;
+import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.Shrinkable;
+import org.checkerframework.checker.modifiability.qual.Unmodifiable;
+import org.checkerframework.checker.modifiability.qual.PolyModifiable;
+import org.checkerframework.checker.modifiability.qual.PolyShrink;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
@@ -194,7 +202,7 @@ public interface Map<K, V> {
      * @return the number of key-value mappings in this map
      */
     @Pure
-    @NonNegative int size(@GuardSatisfied Map<K, V> this);
+    @NonNegative int size(@UnknownModifiability @GuardSatisfied Map<K, V> this);
 
     /**
      * Returns {@code true} if this map contains no key-value mappings.
@@ -203,7 +211,7 @@ public interface Map<K, V> {
      */
     @Pure
     @EnsuresNonEmptyIf(result = false, expression = "this")
-    boolean isEmpty(@GuardSatisfied Map<K, V> this);
+    boolean isEmpty(@UnknownModifiability @GuardSatisfied Map<K, V> this);
 
     /**
      * Returns {@code true} if this map contains a mapping for the specified
@@ -224,7 +232,7 @@ public interface Map<K, V> {
     @EnsuresKeyForIf(expression={"#1"}, result=true, map={"this"})
     @EnsuresNonEmptyIf(result=true, expression={"this"})
     @Pure
-    boolean containsKey(@GuardSatisfied Map<K, V> this, @GuardSatisfied @UnknownSignedness Object key);
+    boolean containsKey(@UnknownModifiability @GuardSatisfied Map<K, V> this, @GuardSatisfied @UnknownSignedness Object key);
 
     /**
      * Returns {@code true} if this map maps one or more keys to the
@@ -244,7 +252,7 @@ public interface Map<K, V> {
      */
     @EnsuresNonEmptyIf(result=true, expression={"this"})
     @Pure
-    boolean containsValue(@GuardSatisfied Map<K, V> this, @GuardSatisfied @UnknownSignedness Object value);
+    boolean containsValue(@UnknownModifiability @GuardSatisfied Map<K, V> this, @GuardSatisfied @UnknownSignedness Object value);
 
     /**
      * Returns the value to which the specified key is mapped,
@@ -271,7 +279,7 @@ public interface Map<K, V> {
      *         does not permit null keys ({@linkplain Collection##optional-restrictions optional})
      */
     @Pure
-    @Nullable V get(@GuardSatisfied Map<K, V> this, @UnknownSignedness @GuardSatisfied Object key);
+    @Nullable V get(@UnknownModifiability @GuardSatisfied Map<K, V> this, @UnknownSignedness @GuardSatisfied Object key);
 
     // Modification Operations
 
@@ -302,7 +310,7 @@ public interface Map<K, V> {
     @ReleasesNoLocks
     @EnsuresKeyFor(value={"#1"}, map={"this"})
     @EnsuresNonEmpty("this")
-    @Nullable V put(@GuardSatisfied Map<K, V> this, K key, V value);
+    @Nullable V put(@Growable @Replaceable @GuardSatisfied Map<K, V> this, K key, V value);
 
     /**
      * Removes the mapping for a key from this map if it is present
@@ -333,7 +341,7 @@ public interface Map<K, V> {
      *         map does not permit null keys ({@linkplain Collection##optional-restrictions optional})
      */
     @CFComment("nullness: key is not @Nullable because this map might not permit null values")
-    @Nullable V remove(@GuardSatisfied Map<K, V> this, @GuardSatisfied @UnknownSignedness Object key);
+    @Nullable V remove(@Shrinkable @GuardSatisfied Map<K, V> this, @GuardSatisfied @UnknownSignedness Object key);
 
 
     // Bulk Operations
@@ -359,7 +367,7 @@ public interface Map<K, V> {
      * @throws IllegalArgumentException if some property of a key or value in
      *         the specified map prevents it from being stored in this map
      */
-    void putAll(@GuardSatisfied Map<K, V> this, Map<? extends K, ? extends V> m);
+    void putAll(@Growable @Replaceable @GuardSatisfied Map<K, V> this, Map<? extends K, ? extends V> m);
 
     /**
      * Removes all of the mappings from this map (optional operation).
@@ -368,7 +376,7 @@ public interface Map<K, V> {
      * @throws UnsupportedOperationException if the {@code clear} operation
      *         is not supported by this map
      */
-    void clear(@GuardSatisfied Map<K, V> this);
+    void clear(@Shrinkable @GuardSatisfied Map<K, V> this);
 
 
     // Views
@@ -389,7 +397,7 @@ public interface Map<K, V> {
      * @return a set view of the keys contained in this map
      */
     @SideEffectFree
-    @PolyNonEmpty Set<@KeyFor({"this"}) K> keySet(@GuardSatisfied @PolyNonEmpty Map<K, V> this);
+    @PolyShrink @PolyNonEmpty Set<@KeyFor({"this"}) K> keySet(@PolyShrink @GuardSatisfied @PolyNonEmpty Map<K, V> this);
 
     /**
      * Returns a {@link Collection} view of the values contained in this map.
@@ -407,7 +415,7 @@ public interface Map<K, V> {
      * @return a collection view of the values contained in this map
      */
     @SideEffectFree
-    @PolyNonEmpty Collection<V> values(@GuardSatisfied @PolyNonEmpty Map<K, V> this);
+    @PolyShrink @PolyNonEmpty Collection<V> values(@PolyShrink @GuardSatisfied @PolyNonEmpty Map<K, V> this);
 
     /**
      * Returns a {@link Set} view of the mappings contained in this map.
@@ -426,7 +434,7 @@ public interface Map<K, V> {
      * @return a set view of the mappings contained in this map
      */
     @SideEffectFree
-    @PolyNonEmpty Set<Map.Entry<@KeyFor({"this"}) K, V>> entrySet(@GuardSatisfied @PolyNonEmpty Map<K, V> this);
+    @PolyShrink @PolyNonEmpty Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K, V>> entrySet(@PolyModifiable @GuardSatisfied @PolyNonEmpty Map<K, V> this);
 
     /**
      * A map entry (key-value pair). The Entry may be unmodifiable, or the
@@ -497,7 +505,7 @@ public interface Map<K, V> {
          *         removed from the backing map.
          */
         @Pure
-        K getKey(Map.@GuardSatisfied Entry<K, V> this);
+        K getKey(Map.@UnknownModifiability @GuardSatisfied Entry<K, V> this);
 
         /**
          * Returns the value corresponding to this entry.  If the mapping
@@ -510,7 +518,7 @@ public interface Map<K, V> {
          *         removed from the backing map.
          */
         @Pure
-        V getValue(Map.@GuardSatisfied Entry<K, V> this);
+        V getValue(Map.@UnknownModifiability @GuardSatisfied Entry<K, V> this);
 
         /**
          * Replaces the value corresponding to this entry with the specified
@@ -532,7 +540,7 @@ public interface Map<K, V> {
          *         required to, throw this exception if the entry has been
          *         removed from the backing map.
          */
-        V setValue(Map.@GuardSatisfied Entry<K, V> this, V value);
+        V setValue(Map.@Replaceable @GuardSatisfied Entry<K, V> this, V value);
 
         /**
          * Compares the specified object with this entry for equality.
@@ -553,7 +561,7 @@ public interface Map<K, V> {
          *         entry
          */
         @Pure
-        boolean equals(Map.@GuardSatisfied Entry<K, V> this, @GuardSatisfied @Nullable Object o);
+        boolean equals(Map.@UnknownModifiability @GuardSatisfied Entry<K, V> this, @GuardSatisfied @Nullable Object o);
 
         /**
          * Returns the hash code value for this map entry.  The hash code
@@ -572,7 +580,7 @@ public interface Map<K, V> {
          * @see #equals(Object)
          */
         @Pure
-        int hashCode(Map.@GuardSatisfied Entry<K, V> this);
+        int hashCode(Map.@UnknownModifiability @GuardSatisfied Entry<K, V> this);
 
         /**
          * Returns a comparator that compares {@link Map.Entry} in natural order on key.
@@ -672,7 +680,8 @@ public interface Map<K, V> {
          * @since 17
          */
         @SuppressWarnings("unchecked")
-        public static <K extends @NonNull Object, V extends @NonNull Object> Map.Entry<K, V> copyOf(Map.Entry<? extends K, ? extends V> e) {
+        public static <K extends @NonNull Object, V extends @NonNull Object> 
+        Map.@Unmodifiable Entry<K, V> copyOf(Map.@UnknownModifiability Entry<? extends K, ? extends V> e) {
             Objects.requireNonNull(e);
             if (e instanceof KeyValueHolder) {
                 return (Map.Entry<K, V>) e;
@@ -696,7 +705,7 @@ public interface Map<K, V> {
      * @param o object to be compared for equality with this map
      * @return {@code true} if the specified object is equal to this map
      */
-    boolean equals(@GuardSatisfied Map<K, V> this, @GuardSatisfied @Nullable Object o);
+    boolean equals(@UnknownModifiability @GuardSatisfied Map<K, V> this, @GuardSatisfied @Nullable Object o);
 
     /**
      * Returns the hash code value for this map.  The hash code of a map is
@@ -711,7 +720,7 @@ public interface Map<K, V> {
      * @see Object#equals(Object)
      * @see #equals(Object)
      */
-    int hashCode(@GuardSatisfied Map<K, V> this);
+    int hashCode(@UnknownModifiability @GuardSatisfied Map<K, V> this);
 
     // Defaultable methods
 
@@ -818,7 +827,7 @@ public interface Map<K, V> {
      *         removed during iteration
      * @since 1.8
      */
-    default void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
+    default void replaceAll(@Replaceable Map<K, V> this, BiFunction<? super K, ? super V, ? extends V> function) {
         Objects.requireNonNull(function);
         for (Map.Entry<K, V> entry : entrySet()) {
             K k;
@@ -885,7 +894,7 @@ public interface Map<K, V> {
      * @since 1.8
      */
     @EnsuresKeyFor(value={"#1"}, map={"this"})
-    default @Nullable V putIfAbsent(K key, V value) {
+    default @Nullable V putIfAbsent(@Growable Map<K, V> this, K key, V value) {
         V v = get(key);
         if (v == null) {
             v = put(key, value);
@@ -929,7 +938,7 @@ public interface Map<K, V> {
      * @since 1.8
      */
     @CFComment("nullness: key and value are not @Nullable because this map might not permit null values")
-    default boolean remove(@GuardSatisfied @UnknownSignedness Object key, @GuardSatisfied @UnknownSignedness Object value) {
+    default boolean remove(@Shrinkable Map<K, V> this, @GuardSatisfied @UnknownSignedness Object key, @GuardSatisfied @UnknownSignedness Object value) {
         Object curValue = get(key);
         if (!Objects.equals(curValue, value) ||
             (curValue == null && !containsKey(key))) {
@@ -979,7 +988,7 @@ public interface Map<K, V> {
      *         or value prevents it from being stored in this map
      * @since 1.8
      */
-    default boolean replace(K key, V oldValue, V newValue) {
+    default boolean replace(@Replaceable Map<K, V> this, K key, V oldValue, V newValue) {
         Object curValue = get(key);
         if (!Objects.equals(curValue, oldValue) ||
             (curValue == null && !containsKey(key))) {
@@ -1027,7 +1036,7 @@ public interface Map<K, V> {
      *         or value prevents it from being stored in this map
      * @since 1.8
      */
-    default @Nullable V replace(K key, V value) {
+    default @Nullable V replace(@Replaceable Map<K, V> this, K key, V value) {
         V curValue;
         if (((curValue = get(key)) != null) || containsKey(key)) {
             curValue = put(key, value);
@@ -1109,7 +1118,7 @@ public interface Map<K, V> {
      *         ({@linkplain Collection##optional-restrictions optional})
      * @since 1.8
      */
-    default @PolyNull V computeIfAbsent(K key,
+    default @PolyNull V computeIfAbsent(@Growable Map<K, V> this, K key,
             Function<? super K, ? extends @PolyNull V> mappingFunction) {
         Objects.requireNonNull(mappingFunction);
         V v;
@@ -1186,7 +1195,7 @@ public interface Map<K, V> {
      *         ({@linkplain Collection##optional-restrictions optional})
      * @since 1.8
      */
-    default @Nullable V computeIfPresent(K key,
+    default @Nullable V computeIfPresent(@Shrinkable @Replaceable Map<K, V> this, K key,
             BiFunction<? super K, ? super V, ? extends @Nullable V> remappingFunction) {
         Objects.requireNonNull(remappingFunction);
         V oldValue;
@@ -1272,7 +1281,7 @@ public interface Map<K, V> {
      *         ({@linkplain Collection##optional-restrictions optional})
      * @since 1.8
      */
-    default @Nullable V compute(K key,
+    default @Nullable V compute(@Modifiable Map<K, V> this, K key,
             BiFunction<? super K, ? super @Nullable V, ? extends @Nullable V> remappingFunction) {
         Objects.requireNonNull(remappingFunction);
         V oldValue = get(key);
@@ -1370,7 +1379,7 @@ public interface Map<K, V> {
      *         null
      * @since 1.8
      */
-    default @Nullable V merge(K key, @NonNull V value,
+    default @Nullable V merge(@Modifiable Map<K, V> this, K key, @NonNull V value,
             BiFunction<? super V, ? super V, ? extends @Nullable V> remappingFunction) {
         Objects.requireNonNull(remappingFunction);
         Objects.requireNonNull(value);
@@ -1396,7 +1405,7 @@ public interface Map<K, V> {
      * @since 9
      */
     @SuppressWarnings("unchecked")
-    static <K, V> Map<K, V> of() {
+    static <K, V> @Unmodifiable Map<K, V> of() {
         return (Map<K,V>) ImmutableCollections.EMPTY_MAP;
     }
 
@@ -1413,7 +1422,7 @@ public interface Map<K, V> {
      *
      * @since 9
      */
-    static <K extends @NonNull Object, V extends @NonNull Object> @NonEmpty Map<K, V> of(K k1, V v1) {
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @NonEmpty Map<K, V> of(K k1, V v1) {
         return new ImmutableCollections.Map1<>(k1, v1);
     }
 
@@ -1433,7 +1442,7 @@ public interface Map<K, V> {
      *
      * @since 9
      */
-    static <K extends @NonNull Object, V extends @NonNull Object> @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2) {
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2) {
         return new ImmutableCollections.MapN<>(k1, v1, k2, v2);
     }
 
@@ -1455,7 +1464,7 @@ public interface Map<K, V> {
      *
      * @since 9
      */
-    static <K extends @NonNull Object, V extends @NonNull Object> @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3) {
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3) {
         return new ImmutableCollections.MapN<>(k1, v1, k2, v2, k3, v3);
     }
 
@@ -1479,7 +1488,7 @@ public interface Map<K, V> {
      *
      * @since 9
      */
-    static <K extends @NonNull Object, V extends @NonNull Object> @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
         return new ImmutableCollections.MapN<>(k1, v1, k2, v2, k3, v3, k4, v4);
     }
 
@@ -1505,7 +1514,7 @@ public interface Map<K, V> {
      *
      * @since 9
      */
-    static <K extends @NonNull Object, V extends @NonNull Object> @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
         return new ImmutableCollections.MapN<>(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5);
     }
 
@@ -1533,7 +1542,7 @@ public interface Map<K, V> {
      *
      * @since 9
      */
-    static <K extends @NonNull Object, V extends @NonNull Object> @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5,
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5,
                                K k6, V v6) {
         return new ImmutableCollections.MapN<>(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5,
                                                k6, v6);
@@ -1565,7 +1574,7 @@ public interface Map<K, V> {
      *
      * @since 9
      */
-    static <K extends @NonNull Object, V extends @NonNull Object> @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5,
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5,
                                K k6, V v6, K k7, V v7) {
         return new ImmutableCollections.MapN<>(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5,
                                                k6, v6, k7, v7);
@@ -1599,7 +1608,7 @@ public interface Map<K, V> {
      *
      * @since 9
      */
-    static <K extends @NonNull Object, V extends @NonNull Object> @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5,
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5,
                                K k6, V v6, K k7, V v7, K k8, V v8) {
         return new ImmutableCollections.MapN<>(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5,
                                                k6, v6, k7, v7, k8, v8);
@@ -1635,7 +1644,7 @@ public interface Map<K, V> {
      *
      * @since 9
      */
-    static <K extends @NonNull Object, V extends @NonNull Object> @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5,
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5,
                                K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9) {
         return new ImmutableCollections.MapN<>(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5,
                                                k6, v6, k7, v7, k8, v8, k9, v9);
@@ -1673,7 +1682,7 @@ public interface Map<K, V> {
      *
      * @since 9
      */
-    static <K extends @NonNull Object, V extends @NonNull Object> @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5,
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @NonEmpty Map<K, V> of(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5,
                                K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9, K k10, V v10) {
         return new ImmutableCollections.MapN<>(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5,
                                                k6, v6, k7, v7, k8, v8, k9, v9, k10, v10);
@@ -1712,7 +1721,7 @@ public interface Map<K, V> {
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
-    static <K extends @NonNull Object, V extends @NonNull Object> @PolyNonEmpty Map<K, V> ofEntries(Entry<? extends K, ? extends V> @PolyNonEmpty... entries) {
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @PolyNonEmpty Map<K, V> ofEntries(Entry<? extends K, ? extends V> @PolyNonEmpty... entries) {
         if (entries.length == 0) { // implicit null check of entries array
             @SuppressWarnings("unchecked")
             var map = (Map<K,V>) ImmutableCollections.EMPTY_MAP;
@@ -1768,7 +1777,7 @@ public interface Map<K, V> {
      * @see Map#ofEntries Map.ofEntries()
      * @since 9
      */
-    static <K extends @NonNull Object, V extends @NonNull Object> Entry<K, V> entry(@NonNull K k, @NonNull V v) {
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable Entry<K, V> entry(@NonNull K k, @NonNull V v) {
         // KeyValueHolder checks for nulls
         return new KeyValueHolder<>(k, v);
     }
@@ -1791,7 +1800,7 @@ public interface Map<K, V> {
      * @since 10
      */
     @SuppressWarnings({"rawtypes","unchecked"})
-    static <K extends @NonNull Object, V extends @NonNull Object> @PolyNonEmpty Map<K, V> copyOf(@PolyNonEmpty Map<? extends K, ? extends V> map) {
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @PolyNonEmpty Map<K, V> copyOf(@UnknownModifiablity @PolyNonEmpty Map<? extends K, ? extends V> map) {
         if (map instanceof ImmutableCollections.AbstractImmutableMap) {
             return (Map<K,V>)map;
         } else if (map.isEmpty()) { // Implicit nullcheck of map

@@ -36,6 +36,13 @@
 package java.util.concurrent;
 
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.Modifiable;
+import org.checkerframework.checker.modifiability.qual.Unmodifiable;
+import org.checkerframework.checker.modifiability.qual.PolyShrink;
+import org.checkerframework.checker.modifiability.qual.PolyModifiable;
+import org.checkerframework.checker.modifiability.qual.Replaceable;
+import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
@@ -279,7 +286,7 @@ import jdk.internal.misc.Unsafe;
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */
-@AnnotatedFor({"nullness"})
+@AnnotatedFor({"nullness", "modifiability"})
 public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Object> extends AbstractMap<K,V>
     implements ConcurrentMap<K,V>, Serializable {
     private static final long serialVersionUID = 7249069246763182397L;
@@ -844,7 +851,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
     /**
      * Creates a new, empty map with the default initial table size (16).
      */
-    public ConcurrentHashMap() {
+    public @Modifiable ConcurrentHashMap() {
     }
 
     /**
@@ -857,7 +864,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @throws IllegalArgumentException if the initial capacity of
      * elements is negative
      */
-    public ConcurrentHashMap(int initialCapacity) {
+    public @Modifiable ConcurrentHashMap(int initialCapacity) {
         this(initialCapacity, LOAD_FACTOR, 1);
     }
 
@@ -866,7 +873,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      *
      * @param m the map
      */
-    public ConcurrentHashMap(Map<? extends K, ? extends V> m) {
+    public @Modifiable ConcurrentHashMap(Map<? extends K, ? extends V> m) {
         this.sizeCtl = DEFAULT_CAPACITY;
         putAll(m);
     }
@@ -886,7 +893,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      *
      * @since 1.6
      */
-    public ConcurrentHashMap(int initialCapacity, float loadFactor) {
+    public @Modifiable ConcurrentHashMap(int initialCapacity, float loadFactor) {
         this(initialCapacity, loadFactor, 1);
     }
 
@@ -908,7 +915,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * negative or the load factor or concurrencyLevel are
      * nonpositive
      */
-    public ConcurrentHashMap(int initialCapacity,
+    public @Modifiable ConcurrentHashMap(int initialCapacity,
                              float loadFactor, int concurrencyLevel) {
         if (!(loadFactor > 0.0f) || initialCapacity < 0 || concurrencyLevel <= 0)
             throw new IllegalArgumentException();
@@ -1029,7 +1036,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @throws NullPointerException if the specified key or value is null
      */
     @EnsuresKeyFor(value={"#1"}, map={"this"})
-    public @Nullable V put(K key, V value) {
+    public @Nullable V put(@Growable @Replaceable ConcurrentHashMap<K,V> this, K key, V value) {
         return putVal(key, value, false);
     }
 
@@ -1110,7 +1117,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      *
      * @param m mappings to be stored in this map
      */
-    public void putAll(Map<? extends K, ? extends V> m) {
+    public void putAll(@Growable @Replaceable ConcurrentHashMap<K,V> this, Map<? extends K, ? extends V> m) {
         tryPresize(m.size());
         for (Map.Entry<? extends K, ? extends V> e : m.entrySet())
             putVal(e.getKey(), e.getValue(), false);
@@ -1125,7 +1132,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      *         {@code null} if there was no mapping for {@code key}
      * @throws NullPointerException if the specified key is null
      */
-    public @Nullable V remove(@GuardSatisfied @UnknownSignedness Object key) {
+    public @Nullable V remove(@Shrinkable ConcurrentHashMap<K,V> this, @GuardSatisfied @UnknownSignedness Object key) {
         return replaceNode(key, null, null);
     }
 
@@ -1210,7 +1217,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
     /**
      * Removes all of the mappings from this map.
      */
-    public void clear() {
+    public void clear(@Shrinkable ConcurrentHashMap<K,V> this) {
         long delta = 0L; // negative number of deletions
         int i = 0;
         Node<K,V>[] tab = table;
@@ -1286,7 +1293,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @return the collection view
      */
     @SideEffectFree
-    public Collection<V> values() {
+    public @PolyShrink Collection<V> values(@PolyShrink ConcurrentHashMap<K,V> this) {
         ValuesView<K,V> vs;
         if ((vs = values) != null) return vs;
         return values = new ValuesView<K,V>(this);
@@ -1310,7 +1317,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @return the set view
      */
     @SideEffectFree
-    public Set<Map.Entry<@KeyFor({"this"}) K,V>> entrySet() {
+    public @PolyShrink Set<Map.@Modifiable Entry<@KeyFor({"this"}) K,V>> entrySet(@PolyShrink ConcurrentHashMap<K,V> this) {
         EntrySetView<K,V> es;
         if ((es = entrySet) != null) return es;
         return entrySet = new EntrySetView<K,V>(this);
@@ -1570,7 +1577,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @throws NullPointerException if the specified key or value is null
      */
     @EnsuresKeyFor(value={"#1"}, map={"this"})
-    public @Nullable V putIfAbsent(K key, V value) {
+    public @Nullable V putIfAbsent(@Growable ConcurrentHashMap<K,V> this, K key, V value) {
         return putVal(key, value, true);
     }
 
@@ -1579,7 +1586,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      *
      * @throws NullPointerException if the specified key is null
      */
-    public boolean remove(@GuardSatisfied @UnknownSignedness Object key, @GuardSatisfied @UnknownSignedness Object value) {
+    public boolean remove(@Shrinkable ConcurrentHashMap<K,V> this, @GuardSatisfied @UnknownSignedness Object key, @GuardSatisfied @UnknownSignedness Object value) {
         if (key == null)
             throw new NullPointerException();
         return value != null && replaceNode(key, null, value) != null;
@@ -1590,7 +1597,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      *
      * @throws NullPointerException if any of the arguments are null
      */
-    public boolean replace(K key, V oldValue, V newValue) {
+    public boolean replace(@Replaceable ConcurrentHashMap<K,V> this, K key, V oldValue, V newValue) {
         if (key == null || oldValue == null || newValue == null)
             throw new NullPointerException();
         return replaceNode(key, newValue, oldValue) != null;
@@ -1603,7 +1610,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      *         or {@code null} if there was no mapping for the key
      * @throws NullPointerException if the specified key or value is null
      */
-    public @Nullable V replace(K key, V value) {
+    public @Nullable V replace(@Replaceable ConcurrentHashMap<K,V> this, K key, V value) {
         if (key == null || value == null)
             throw new NullPointerException();
         return replaceNode(key, value, null);
@@ -1639,7 +1646,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
         }
     }
 
-    public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
+    public void replaceAll(@Replaceable ConcurrentHashMap<K,V> this, BiFunction<? super K, ? super V, ? extends V> function) {
         if (function == null) throw new NullPointerException();
         Node<K,V>[] t;
         if ((t = table) != null) {
@@ -1722,7 +1729,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @throws RuntimeException or Error if the mappingFunction does so,
      *         in which case the mapping is left unestablished
      */
-    public @PolyNull V computeIfAbsent(K key, Function<? super K, ? extends @PolyNull V> mappingFunction) {
+    public @PolyNull V computeIfAbsent(@Growable ConcurrentHashMap<K,V> this, K key, Function<? super K, ? extends @PolyNull V> mappingFunction) {
         if (key == null || mappingFunction == null)
             throw new NullPointerException();
         int h = spread(key.hashCode());
@@ -1834,7 +1841,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @throws RuntimeException or Error if the remappingFunction does so,
      *         in which case the mapping is unchanged
      */
-    public @PolyNull V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends @PolyNull V> remappingFunction) {
+    public @PolyNull V computeIfPresent(@Shrinkable @Replaceable ConcurrentHashMap<K,V> this, K key, BiFunction<? super K, ? super V, ? extends @PolyNull V> remappingFunction) {
         if (key == null || remappingFunction == null)
             throw new NullPointerException();
         int h = spread(key.hashCode());
@@ -1928,7 +1935,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @throws RuntimeException or Error if the remappingFunction does so,
      *         in which case the mapping is unchanged
      */
-    public @PolyNull V compute(K key,
+    public @PolyNull V compute(@Modifiable ConcurrentHashMap<K,V> this, K key,
                      BiFunction<? super K, ? super @Nullable V, ? extends @PolyNull V> remappingFunction) {
         if (key == null || remappingFunction == null)
             throw new NullPointerException();
@@ -2057,7 +2064,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @throws RuntimeException or Error if the remappingFunction does so,
      *         in which case the mapping is unchanged
      */
-    public @PolyNull V merge(K key, @NonNull V value, BiFunction<? super V, ? super V, ? extends @PolyNull V> remappingFunction) {
+    public @PolyNull V merge(@Modifiable ConcurrentHashMap<K,V> this, K key, @NonNull V value, BiFunction<? super V, ? super V, ? extends @PolyNull V> remappingFunction) {
         if (key == null || value == null || remappingFunction == null)
             throw new NullPointerException();
         int h = spread(key.hashCode());
@@ -3549,7 +3556,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
     /**
      * Exported Entry for EntryIterator.
      */
-    static final class MapEntry<K,V> implements Map.Entry<K,V> {
+    static final @Modifiable class MapEntry<K,V> implements Map.Entry<K,V> {
         final K key; // non-null
         V val;       // non-null
         final ConcurrentHashMap<K,V> map;
@@ -4275,7 +4282,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @since 1.8
      */
     public void forEachEntry(long parallelismThreshold,
-                             Consumer<? super Map.Entry<K,V>> action) {
+                             Consumer<? super Map.@Unmodifiable Entry<K,V>> action) {
         if (action == null) throw new NullPointerException();
         new ForEachEntryTask<K,V>(null, batchFor(parallelismThreshold), 0, 0, table,
                                   action).invoke();
@@ -4295,7 +4302,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @since 1.8
      */
     public <U> void forEachEntry(long parallelismThreshold,
-                                 Function<Map.Entry<K,V>, ? extends U> transformer,
+                                 Function<Map.@Unmodifiable Entry<K,V>, ? extends U> transformer,
                                  Consumer<? super U> action) {
         if (transformer == null || action == null)
             throw new NullPointerException();
@@ -4321,7 +4328,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @since 1.8
      */
     public <U> U searchEntries(long parallelismThreshold,
-                               Function<Map.Entry<K,V>, ? extends U> searchFunction) {
+                               Function<Map.@Unmodifiable Entry<K,V>, ? extends U> searchFunction) {
         if (searchFunction == null) throw new NullPointerException();
         return new SearchEntriesTask<K,V,U>
             (null, batchFor(parallelismThreshold), 0, 0, table,
@@ -4339,7 +4346,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @since 1.8
      */
     public Map.Entry<K,V> reduceEntries(long parallelismThreshold,
-                                        BiFunction<Map.Entry<K,V>, Map.Entry<K,V>, ? extends Map.Entry<K,V>> reducer) {
+                                        BiFunction<? super Map.@Unmodifiable Entry<K,V>, ? super Map.@Unmodifiable Entry<K,V>, ? extends Map.Entry<K,V>> reducer) {
         if (reducer == null) throw new NullPointerException();
         return new ReduceEntriesTask<K,V>
             (null, batchFor(parallelismThreshold), 0, 0, table,
@@ -4363,7 +4370,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @since 1.8
      */
     public <U> U reduceEntries(long parallelismThreshold,
-                               Function<Map.Entry<K,V>, ? extends U> transformer,
+                               Function<Map.@Unmodifiable Entry<K,V>, ? extends U> transformer,
                                BiFunction<? super U, ? super U, ? extends U> reducer) {
         if (transformer == null || reducer == null)
             throw new NullPointerException();
@@ -4388,7 +4395,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @since 1.8
      */
     public double reduceEntriesToDouble(long parallelismThreshold,
-                                        ToDoubleFunction<Map.Entry<K,V>> transformer,
+                                        ToDoubleFunction<Map.@Unmodifiable Entry<K,V>> transformer,
                                         double basis,
                                         DoubleBinaryOperator reducer) {
         if (transformer == null || reducer == null)
@@ -4414,7 +4421,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @since 1.8
      */
     public long reduceEntriesToLong(long parallelismThreshold,
-                                    ToLongFunction<Map.Entry<K,V>> transformer,
+                                    ToLongFunction<Map.@Unmodifiable Entry<K,V>> transformer,
                                     long basis,
                                     LongBinaryOperator reducer) {
         if (transformer == null || reducer == null)
@@ -4440,7 +4447,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @since 1.8
      */
     public int reduceEntriesToInt(long parallelismThreshold,
-                                  ToIntFunction<Map.Entry<K,V>> transformer,
+                                  ToIntFunction<Map.@Unmodifiable Entry<K,V>> transformer,
                                   int basis,
                                   IntBinaryOperator reducer) {
         if (transformer == null || reducer == null)
@@ -4641,7 +4648,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      *
      * @since 1.8
      */
-    public static final class KeySetView<K,V> extends CollectionView<K,V,K>
+    public static final @Modifiable class KeySetView<K,V> extends CollectionView<K,V,K>
         implements Set<K>, java.io.Serializable {
         private static final long serialVersionUID = 7249069246763182397L;
         @SuppressWarnings("serial") // Conditionally serializable
@@ -4849,7 +4856,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * entries.  This class cannot be directly instantiated. See
      * {@link #entrySet()}.
      */
-    static final class EntrySetView<K,V> extends CollectionView<K,V,Map.Entry<K,V>>
+    static final @Modifiable class EntrySetView<K,V> extends CollectionView<K,V,Map.Entry<K,V>>
         implements Set<Map.Entry<K,V>>, java.io.Serializable {
         private static final long serialVersionUID = 2249069246763182397L;
         EntrySetView(ConcurrentHashMap<K,V> map) { super(map); }

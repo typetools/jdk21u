@@ -116,9 +116,6 @@ jobs:
   #   timeoutInMinutes: 0
   #   displayName: make run-test
 
-cftests_job(junit, cftests-junit, 11)
-cftests_job(nonjunit, cftests-nonjunit, 11)
-cftests_job(typecheck, typecheck, 11)
 cftests_job(junit, cftests-junit, 17)
 cftests_job(nonjunit, cftests-nonjunit, 17)
 cftests_job(typecheck, typecheck, 17)

@@ -37,6 +37,9 @@ package java.util.concurrent;
 
 import org.checkerframework.checker.index.qual.CanShrink;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.Modifiable;
+import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
@@ -187,7 +190,7 @@ import java.util.Queue;
  * @author Doug Lea
  * @param <E> the type of elements held in this queue
  */
-@AnnotatedFor({"nullness"})
+@AnnotatedFor({"nullness", "modifiability"})
 public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
     /**
      * Inserts the specified element into this queue if it is possible to do
@@ -208,7 +211,7 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      *         element prevents it from being added to this queue
      */
     @EnsuresNonEmpty("this")
-    boolean add(E e);
+    boolean add(@Growable BlockingQueue<E> this, E e);
 
     /**
      * Inserts the specified element into this queue if it is possible to do
@@ -227,7 +230,7 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this queue
      */
-    boolean offer(E e);
+    boolean offer(@Growable BlockingQueue<E> this, E e);
 
     /**
      * Inserts the specified element into this queue, waiting if necessary
@@ -241,7 +244,7 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this queue
      */
-    void put(E e) throws InterruptedException;
+    void put(@Growable BlockingQueue<E> this, E e) throws InterruptedException;
 
     /**
      * Inserts the specified element into this queue, waiting up to the
@@ -261,7 +264,7 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this queue
      */
-    boolean offer(E e, long timeout, TimeUnit unit)
+    boolean offer(@Growable BlockingQueue<E> this, E e, long timeout, TimeUnit unit)
         throws InterruptedException;
 
     /**
@@ -271,7 +274,7 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      * @return the head of this queue
      * @throws InterruptedException if interrupted while waiting
      */
-    E take() throws InterruptedException;
+    E take(@Shrinkable BlockingQueue<E> this) throws InterruptedException;
 
     /**
      * Retrieves and removes the head of this queue, waiting up to the
@@ -285,7 +288,7 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      *         specified waiting time elapses before an element is available
      * @throws InterruptedException if interrupted while waiting
      */
-    @Nullable E poll(long timeout, TimeUnit unit)
+    @Nullable E poll(@Shrinkable BlockingQueue<E> this, long timeout, TimeUnit unit)
         throws InterruptedException;
 
     /**
@@ -319,7 +322,7 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      * @throws NullPointerException if the specified element is null
      * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      */
-    boolean remove(@CanShrink BlockingQueue<E> this, @UnknownSignedness Object o);
+    boolean remove(@Shrinkable @CanShrink BlockingQueue<E> this, @UnknownSignedness Object o);
 
     /**
      * Returns {@code true} if this queue contains the specified element.
@@ -361,7 +364,7 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      *         queue, or some property of an element of this queue prevents
      *         it from being added to the specified collection
      */
-    int drainTo(@GuardSatisfied @CanShrink BlockingQueue<E> this, Collection<? super E> c);
+    int drainTo(@Shrinkable @GuardSatisfied @CanShrink BlockingQueue<E> this, @Growable Collection<? super E> c);
 
     /**
      * Removes at most the given number of available elements from
@@ -386,5 +389,5 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      *         queue, or some property of an element of this queue prevents
      *         it from being added to the specified collection
      */
-    int drainTo(@GuardSatisfied @CanShrink BlockingQueue<E> this, Collection<? super E> c, int maxElements);
+    int drainTo(@Shrinkable @GuardSatisfied @CanShrink BlockingQueue<E> this, @Growable Collection<? super E> c, int maxElements);
 }

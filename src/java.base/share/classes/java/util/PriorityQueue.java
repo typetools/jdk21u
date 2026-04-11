@@ -30,6 +30,10 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.index.qual.PolyGrowShrink;
 import org.checkerframework.checker.index.qual.Positive;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.Modifiable;
+import org.checkerframework.checker.modifiability.qual.PolyModifiable;
+import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
@@ -104,7 +108,7 @@ import jdk.internal.util.ArraysSupport;
  * @param <E> the type of elements held in this queue
  */
 @CFComment({"lock/nullness: This class doesn't permits null elements"})
-@AnnotatedFor({"lock", "nullness", "index"})
+@AnnotatedFor({"lock", "nullness", "index", "modifiability"})
 @SuppressWarnings("unchecked")
 public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
     implements java.io.Serializable {
@@ -147,7 +151,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * capacity (11) that orders its elements according to their
      * {@linkplain Comparable natural ordering}.
      */
-    public PriorityQueue() {
+    public @Modifiable PriorityQueue() {
         this(DEFAULT_INITIAL_CAPACITY, null);
     }
 
@@ -160,7 +164,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @throws IllegalArgumentException if {@code initialCapacity} is less
      *         than 1
      */
-    public PriorityQueue(@Positive int initialCapacity) {
+    public @Modifiable PriorityQueue(@Positive int initialCapacity) {
         this(initialCapacity, null);
     }
 
@@ -173,7 +177,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      *         natural ordering} of the elements will be used.
      * @since 1.8
      */
-    public PriorityQueue(Comparator<? super E> comparator) {
+    public @Modifiable PriorityQueue(Comparator<? super E> comparator) {
         this(DEFAULT_INITIAL_CAPACITY, comparator);
     }
 
@@ -188,7 +192,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @throws IllegalArgumentException if {@code initialCapacity} is
      *         less than 1
      */
-    public PriorityQueue(@Positive int initialCapacity,
+    public @Modifiable PriorityQueue(@Positive int initialCapacity,
                          Comparator<? super E> comparator) {
         // Note: This restriction of at least one is not actually needed,
         // but continues for 1.5 compatibility
@@ -214,7 +218,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @throws NullPointerException if the specified collection or any
      *         of its elements are null
      */
-    public @PolyNonEmpty PriorityQueue(@PolyNonEmpty Collection<? extends E> c) {
+    public @Modifiable @PolyNonEmpty PriorityQueue(@PolyNonEmpty Collection<? extends E> c) {
         if (c instanceof SortedSet<?>) {
             SortedSet<? extends E> ss = (SortedSet<? extends E>) c;
             this.comparator = (Comparator<? super E>) ss.comparator();
@@ -245,7 +249,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @throws NullPointerException if the specified priority queue or any
      *         of its elements are null
      */
-    public PriorityQueue(PriorityQueue<? extends E> c) {
+    public @Modifiable PriorityQueue(PriorityQueue<? extends E> c) {
         this.comparator = (Comparator<? super E>) c.comparator();
         initFromPriorityQueue(c);
     }
@@ -263,7 +267,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @throws NullPointerException if the specified sorted set or any
      *         of its elements are null
      */
-    public PriorityQueue(SortedSet<? extends E> c) {
+    public @Modifiable PriorityQueue(SortedSet<? extends E> c) {
         this.comparator = (Comparator<? super E>) c.comparator();
         initElementsFromCollection(c);
     }
@@ -330,7 +334,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @throws NullPointerException if the specified element is null
      */
     @EnsuresNonEmpty("this")
-    public boolean add(@GuardSatisfied PriorityQueue<E> this, E e) {
+    public boolean add(@Growable @GuardSatisfied PriorityQueue<E> this, E e) {
         return offer(e);
     }
 
@@ -343,7 +347,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      *         according to the priority queue's ordering
      * @throws NullPointerException if the specified element is null
      */
-    public boolean offer(E e) {
+    public boolean offer(@Growable PriorityQueue<E> this, E e) {
         if (e == null)
             throw new NullPointerException();
         modCount++;
@@ -381,7 +385,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @param o element to be removed from this queue, if present
      * @return {@code true} if this queue changed as a result of the call
      */
-    public boolean remove(@GuardSatisfied @CanShrink PriorityQueue<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
+    public boolean remove(@Shrinkable @GuardSatisfied @CanShrink PriorityQueue<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
         int i = indexOf(o);
         if (i == -1)
             return false;
@@ -493,7 +497,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @return an iterator over the elements in this queue
      */
     @SideEffectFree
-    public @PolyGrowShrink @PolyNonEmpty Iterator<E> iterator(@PolyGrowShrink @PolyNonEmpty PriorityQueue<E> this) {
+    public @PolyModifiable @PolyGrowShrink @PolyNonEmpty Iterator<E> iterator(@PolyModifiable @PolyGrowShrink @PolyNonEmpty PriorityQueue<E> this) {
         return new Itr();
     }
 
@@ -593,7 +597,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * Removes all of the elements from this priority queue.
      * The queue will be empty after this call returns.
      */
-    public void clear(@GuardSatisfied @CanShrink PriorityQueue<E> this) {
+    public void clear(@Shrinkable @GuardSatisfied @CanShrink PriorityQueue<E> this) {
         modCount++;
         final Object[] es = queue;
         for (int i = 0, n = size; i < n; i++)
@@ -601,7 +605,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
         size = 0;
     }
 
-    public @Nullable E poll(@GuardSatisfied @CanShrink PriorityQueue<E> this) {
+    public @Nullable E poll(@Shrinkable @GuardSatisfied @CanShrink PriorityQueue<E> this) {
         final Object[] es;
         final E result;
 
@@ -924,7 +928,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
     /**
      * @throws NullPointerException {@inheritDoc}
      */
-    public boolean removeIf(@GuardSatisfied @CanShrink PriorityQueue<E> this, Predicate<? super E> filter) {
+    public boolean removeIf(@Shrinkable @GuardSatisfied @CanShrink PriorityQueue<E> this, Predicate<? super E> filter) {
         Objects.requireNonNull(filter);
         return bulkRemove(filter);
     }

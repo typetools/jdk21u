@@ -66,7 +66,7 @@ in openjdk:jdk21u):
 The typetools:jdk fork is an ancestor of JDK release forks such as
 typetools:jdk21u.  The typetools:jdk fork may not compile, because the commit of
 openjdk:jdk on which it is based may not compile, due to changes to tools such
-as compilers.  Repositories such as jdk11u, jdk17u, and jdk21u have been updated
+as compilers.  Repositories such as jdk17u, jdk21u, and jdk25u have been updated
 and do compile.
 
 This fork's annotations are pulled into those repositories, in order to build an

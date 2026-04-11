@@ -27,6 +27,12 @@ package java.util;
 
 import jdk.internal.util.NullableKeyValueHolder;
 
+import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.Replaceable;
+import org.checkerframework.checker.modifiability.qual.Shrinkable;
+import org.checkerframework.checker.modifiability.qual.PolyShrink;
+import org.checkerframework.checker.modifiability.qual.PolyModifiable;
+
 /**
  * A Map that has a well-defined encounter order, that supports operations at both ends, and
  * that is reversible. The <a href="SequencedCollection.html#encounter">encounter order</a>
@@ -184,7 +190,7 @@ public interface SequencedMap<K, V> extends Map<K, V> {
      * @throws UnsupportedOperationException if this collection implementation does not
      *         support this operation
      */
-    default Map.Entry<K,V> pollFirstEntry() {
+    default Map.Entry<K,V> pollFirstEntry(@Shrinkable SequencedMap<K,V> this) {
         var it = entrySet().iterator();
         if (it.hasNext()) {
             var entry = new NullableKeyValueHolder<>(it.next());
@@ -209,7 +215,7 @@ public interface SequencedMap<K, V> extends Map<K, V> {
      * @throws UnsupportedOperationException if this collection implementation does not
      *         support this operation
      */
-    default Map.Entry<K,V> pollLastEntry() {
+    default Map.Entry<K,V> pollLastEntry(@Shrinkable SequencedMap<K,V> this) {
         var it = reversed().entrySet().iterator();
         if (it.hasNext()) {
             var entry = new NullableKeyValueHolder<>(it.next());
@@ -235,7 +241,7 @@ public interface SequencedMap<K, V> extends Map<K, V> {
      * @throws UnsupportedOperationException if this collection implementation does not
      *         support this operation
      */
-    default V putFirst(K k, V v) {
+    default V putFirst(@Growable @Replaceable SequencedMap<K,V> this, K k, V v) {
         throw new UnsupportedOperationException();
     }
 
@@ -254,7 +260,7 @@ public interface SequencedMap<K, V> extends Map<K, V> {
      * @throws UnsupportedOperationException if this collection implementation does not
      *         support this operation
      */
-    default V putLast(K k, V v) {
+    default V putLast(@Growable @Replaceable SequencedMap<K,V> this, K k, V v) {
         throw new UnsupportedOperationException();
     }
 
@@ -272,7 +278,7 @@ public interface SequencedMap<K, V> extends Map<K, V> {
      *
      * @return a {@code SequencedSet} view of this map's {@code keySet}
      */
-    default SequencedSet<K> sequencedKeySet() {
+    default @PolyShrink SequencedSet<K> sequencedKeySet(@PolyShrink SequencedMap<K,V> this) {
         class SeqKeySet extends AbstractMap.ViewCollection<K> implements SequencedSet<K> {
             Collection<K> view() {
                 return SequencedMap.this.keySet();
@@ -305,7 +311,7 @@ public interface SequencedMap<K, V> extends Map<K, V> {
      *
      * @return a {@code SequencedCollection} view of this map's {@code values} collection
      */
-    default SequencedCollection<V> sequencedValues() {
+    default @PolyShrink SequencedCollection<V> sequencedValues(@PolyShrink SequencedMap<K,V> this) {
         class SeqValues extends AbstractMap.ViewCollection<V> implements SequencedCollection<V> {
             Collection<V> view() {
                 return SequencedMap.this.values();
@@ -331,7 +337,7 @@ public interface SequencedMap<K, V> extends Map<K, V> {
      *
      * @return a {@code SequencedSet} view of this map's {@code entrySet}
      */
-    default SequencedSet<Map.Entry<K, V>> sequencedEntrySet() {
+    default @PolyShrink SequencedSet<Map.@PolyModifiable Entry<K, V>> sequencedEntrySet(@PolyModifiable SequencedMap<K,V> this) {
         class SeqEntrySet extends AbstractMap.ViewCollection<Map.Entry<K, V>>
                 implements SequencedSet<Map.Entry<K, V>> {
             Collection<Map.Entry<K, V>> view() {

@@ -26,6 +26,10 @@
 package java.util;
 
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.modifiability.qual.Modifiable;
+import org.checkerframework.checker.modifiability.qual.PolyModifiable;
+import org.checkerframework.checker.modifiability.qual.PolyShrink;
+import org.checkerframework.checker.modifiability.qual.ThrowsUOE;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -164,7 +168,7 @@ public interface SortedMap<K,V> extends SequencedMap<K,V> {
      *         outside the bounds of the range
      */
     @SideEffectFree
-    SortedMap<K,V> subMap(@GuardSatisfied SortedMap<K, V> this, @GuardSatisfied K fromKey, @GuardSatisfied K toKey);
+    @PolyModifiable SortedMap<K,V> subMap(@PolyModifiable @GuardSatisfied SortedMap<K, V> this, @GuardSatisfied K fromKey, @GuardSatisfied K toKey);
 
     /**
      * Returns a view of the portion of this map whose keys are
@@ -192,7 +196,7 @@ public interface SortedMap<K,V> extends SequencedMap<K,V> {
      *         bounds of the range
      */
     @SideEffectFree
-    SortedMap<K,V> headMap(@GuardSatisfied SortedMap<K, V> this, K toKey);
+    @PolyModifiable SortedMap<K,V> headMap(@PolyModifiable @GuardSatisfied SortedMap<K, V> this, K toKey);
 
     /**
      * Returns a view of the portion of this map whose keys are
@@ -220,7 +224,7 @@ public interface SortedMap<K,V> extends SequencedMap<K,V> {
      *         bounds of the range
      */
     @SideEffectFree
-    SortedMap<K,V> tailMap(@GuardSatisfied SortedMap<K, V> this, K fromKey);
+    @PolyModifiable SortedMap<K,V> tailMap(@PolyModifiable @GuardSatisfied SortedMap<K, V> this, K fromKey);
 
     /**
      * Returns the first (lowest) key currently in this map.
@@ -258,7 +262,7 @@ public interface SortedMap<K,V> extends SequencedMap<K,V> {
      *         ascending order
      */
     @SideEffectFree
-    Set<@KeyFor({"this"}) K> keySet(@GuardSatisfied SortedMap<K, V> this);
+    @PolyShrink Set<@KeyFor({"this"}) K> keySet(@PolyShrink @GuardSatisfied SortedMap<K, V> this);
 
     /**
      * Returns a {@link Collection} view of the values contained in this map.
@@ -279,7 +283,7 @@ public interface SortedMap<K,V> extends SequencedMap<K,V> {
      *         sorted in ascending key order
      */
     @SideEffectFree
-    Collection<V> values(@GuardSatisfied SortedMap<K, V> this);
+    @PolyShrink Collection<V> values(@PolyShrink @GuardSatisfied SortedMap<K, V> this);
 
     /**
      * Returns a {@link Set} view of the mappings contained in this map.
@@ -300,7 +304,7 @@ public interface SortedMap<K,V> extends SequencedMap<K,V> {
      *         sorted in ascending key order
      */
     @SideEffectFree
-    Set<Map.Entry<@KeyFor({"this"}) K, V>> entrySet(@GuardSatisfied SortedMap<K, V> this);
+    @PolyShrink Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K, V>> entrySet(@PolyModifiable @GuardSatisfied SortedMap<K, V> this);
 
     /**
      * Throws {@code UnsupportedOperationException}. The encounter order induced by this
@@ -313,6 +317,7 @@ public interface SortedMap<K,V> extends SequencedMap<K,V> {
      * @throws UnsupportedOperationException always
      * @since 21
      */
+    @ThrowsUOE
      default V putFirst(K k, V v) {
         throw new UnsupportedOperationException();
     }
@@ -328,6 +333,7 @@ public interface SortedMap<K,V> extends SequencedMap<K,V> {
      * @throws UnsupportedOperationException always
      * @since 21
      */
+    @ThrowsUOE
     default V putLast(K k, V v) {
         throw new UnsupportedOperationException();
     }
@@ -348,7 +354,7 @@ public interface SortedMap<K,V> extends SequencedMap<K,V> {
      * @return a reverse-ordered view of this map, as a {@code SortedMap}
      * @since 21
      */
-    default SortedMap<K, V> reversed() {
+    default @PolyModifiable SortedMap<K, V> reversed(@PolyModifiable SortedMap<K, V> this) {
         return ReverseOrderSortedMapView.of(this);
     }
 }

@@ -28,6 +28,9 @@ package java.util;
 import org.checkerframework.checker.index.qual.GTENegativeOne;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.Replaceable;
+import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.dataflow.qual.Pure;
@@ -166,7 +169,7 @@ public interface ListIterator<E> extends Iterator<E> {
      *         {@code add} have been called after the last call to
      *         {@code next} or {@code previous}
      */
-    void remove(@GuardSatisfied ListIterator<E> this);
+    void remove(@Shrinkable @GuardSatisfied ListIterator<E> this);
 
     /**
      * Replaces the last element returned by {@link #next} or
@@ -188,7 +191,7 @@ public interface ListIterator<E> extends Iterator<E> {
      *         {@code add} have been called after the last call to
      *         {@code next} or {@code previous}
      */
-    void set(@GuardSatisfied ListIterator<E> this, E e);
+    void set(@Replaceable @GuardSatisfied ListIterator<E> this, E e);
 
     /**
      * Inserts the specified element into the list (optional operation).
@@ -210,5 +213,5 @@ public interface ListIterator<E> extends Iterator<E> {
      * @throws IllegalArgumentException if some aspect of this element
      *         prevents it from being added to this list
      */
-    void add(@GuardSatisfied ListIterator<E> this, E e);
+    void add(@Growable @GuardSatisfied ListIterator<E> this, E e);
 }

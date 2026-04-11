@@ -38,6 +38,10 @@ package java.util.concurrent;
 import org.checkerframework.checker.index.qual.CanShrink;
 import org.checkerframework.checker.index.qual.PolyGrowShrink;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.Modifiable;
+import org.checkerframework.checker.modifiability.qual.PolyModifiable;
+import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
@@ -49,6 +53,7 @@ import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectsOnly;
+import org.checkerframework.framework.qual.AnnotatedFor;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -104,6 +109,7 @@ import java.util.function.Predicate;
  * @author Doug Lea
  * @param <E> the type of elements held in this queue
  */
+@AnnotatedFor({"nullness", "modifiability"})
 public class LinkedTransferQueue<E> extends AbstractQueue<E>
     implements TransferQueue<E>, java.io.Serializable {
     private static final long serialVersionUID = -3223113410248163686L;
@@ -1128,7 +1134,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
     /**
      * Creates an initially empty {@code LinkedTransferQueue}.
      */
-    public LinkedTransferQueue() {
+    public @Modifiable LinkedTransferQueue() {
     }
 
     /**
@@ -1140,7 +1146,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      * @throws NullPointerException if the specified collection or any
      *         of its elements are null
      */
-    public LinkedTransferQueue(Collection<? extends E> c) {
+    public @Modifiable LinkedTransferQueue(Collection<? extends E> c) {
         DualNode h = null, t = null;
         for (E e : c) {
             DualNode newNode = new DualNode(Objects.requireNonNull(e), true);
@@ -1160,7 +1166,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      *
      * @throws NullPointerException if the specified element is null
      */
-    public void put(E e) {
+    public void put(@Growable LinkedTransferQueue<E> this, E e) {
         Objects.requireNonNull(e);
         xfer(e, -1L);
     }
@@ -1174,7 +1180,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      *  {@link BlockingQueue#offer(Object,long,TimeUnit) BlockingQueue.offer})
      * @throws NullPointerException if the specified element is null
      */
-    public boolean offer(E e, long timeout, TimeUnit unit) {
+    public boolean offer(@Growable LinkedTransferQueue<E> this, E e, long timeout, TimeUnit unit) {
         Objects.requireNonNull(e);
         xfer(e, -1L);
         return true;
@@ -1187,7 +1193,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      * @return {@code true} (as specified by {@link Queue#offer})
      * @throws NullPointerException if the specified element is null
      */
-    public boolean offer(E e) {
+    public boolean offer(@Growable LinkedTransferQueue<E> this, E e) {
         Objects.requireNonNull(e);
         xfer(e, -1L);
         return true;
@@ -1202,7 +1208,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      * @throws NullPointerException if the specified element is null
      */
     @EnsuresNonEmpty("this")
-    public boolean add(E e) {
+    public boolean add(@Growable LinkedTransferQueue<E> this, E e) {
         Objects.requireNonNull(e);
         xfer(e, -1L);
         return true;
@@ -1218,7 +1224,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      *
      * @throws NullPointerException if the specified element is null
      */
-    public boolean tryTransfer(@GuardSatisfied @CanShrink LinkedTransferQueue<E> this, E e) {
+    public boolean tryTransfer(@Growable @GuardSatisfied @CanShrink LinkedTransferQueue<E> this, E e) {
         Objects.requireNonNull(e);
         return xfer(e, 0L) == null;
     }
@@ -1234,7 +1240,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      *
      * @throws NullPointerException if the specified element is null
      */
-    public void transfer(@GuardSatisfied @CanShrink LinkedTransferQueue<E> this, E e) throws InterruptedException {
+    public void transfer(@Growable @GuardSatisfied @CanShrink LinkedTransferQueue<E> this, E e) throws InterruptedException {
         Objects.requireNonNull(e);
         if (!Thread.interrupted()) {
             if (xfer(e, Long.MAX_VALUE) == null)
@@ -1258,7 +1264,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      *
      * @throws NullPointerException if the specified element is null
      */
-    public boolean tryTransfer(@GuardSatisfied @CanShrink LinkedTransferQueue<E> this, E e, long timeout, TimeUnit unit)
+    public boolean tryTransfer(@Growable @GuardSatisfied @CanShrink LinkedTransferQueue<E> this, E e, long timeout, TimeUnit unit)
         throws InterruptedException {
         Objects.requireNonNull(e);
         long nanos = Math.max(unit.toNanos(timeout), 0L);
@@ -1270,7 +1276,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
     }
 
     @SuppressWarnings("unchecked")
-    public E take(@GuardSatisfied @CanShrink LinkedTransferQueue<E> this) throws InterruptedException {
+    public E take(@Shrinkable @GuardSatisfied @CanShrink LinkedTransferQueue<E> this) throws InterruptedException {
         Object e;
         if (!Thread.interrupted()) {
             if ((e = xfer(null, Long.MAX_VALUE)) != null)
@@ -1281,7 +1287,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
     }
 
     @SuppressWarnings("unchecked")
-    public E poll(@GuardSatisfied @CanShrink LinkedTransferQueue<E> this, long timeout, TimeUnit unit) throws InterruptedException {
+    public E poll(@Shrinkable @GuardSatisfied @CanShrink LinkedTransferQueue<E> this, long timeout, TimeUnit unit) throws InterruptedException {
         Object e;
         long nanos = Math.max(unit.toNanos(timeout), 0L);
         if ((e = xfer(null, nanos)) != null || !Thread.interrupted())
@@ -1290,7 +1296,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
     }
 
     @SuppressWarnings("unchecked")
-    public E poll(@GuardSatisfied @CanShrink LinkedTransferQueue<E> this) {
+    public E poll(@Shrinkable @GuardSatisfied @CanShrink LinkedTransferQueue<E> this) {
         return (E) xfer(null, 0L);
     }
 
@@ -1298,7 +1304,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      * @throws NullPointerException     {@inheritDoc}
      * @throws IllegalArgumentException {@inheritDoc}
      */
-    public int drainTo(@GuardSatisfied @CanShrink LinkedTransferQueue<E> this, Collection<? super E> c) {
+    public int drainTo(@Shrinkable @GuardSatisfied @CanShrink LinkedTransferQueue<E> this, @Growable Collection<? super E> c) {
         Objects.requireNonNull(c);
         if (c == this)
             throw new IllegalArgumentException();
@@ -1312,7 +1318,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      * @throws NullPointerException     {@inheritDoc}
      * @throws IllegalArgumentException {@inheritDoc}
      */
-    public int drainTo(@GuardSatisfied @CanShrink LinkedTransferQueue<E> this, Collection<? super E> c, int maxElements) {
+    public int drainTo(@Shrinkable @GuardSatisfied @CanShrink LinkedTransferQueue<E> this, @Growable Collection<? super E> c, int maxElements) {
         Objects.requireNonNull(c);
         if (c == this)
             throw new IllegalArgumentException();
@@ -1331,7 +1337,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      *
      * @return an iterator over the elements in this queue in proper sequence
      */
-    public @PolyGrowShrink @PolyNonEmpty Iterator<E> iterator(@PolyGrowShrink @PolyNonEmpty LinkedTransferQueue<E> this) {
+    public @PolyGrowShrink @PolyModifiable @PolyNonEmpty Iterator<E> iterator(@PolyGrowShrink @PolyModifiable @PolyNonEmpty LinkedTransferQueue<E> this) {
         return new Itr();
     }
 
@@ -1415,7 +1421,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      * @param o element to be removed from this queue, if present
      * @return {@code true} if this queue changed as a result of the call
      */
-    public boolean remove(@CanShrink LinkedTransferQueue<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
+    public boolean remove(@Shrinkable @CanShrink LinkedTransferQueue<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
         if (o == null) return false;
         restartFromHead: for (;;) {
             for (DualNode p = head, pred = null; p != null; ) {
@@ -1536,7 +1542,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
     /**
      * @throws NullPointerException {@inheritDoc}
      */
-    public boolean removeIf(@CanShrink LinkedTransferQueue<E> this, Predicate<? super E> filter) {
+    public boolean removeIf(@Shrinkable @CanShrink LinkedTransferQueue<E> this, Predicate<? super E> filter) {
         Objects.requireNonNull(filter);
         return bulkRemove(filter);
     }
@@ -1544,7 +1550,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
     /**
      * @throws NullPointerException {@inheritDoc}
      */
-    public boolean removeAll(@CanShrink LinkedTransferQueue<E> this, Collection<? extends @NonNull @UnknownSignedness Object> c) {
+    public boolean removeAll(@Shrinkable @CanShrink LinkedTransferQueue<E> this, Collection<? extends @NonNull @UnknownSignedness Object> c) {
         Objects.requireNonNull(c);
         return bulkRemove(e -> c.contains(e));
     }
@@ -1552,12 +1558,12 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
     /**
      * @throws NullPointerException {@inheritDoc}
      */
-    public boolean retainAll(@GuardSatisfied @CanShrink LinkedTransferQueue<E> this, Collection<? extends @NonNull @UnknownSignedness Object> c) {
+    public boolean retainAll(@Shrinkable @GuardSatisfied @CanShrink LinkedTransferQueue<E> this, Collection<? extends @NonNull @UnknownSignedness Object> c) {
         Objects.requireNonNull(c);
         return bulkRemove(e -> !c.contains(e));
     }
 
-    public void clear(@GuardSatisfied @CanShrink LinkedTransferQueue<E> this) {
+    public void clear(@Shrinkable @GuardSatisfied @CanShrink LinkedTransferQueue<E> this) {
         bulkRemove(e -> true);
     }
 
