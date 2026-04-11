@@ -36,6 +36,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
+import java.lang.annotation.Native;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
@@ -364,11 +365,17 @@ public sealed @UsesObjectEquals class Console implements Flushable permits Proxy
                 "Console class itself does not provide implementation");
     }
 
+    @Native static final int TTY_STDIN_MASK = 0x00000001;
+    @Native static final int TTY_STDOUT_MASK = 0x00000002;
+    @Native static final int TTY_STDERR_MASK = 0x00000004;
+    // ttyStatus() returns bit patterns above, a bit is set if the corresponding file
+    // descriptor is a character device
+    private static final int ttyStatus = ttyStatus();
     private static native String encoding();
     static final Charset CHARSET;
     static {
         Charset cs = null;
-        boolean istty = istty();
+        boolean istty = isStdinTty() && isStdoutTty();
 
         if (istty) {
             String csname = encoding();
@@ -392,6 +399,9 @@ public sealed @UsesObjectEquals class Console implements Flushable permits Proxy
         SharedSecrets.setJavaIOAccess(new JavaIOAccess() {
             public Console console() {
                 return cons;
+            }
+            public boolean isStdinTty() {
+                return Console.isStdinTty();
             }
         });
     }
@@ -434,5 +444,14 @@ public sealed @UsesObjectEquals class Console implements Flushable permits Proxy
     }
 
     private static final Console cons;
-    private static native boolean istty();
+    private static boolean isStdinTty() {
+        return (ttyStatus & TTY_STDIN_MASK) != 0;
+    }
+    private static boolean isStdoutTty() {
+        return (ttyStatus & TTY_STDOUT_MASK) != 0;
+    }
+    private static boolean isStderrTty() {
+        return (ttyStatus & TTY_STDERR_MASK) != 0;
+    }
+    private static native int ttyStatus();
 }
