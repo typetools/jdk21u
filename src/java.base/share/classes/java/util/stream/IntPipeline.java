@@ -558,6 +558,7 @@ abstract class IntPipeline<E_IN>
     }
 
     @Override
+    @SideEffectFree
     public final int[] toArray() {
         return Nodes.flattenInt((Node.OfInt) evaluateToArrayNode(Integer[]::new))
                         .asPrimitiveArray();

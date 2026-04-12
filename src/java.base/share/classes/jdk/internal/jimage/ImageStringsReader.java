@@ -62,18 +62,22 @@ public class ImageStringsReader implements ImageStrings {
         throw new InternalError("Can not add strings at runtime");
     }
 
+    @Pure
     public static int hashCode(String s) {
         return hashCode(s, HASH_MULTIPLIER);
     }
 
+    @Pure
     public static int hashCode(String s, int seed) {
         return unmaskedHashCode(s, seed) & POSITIVE_MASK;
     }
 
+    @Pure
     public static int hashCode(String module, String name) {
         return hashCode(module, name, HASH_MULTIPLIER);
     }
 
+    @Pure
     public static int hashCode(String module, String name, int seed) {
         seed = (seed * HASH_MULTIPLIER) ^ ('/');
         seed = unmaskedHashCode(module, seed);

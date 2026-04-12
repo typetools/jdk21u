@@ -268,6 +268,7 @@ public class DefaultListModel<E> extends AbstractListModel<E>
      * @see #get(int)
      * @see Vector#elementAt(int)
      */
+    @SideEffectFree
     public E elementAt(int index) {
         return delegate.elementAt(index);
     }

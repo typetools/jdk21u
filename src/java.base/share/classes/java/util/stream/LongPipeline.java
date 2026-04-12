@@ -541,6 +541,7 @@ abstract class LongPipeline<E_IN>
     }
 
     @Override
+    @SideEffectFree
     public final long[] toArray() {
         return Nodes.flattenLong((Node.OfLong) evaluateToArrayNode(Long[]::new))
                 .asPrimitiveArray();

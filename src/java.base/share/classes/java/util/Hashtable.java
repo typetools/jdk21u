@@ -43,6 +43,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.dataflow.qual.SideEffectsOnly;
@@ -506,6 +507,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
      * @see     #get(Object)
      */
     @EnsuresKeyFor(value={"#1"}, map={"this"})
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized @Nullable V put(@Growable @Replaceable @GuardSatisfied Hashtable<K, V> this, K key, V value) {
         // Make sure the value is not null
         if (value == null) {
@@ -539,6 +541,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
      *          or {@code null} if the key did not have a mapping
      * @throws  NullPointerException  if the key is {@code null}
      */
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized @Nullable V remove(@Shrinkable @GuardSatisfied Hashtable<K, V> this, @GuardSatisfied @UnknownSignedness Object key) {
         Entry<?,?> tab[] = table;
         int hash = key.hashCode();
@@ -571,6 +574,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
      * @throws NullPointerException if the specified map is null
      * @since 1.2
      */
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized void putAll(@Growable @Replaceable @GuardSatisfied Hashtable<K, V> this, Map<? extends K, ? extends V> t) {
         for (Map.Entry<? extends K, ? extends V> e : t.entrySet())
             put(e.getKey(), e.getValue());
@@ -579,6 +583,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
     /**
      * Clears this hashtable so that it contains no keys.
      */
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized void clear(@Shrinkable @GuardSatisfied Hashtable<K, V> this) {
         Entry<?,?> tab[] = table;
         for (int index = tab.length; --index >= 0; )
@@ -716,9 +721,11 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
         public boolean contains(@UnknownSignedness Object o) {
             return containsKey(o);
         }
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean remove(@UnknownSignedness Object o) {
             return Hashtable.this.remove(o) != null;
         }
+        @DoesNotUnrefineReceiver("modifiability")
         public void clear() {
             Hashtable.this.clear();
         }
@@ -754,6 +761,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
         }
 
         @EnsuresNonEmpty("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean add(Map.Entry<K,V> o) {
             return super.add(o);
         }
@@ -774,6 +782,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
             return false;
         }
 
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean remove(@UnknownSignedness Object o) {
             if (!(o instanceof Map.Entry<?, ?> entry))
                 return false;
@@ -805,6 +814,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
             return count;
         }
 
+        @DoesNotUnrefineReceiver("modifiability")
         public void clear() {
             Hashtable.this.clear();
         }
@@ -847,6 +857,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
         public boolean contains(@UnknownSignedness Object o) {
             return containsValue(o);
         }
+        @DoesNotUnrefineReceiver("modifiability")
         public void clear() {
             Hashtable.this.clear();
         }
@@ -938,6 +949,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
 
     @SuppressWarnings("unchecked")
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized void forEach(BiConsumer<? super K, ? super V> action) {
         Objects.requireNonNull(action);     // explicit check required in case
                                             // table is empty.
@@ -958,6 +970,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
 
     @SuppressWarnings("unchecked")
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized void replaceAll(@Replaceable Hashtable<K, V> this, BiFunction<? super K, ? super V, ? extends V> function) {
         Objects.requireNonNull(function);     // explicit check required in case
                                               // table is empty.
@@ -979,6 +992,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
 
     @EnsuresKeyFor(value={"#1"}, map={"this"})
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized V putIfAbsent(@Growable Hashtable<K, V> this, K key, V value) {
         Objects.requireNonNull(value);
 
@@ -1003,6 +1017,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
     }
 
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized boolean remove(@Shrinkable Hashtable<K, V> this, @GuardSatisfied @UnknownSignedness Object key, @GuardSatisfied @UnknownSignedness Object value) {
         Objects.requireNonNull(value);
 
@@ -1028,6 +1043,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
     }
 
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized boolean replace(@Replaceable Hashtable<K, V> this, K key, V oldValue, V newValue) {
         Objects.requireNonNull(oldValue);
         Objects.requireNonNull(newValue);
@@ -1050,6 +1066,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
     }
 
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized V replace(@Replaceable Hashtable<K, V> this, K key, V value) {
         Objects.requireNonNull(value);
         Entry<?,?> tab[] = table;
@@ -1078,6 +1095,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
      * mapping function modified this map
      */
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized @PolyNull V computeIfAbsent(@Growable Hashtable<K, V> this, K key, Function<? super K, ? extends @PolyNull V> mappingFunction) {
         Objects.requireNonNull(mappingFunction);
 
@@ -1114,6 +1132,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
      * remapping function modified this map
      */
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized @PolyNull V computeIfPresent(@Shrinkable @Replaceable Hashtable<K, V> this, K key, BiFunction<? super K, ? super V, ? extends @PolyNull V> remappingFunction) {
         Objects.requireNonNull(remappingFunction);
 
@@ -1156,6 +1175,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
      * remapping function modified this map
      */
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized @PolyNull V compute(@Modifiable Hashtable<K, V> this, K key, BiFunction<? super K, ? super V, ? extends @PolyNull V> remappingFunction) {
         Objects.requireNonNull(remappingFunction);
 
@@ -1207,6 +1227,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
      * remapping function modified this map
      */
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized @PolyNull V merge(@Modifiable Hashtable<K, V> this, K key, @NonNull V value, BiFunction<? super V, ? super V, ? extends @PolyNull V> remappingFunction) {
         Objects.requireNonNull(remappingFunction);
 
@@ -1443,14 +1464,17 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
 
         // Map.Entry Ops
 
+        @Pure
         public K getKey() {
             return key;
         }
 
+        @Pure
         public V getValue() {
             return value;
         }
 
+        @DoesNotUnrefineReceiver("modifiability")
         public V setValue(V value) {
             if (value == null)
                 throw new NullPointerException();
@@ -1460,6 +1484,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
             return oldValue;
         }
 
+        @Pure
         public boolean equals(Object o) {
             if (!(o instanceof Map.Entry<?, ?> e))
                 return false;
@@ -1468,6 +1493,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
                (value==null ? e.getValue()==null : value.equals(e.getValue()));
         }
 
+        @Pure
         public int hashCode() {
             return hash ^ Objects.hashCode(value);
         }
@@ -1561,6 +1587,7 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
             return nextElement();
         }
 
+        @DoesNotUnrefineReceiver("modifiability")
         public void remove() {
             if (!iterator)
                 throw new UnsupportedOperationException();
