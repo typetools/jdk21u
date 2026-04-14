@@ -25,6 +25,7 @@
 
 package jdk.internal.jimage;
 
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.UTFDataFormatException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;

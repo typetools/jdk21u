@@ -24,6 +24,7 @@
  */
 package jdk.internal.util;
 
+import org.checkerframework.dataflow.qual.Pure;
 import java.util.Arrays;
 import java.util.Collection;
 import jdk.internal.access.JavaLangAccess;

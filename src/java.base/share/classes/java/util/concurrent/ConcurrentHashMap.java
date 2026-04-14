@@ -4371,7 +4371,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      * @since 1.8
      */
     public Map.Entry<K,V> reduceEntries(long parallelismThreshold,
-                                        BiFunction<? super Map.@Unmodifiable Entry<K,V>, ? super Map.@Unmodifiable Entry<K,V>, ? extends Map.Entry<K,V>> reducer) {
+                                        BiFunction<Map.Entry<K,V>, Map.Entry<K,V>, ? extends Map.Entry<K,V>> reducer) {
         if (reducer == null) throw new NullPointerException();
         return new ReduceEntriesTask<K,V>
             (null, batchFor(parallelismThreshold), 0, 0, table,

@@ -1469,7 +1469,6 @@ public class CopyOnWriteArrayList<E>
 
         @Pure
         @EnsuresNonEmptyIf(result = false, expression = "this")
-        @Pure
         public boolean isEmpty() {
             return size() == 0;
         }

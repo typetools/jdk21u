@@ -25,6 +25,8 @@
 
 package javax.swing;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
 import java.util.Vector;
 import java.util.Collection;
 import java.util.Enumeration;
