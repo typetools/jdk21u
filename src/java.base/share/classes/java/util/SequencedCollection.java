@@ -25,6 +25,13 @@
 
 package java.util;
 
+
+import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.Shrinkable;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
+import org.checkerframework.dataflow.qual.Pure;
+
+
 /**
  * A collection that has a well-defined encounter order, that supports operations at both ends,
  * and that is reversible. The elements of a sequenced collection have an <a id="encounter">
@@ -87,6 +94,7 @@ public interface SequencedCollection<E> extends Collection<E> {
      *
      * @return a reverse-ordered view of this collection
      */
+    @DoesNotUnrefineReceiver("modifiability")
     SequencedCollection<E> reversed();
 
     /**
@@ -103,7 +111,8 @@ public interface SequencedCollection<E> extends Collection<E> {
      * @throws UnsupportedOperationException if this collection implementation
      *         does not support this operation
      */
-    default void addFirst(E e) {
+    @DoesNotUnrefineReceiver("modifiability")
+    default void addFirst(@Growable SequencedCollection<E> this, E e) {
         throw new UnsupportedOperationException();
     }
 
@@ -121,7 +130,8 @@ public interface SequencedCollection<E> extends Collection<E> {
      * @throws UnsupportedOperationException if this collection implementation
      *         does not support this operation
      */
-    default void addLast(E e) {
+    @DoesNotUnrefineReceiver("modifiability")
+    default void addLast(@Growable SequencedCollection<E> this, E e) {
         throw new UnsupportedOperationException();
     }
 
@@ -137,6 +147,7 @@ public interface SequencedCollection<E> extends Collection<E> {
      * @return the retrieved element
      * @throws NoSuchElementException if this collection is empty
      */
+    @Pure
     default E getFirst() {
         return this.iterator().next();
     }
@@ -153,6 +164,7 @@ public interface SequencedCollection<E> extends Collection<E> {
      * @return the retrieved element
      * @throws NoSuchElementException if this collection is empty
      */
+    @Pure
     default E getLast() {
         return this.reversed().iterator().next();
     }
@@ -172,7 +184,8 @@ public interface SequencedCollection<E> extends Collection<E> {
      * @throws UnsupportedOperationException if this collection implementation
      *         does not support this operation
      */
-    default E removeFirst() {
+    @DoesNotUnrefineReceiver("modifiability")
+    default E removeFirst(@Shrinkable SequencedCollection<E> this) {
         var it = this.iterator();
         E e = it.next();
         it.remove();
@@ -194,7 +207,8 @@ public interface SequencedCollection<E> extends Collection<E> {
      * @throws UnsupportedOperationException if this collection implementation
      *         does not support this operation
      */
-    default E removeLast() {
+    @DoesNotUnrefineReceiver("modifiability")
+    default E removeLast(@Shrinkable SequencedCollection<E> this) {
         var it = this.reversed().iterator();
         E e = it.next();
         it.remove();

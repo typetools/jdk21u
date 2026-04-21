@@ -38,6 +38,10 @@ import org.checkerframework.checker.index.qual.CanShrink;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.index.qual.PolyGrowShrink;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.Modifiable;
+import org.checkerframework.checker.modifiability.qual.PolyModifiable;
+import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
@@ -48,6 +52,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.dataflow.qual.SideEffectsOnly;
@@ -104,7 +109,7 @@ import jdk.internal.access.SharedSecrets;
  * @param <E> the type of elements held in this deque
  * @since   1.6
  */
-@AnnotatedFor({"lock", "nullness", "index"})
+@AnnotatedFor({"lock", "nullness", "index", "modifiability"})
 public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
                            implements Deque<E>, Cloneable, Serializable
 {
@@ -197,7 +202,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * Constructs an empty array deque with an initial capacity
      * sufficient to hold 16 elements.
      */
-    public ArrayDeque() {
+    public @Modifiable ArrayDeque() {
         elements = new Object[16 + 1];
     }
 
@@ -207,7 +212,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      *
      * @param numElements lower bound on initial capacity of the deque
      */
-    public ArrayDeque(@NonNegative int numElements) {
+    public @Modifiable ArrayDeque(@NonNegative int numElements) {
         elements =
             new Object[(numElements < 1) ? 1 :
                        (numElements == Integer.MAX_VALUE) ? Integer.MAX_VALUE :
@@ -224,7 +229,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @param c the collection whose elements are to be placed into the deque
      * @throws NullPointerException if the specified collection is null
      */
-    public @PolyNonEmpty ArrayDeque(@PolyNonEmpty Collection<? extends E> c) {
+    public @Modifiable @PolyNonEmpty ArrayDeque(@PolyNonEmpty Collection<? extends E> c) {
         this(c.size());
         copyElements(c);
     }
@@ -301,7 +306,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @param e the element to add
      * @throws NullPointerException if the specified element is null
      */
-    public void addFirst(@GuardSatisfied ArrayDeque<E> this, E e) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public void addFirst(@Growable @GuardSatisfied ArrayDeque<E> this, E e) {
         if (e == null)
             throw new NullPointerException();
         final Object[] es = elements;
@@ -318,7 +324,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @param e the element to add
      * @throws NullPointerException if the specified element is null
      */
-    public void addLast(@GuardSatisfied ArrayDeque<E> this, E e) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public void addLast(@Growable @GuardSatisfied ArrayDeque<E> this, E e) {
         if (e == null)
             throw new NullPointerException();
         final Object[] es = elements;
@@ -337,7 +344,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @throws NullPointerException if the specified collection or any
      *         of its elements are null
      */
-    public boolean addAll(Collection<? extends E> c) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean addAll(@Growable ArrayDeque<E> this, Collection<? extends E> c) {
         final int s, needed;
         if ((needed = (s = size()) + c.size() + 1 - elements.length) > 0)
             grow(needed);
@@ -356,7 +364,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @return {@code true} (as specified by {@link Deque#offerFirst})
      * @throws NullPointerException if the specified element is null
      */
-    public boolean offerFirst(E e) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean offerFirst(@Growable ArrayDeque<E> this, E e) {
         addFirst(e);
         return true;
     }
@@ -368,7 +377,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @return {@code true} (as specified by {@link Deque#offerLast})
      * @throws NullPointerException if the specified element is null
      */
-    public boolean offerLast(E e) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean offerLast(@Growable ArrayDeque<E> this, E e) {
         addLast(e);
         return true;
     }
@@ -376,7 +386,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
     /**
      * @throws NoSuchElementException {@inheritDoc}
      */
-    public E removeFirst(@GuardSatisfied @NonEmpty @CanShrink ArrayDeque<E> this) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public E removeFirst(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink ArrayDeque<E> this) {
         E e = pollFirst();
         if (e == null)
             throw new NoSuchElementException();
@@ -386,14 +397,16 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
     /**
      * @throws NoSuchElementException {@inheritDoc}
      */
-    public E removeLast(@GuardSatisfied @NonEmpty @CanShrink ArrayDeque<E> this) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public E removeLast(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink ArrayDeque<E> this) {
         E e = pollLast();
         if (e == null)
             throw new NoSuchElementException();
         return e;
     }
 
-    public @Nullable E pollFirst(@GuardSatisfied @CanShrink ArrayDeque<E> this) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public @Nullable E pollFirst(@Shrinkable @GuardSatisfied @CanShrink ArrayDeque<E> this) {
         final Object[] es;
         final int h;
         E e = elementAt(es = elements, h = head);
@@ -404,7 +417,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
         return e;
     }
 
-    public @Nullable E pollLast(@GuardSatisfied @CanShrink ArrayDeque<E> this) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public @Nullable E pollLast(@Shrinkable @GuardSatisfied @CanShrink ArrayDeque<E> this) {
         final Object[] es;
         final int t;
         E e = elementAt(es = elements, t = dec(tail, es.length));
@@ -416,6 +430,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
     /**
      * @throws NoSuchElementException {@inheritDoc}
      */
+    @Pure
     public E getFirst(@GuardSatisfied @NonEmpty ArrayDeque<E> this) {
         E e = elementAt(elements, head);
         if (e == null)
@@ -426,6 +441,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
     /**
      * @throws NoSuchElementException {@inheritDoc}
      */
+    @Pure
     public E getLast(@GuardSatisfied @NonEmpty ArrayDeque<E> this) {
         final Object[] es = elements;
         E e = elementAt(es, dec(tail, es.length));
@@ -457,7 +473,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @param o element to be removed from this deque, if present
      * @return {@code true} if the deque contained the specified element
      */
-    public boolean removeFirstOccurrence(@GuardSatisfied @CanShrink ArrayDeque<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean removeFirstOccurrence(@Shrinkable @GuardSatisfied @CanShrink ArrayDeque<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
         if (o != null) {
             final Object[] es = elements;
             for (int i = head, end = tail, to = (i <= end) ? end : es.length;
@@ -485,7 +502,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @param o element to be removed from this deque, if present
      * @return {@code true} if the deque contained the specified element
      */
-    public boolean removeLastOccurrence(@GuardSatisfied @CanShrink ArrayDeque<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean removeLastOccurrence(@Shrinkable @GuardSatisfied @CanShrink ArrayDeque<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
         if (o != null) {
             final Object[] es = elements;
             for (int i = tail, end = head, to = (i >= end) ? end : 0;
@@ -513,7 +531,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @throws NullPointerException if the specified element is null
      */
     @EnsuresNonEmpty("this")
-    public boolean add(@GuardSatisfied ArrayDeque<E> this, E e) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean add(@Growable @GuardSatisfied ArrayDeque<E> this, E e) {
         addLast(e);
         return true;
     }
@@ -527,7 +546,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @return {@code true} (as specified by {@link Queue#offer})
      * @throws NullPointerException if the specified element is null
      */
-    public boolean offer(@GuardSatisfied ArrayDeque<E> this, E e) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean offer(@Growable @GuardSatisfied ArrayDeque<E> this, E e) {
         return offerLast(e);
     }
 
@@ -542,7 +562,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @return the head of the queue represented by this deque
      * @throws NoSuchElementException {@inheritDoc}
      */
-    public E remove(@GuardSatisfied @NonEmpty @CanShrink ArrayDeque<E> this) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public E remove(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink ArrayDeque<E> this) {
         return removeFirst();
     }
 
@@ -556,7 +577,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @return the head of the queue represented by this deque, or
      *         {@code null} if this deque is empty
      */
-    public @Nullable E poll(@GuardSatisfied @CanShrink ArrayDeque<E> this) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public @Nullable E poll(@Shrinkable @GuardSatisfied @CanShrink ArrayDeque<E> this) {
         return pollFirst();
     }
 
@@ -570,6 +592,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @return the head of the queue represented by this deque
      * @throws NoSuchElementException {@inheritDoc}
      */
+    @SideEffectFree
     public E element(@GuardSatisfied @NonEmpty ArrayDeque<E> this) {
         return getFirst();
     }
@@ -599,7 +622,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @param e the element to push
      * @throws NullPointerException if the specified element is null
      */
-    public void push(@GuardSatisfied ArrayDeque<E> this, E e) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public void push(@Growable @GuardSatisfied ArrayDeque<E> this, E e) {
         addFirst(e);
     }
 
@@ -613,7 +637,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      *         of the stack represented by this deque)
      * @throws NoSuchElementException {@inheritDoc}
      */
-    public E pop(@GuardSatisfied @NonEmpty @CanShrink ArrayDeque<E> this) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public E pop(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink ArrayDeque<E> this) {
         return removeFirst();
     }
 
@@ -695,11 +720,11 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @return an iterator over the elements in this deque
      */
     @SideEffectFree
-    public @PolyGrowShrink @PolyNonEmpty Iterator<E> iterator(@PolyGrowShrink @PolyNonEmpty ArrayDeque<E> this) {
+    public @PolyGrowShrink @PolyModifiable @PolyNonEmpty Iterator<E> iterator(@PolyGrowShrink @PolyModifiable @PolyNonEmpty ArrayDeque<E> this) {
         return new DeqIterator();
     }
 
-    public @PolyGrowShrink @PolyNonEmpty Iterator<E> descendingIterator(@PolyGrowShrink @PolyNonEmpty ArrayDeque<E> this) {
+    public @PolyGrowShrink @PolyModifiable @PolyNonEmpty Iterator<E> descendingIterator(@PolyGrowShrink @PolyModifiable @PolyNonEmpty ArrayDeque<E> this) {
         return new DescendingIterator();
     }
 
@@ -740,6 +765,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
                 cursor = dec(cursor, elements.length);
         }
 
+        @DoesNotUnrefineReceiver("modifiability")
         public final void remove() {
             if (lastRet < 0)
                 throw new IllegalStateException();
@@ -928,7 +954,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
     /**
      * @throws NullPointerException {@inheritDoc}
      */
-    public boolean removeIf(@CanShrink ArrayDeque<E> this, Predicate<? super E> filter) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean removeIf(@Shrinkable @CanShrink ArrayDeque<E> this, Predicate<? super E> filter) {
         Objects.requireNonNull(filter);
         return bulkRemove(filter);
     }
@@ -936,6 +963,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
     /**
      * @throws NullPointerException {@inheritDoc}
      */
+    @DoesNotUnrefineReceiver("modifiability")
     public boolean removeAll(@CanShrink ArrayDeque<E> this, Collection<? extends @UnknownSignedness Object> c) {
         Objects.requireNonNull(c);
         return bulkRemove(e -> c.contains(e));
@@ -944,7 +972,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
     /**
      * @throws NullPointerException {@inheritDoc}
      */
-    public boolean retainAll(@GuardSatisfied @CanShrink ArrayDeque<E> this, Collection<? extends @UnknownSignedness Object> c) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean retainAll(@Shrinkable @GuardSatisfied @CanShrink ArrayDeque<E> this, Collection<? extends @UnknownSignedness Object> c) {
         Objects.requireNonNull(c);
         return bulkRemove(e -> !c.contains(e));
     }
@@ -1060,7 +1089,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @param o element to be removed from this deque, if present
      * @return {@code true} if this deque contained the specified element
      */
-    public boolean remove(@GuardSatisfied @CanShrink ArrayDeque<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean remove(@Shrinkable @GuardSatisfied @CanShrink ArrayDeque<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
         return removeFirstOccurrence(o);
     }
 
@@ -1068,7 +1098,8 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * Removes all of the elements from this deque.
      * The deque will be empty after this call returns.
      */
-    public void clear(@GuardSatisfied @CanShrink ArrayDeque<E> this) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public void clear(@Shrinkable @GuardSatisfied @CanShrink ArrayDeque<E> this) {
         circularClear(elements, head, tail);
         head = tail = 0;
     }
@@ -1158,7 +1189,6 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      *         this deque
      * @throws NullPointerException if the specified array is null
      */
-    @SideEffectFree
     @SuppressWarnings("unchecked")
     public <T> @Nullable T[] toArray(@PolyNull T[] a) {
         final int size;
@@ -1183,7 +1213,7 @@ public class ArrayDeque<E extends @NonNull Object> extends AbstractCollection<E>
      * @return a copy of this deque
      */
     @SideEffectFree
-    public ArrayDeque<E> clone(@GuardSatisfied ArrayDeque<E> this) {
+    public @Modifiable ArrayDeque<E> clone(@GuardSatisfied ArrayDeque<E> this) {
         try {
             @SuppressWarnings("unchecked")
             ArrayDeque<E> result = (ArrayDeque<E>) super.clone();

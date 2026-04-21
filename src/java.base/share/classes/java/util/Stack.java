@@ -33,6 +33,7 @@ import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 
 /**
  * The {@code Stack} class represents a last-in-first-out
@@ -75,6 +76,7 @@ public class Stack<E> extends Vector<E> {
      * @return  the {@code item} argument.
      * @see     java.util.Vector#addElement
      */
+    @DoesNotUnrefineReceiver("modifiability")
     public E push(@GuardSatisfied Stack<E> this, E item) {
         addElement(item);
 
@@ -89,6 +91,7 @@ public class Stack<E> extends Vector<E> {
      *          of the {@code Vector} object).
      * @throws  EmptyStackException  if this stack is empty.
      */
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized E pop(@GuardSatisfied @NonEmpty @CanShrink Stack<E> this) {
         E       obj;
         int     len = size();
@@ -142,6 +145,7 @@ public class Stack<E> extends Vector<E> {
      *          the object is located; the return value {@code -1}
      *          indicates that the object is not on the stack.
      */
+    @Pure
     public synchronized int search(Object o) {
         int i = lastIndexOf(o);
 

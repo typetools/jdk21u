@@ -36,8 +36,12 @@
 package java.util;
 
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.modifiability.qual.PolyModifiable;
+import org.checkerframework.checker.modifiability.qual.PolyShrink;
+import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
@@ -123,6 +127,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @throws NullPointerException if the specified key is null
      *         and this map does not permit null keys
      */
+    @SideEffectFree
     Map.@Nullable Entry<K,V> lowerEntry(K key);
 
     /**
@@ -137,6 +142,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @throws NullPointerException if the specified key is null
      *         and this map does not permit null keys
      */
+    @SideEffectFree
     @Nullable K lowerKey(K key);
 
     /**
@@ -152,6 +158,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @throws NullPointerException if the specified key is null
      *         and this map does not permit null keys
      */
+    @SideEffectFree
     Map.@Nullable Entry<K,V> floorEntry(K key);
 
     /**
@@ -166,6 +173,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @throws NullPointerException if the specified key is null
      *         and this map does not permit null keys
      */
+    @SideEffectFree
     @Nullable K floorKey(K key);
 
     /**
@@ -181,6 +189,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @throws NullPointerException if the specified key is null
      *         and this map does not permit null keys
      */
+    @SideEffectFree
     Map.@Nullable Entry<K,V> ceilingEntry(K key);
 
     /**
@@ -195,6 +204,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @throws NullPointerException if the specified key is null
      *         and this map does not permit null keys
      */
+    @SideEffectFree
     @Nullable K ceilingKey(K key);
 
     /**
@@ -210,6 +220,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @throws NullPointerException if the specified key is null
      *         and this map does not permit null keys
      */
+    @SideEffectFree
     Map.@Nullable Entry<K,V> higherEntry(K key);
 
     /**
@@ -224,6 +235,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @throws NullPointerException if the specified key is null
      *         and this map does not permit null keys
      */
+    @SideEffectFree
     @Nullable K higherKey(K key);
 
     /**
@@ -233,6 +245,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @return an entry with the least key,
      *         or {@code null} if this map is empty
      */
+    @SideEffectFree
     Map.@Nullable Entry<K,V> firstEntry();
 
     /**
@@ -242,6 +255,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @return an entry with the greatest key,
      *         or {@code null} if this map is empty
      */
+    @SideEffectFree
     Map.@Nullable Entry<K,V> lastEntry();
 
     /**
@@ -251,7 +265,8 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @return the removed first entry of this map,
      *         or {@code null} if this map is empty
      */
-    Map.@Nullable Entry<K,V> pollFirstEntry(@GuardSatisfied NavigableMap<K, V> this);
+    @DoesNotUnrefineReceiver("modifiability")
+    Map.@Nullable Entry<K,V> pollFirstEntry(@Shrinkable @GuardSatisfied NavigableMap<K, V> this);
 
     /**
      * Removes and returns a key-value mapping associated with
@@ -260,7 +275,8 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @return the removed last entry of this map,
      *         or {@code null} if this map is empty
      */
-    Map.@Nullable Entry<K,V> pollLastEntry(@GuardSatisfied NavigableMap<K, V> this);
+    @DoesNotUnrefineReceiver("modifiability")
+    Map.@Nullable Entry<K,V> pollLastEntry(@Shrinkable @GuardSatisfied NavigableMap<K, V> this);
 
     /**
      * Returns a reverse order view of the mappings contained in this map.
@@ -278,7 +294,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @return a reverse order view of this map
      */
     @SideEffectFree
-    NavigableMap<K,V> descendingMap();
+    @PolyModifiable NavigableMap<K,V> descendingMap(@PolyModifiable NavigableMap<K,V> this);
 
     /**
      * Returns a {@link NavigableSet} view of the keys contained in this map.
@@ -295,7 +311,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @return a navigable set view of the keys in this map
      */
     @SideEffectFree
-    NavigableSet<@KeyFor({"this"}) K> navigableKeySet();
+    @PolyShrink NavigableSet<@KeyFor({"this"}) K> navigableKeySet(@PolyShrink NavigableMap<K, V> this);
 
     /**
      * Returns a reverse order {@link NavigableSet} view of the keys contained in this map.
@@ -312,7 +328,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @return a reverse order navigable set view of the keys in this map
      */
     @SideEffectFree
-    NavigableSet<@KeyFor({"this"}) K> descendingKeySet();
+    @PolyShrink NavigableSet<@KeyFor({"this"}) K> descendingKeySet(@PolyShrink NavigableMap<K, V> this);
 
     /**
      * Returns a view of the portion of this map whose keys range from
@@ -349,7 +365,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      *         outside the bounds of the range
      */
     @SideEffectFree
-    NavigableMap<K,V> subMap(K fromKey, boolean fromInclusive,
+    @PolyModifiable NavigableMap<K,V> subMap(@PolyModifiable NavigableMap<K,V> this, K fromKey, boolean fromInclusive,
                              K toKey,   boolean toInclusive);
 
     /**
@@ -380,7 +396,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      *         bounds of the range
      */
     @SideEffectFree
-    NavigableMap<K,V> headMap(K toKey, boolean inclusive);
+    @PolyModifiable NavigableMap<K,V> headMap(@PolyModifiable NavigableMap<K,V> this, K toKey, boolean inclusive);
 
     /**
      * Returns a view of the portion of this map whose keys are greater than (or
@@ -410,7 +426,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      *         bounds of the range
      */
     @SideEffectFree
-    NavigableMap<K,V> tailMap(K fromKey, boolean inclusive);
+    @PolyModifiable NavigableMap<K,V> tailMap(@PolyModifiable NavigableMap<K,V> this, K fromKey, boolean inclusive);
 
     /**
      * {@inheritDoc}
@@ -422,7 +438,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @throws IllegalArgumentException {@inheritDoc}
      */
     @SideEffectFree
-    SortedMap<K,V> subMap(K fromKey, K toKey);
+    @PolyModifiable SortedMap<K,V> subMap(@PolyModifiable NavigableMap<K,V> this, K fromKey, K toKey);
 
     /**
      * {@inheritDoc}
@@ -434,7 +450,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @throws IllegalArgumentException {@inheritDoc}
      */
     @SideEffectFree
-    SortedMap<K,V> headMap(K toKey);
+    @PolyModifiable SortedMap<K,V> headMap(@PolyModifiable NavigableMap<K,V> this, K toKey);
 
     /**
      * {@inheritDoc}
@@ -446,7 +462,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @throws IllegalArgumentException {@inheritDoc}
      */
     @SideEffectFree
-    SortedMap<K,V> tailMap(K fromKey);
+    @PolyModifiable SortedMap<K,V> tailMap(@PolyModifiable NavigableMap<K,V> this, K fromKey);
 
     /**
      * {@inheritDoc}
@@ -460,7 +476,7 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
      * @return a reverse-ordered view of this map, as a {@code NavigableMap}
      * @since 21
      */
-    default NavigableMap<K, V> reversed() {
+    default @PolyModifiable NavigableMap<K, V> reversed(@PolyModifiable NavigableMap<K, V> this) {
         return this.descendingMap();
     }
 }

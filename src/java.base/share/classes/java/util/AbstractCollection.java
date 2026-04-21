@@ -29,12 +29,20 @@ import org.checkerframework.checker.index.qual.CanShrink;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.index.qual.PolyGrowShrink;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.Modifiable;
+import org.checkerframework.checker.modifiability.qual.PolyModifiable;
+import org.checkerframework.checker.modifiability.qual.Shrinkable;
+import org.checkerframework.checker.modifiability.qual.ThrowsUOE;
+import org.checkerframework.checker.modifiability.qual.UnknownModifiability;
+import org.checkerframework.checker.modifiability.qual.Unmodifiable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
@@ -96,10 +104,9 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @return an iterator over the elements contained in this collection
      */
     @SideEffectFree
-    public abstract @PolyGrowShrink @PolyNonEmpty Iterator<E> iterator(@PolyGrowShrink @PolyNonEmpty AbstractCollection<E> this);
-
+    public abstract @UnknownModifiability @PolyGrowShrink @PolyNonEmpty Iterator<E> iterator(@UnknownModifiability @PolyGrowShrink @PolyNonEmpty AbstractCollection<E> this);
     @Pure
-    public abstract @NonNegative int size(@GuardSatisfied AbstractCollection<E> this);
+    public abstract @NonNegative int size(@UnknownModifiability @GuardSatisfied AbstractCollection<E> this);
 
     /**
      * {@inheritDoc}
@@ -109,7 +116,7 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      */
     @Pure
     @EnsuresNonEmptyIf(result = false, expression = "this")
-    public boolean isEmpty(@GuardSatisfied AbstractCollection<E> this) {
+    public boolean isEmpty(@UnknownModifiability @GuardSatisfied AbstractCollection<E> this) {
         return size() == 0;
     }
 
@@ -125,7 +132,7 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      */
     @Pure
     @EnsuresNonEmptyIf(result = true, expression = "this")
-    public boolean contains(@GuardSatisfied AbstractCollection<E> this, @GuardSatisfied @UnknownSignedness Object o) {
+    public boolean contains(@UnknownModifiability @GuardSatisfied AbstractCollection<E> this, @GuardSatisfied @UnknownSignedness Object o) {
         Iterator<E> it = iterator();
         if (o==null) {
             while (it.hasNext())
@@ -163,7 +170,7 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * }</pre>
      */
     @SideEffectFree
-    public @PolyNull @PolySigned Object[] toArray(AbstractCollection<@PolyNull @PolySigned E> this) {
+    public @PolyNull @PolySigned Object[] toArray(@UnknownModifiability AbstractCollection<@PolyNull @PolySigned E> this) {
         // Estimate size of array; be prepared to see more or fewer elements
         Object[] r = new Object[size()];
         Iterator<E> it = iterator();
@@ -203,9 +210,8 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @throws ArrayStoreException  {@inheritDoc}
      * @throws NullPointerException {@inheritDoc}
      */
-    @SideEffectFree
     @SuppressWarnings("unchecked")
-    public <T> @Nullable T [] toArray(@PolyNull T [] a) {
+    public <T> @Nullable T [] toArray(@UnknownModifiability @PolyNull T [] a) {
         // Estimate size of array; be prepared to see more or fewer elements
         int size = size();
         T[] r = a.length >= size ? a :
@@ -275,7 +281,8 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @throws IllegalArgumentException      {@inheritDoc}
      * @throws IllegalStateException         {@inheritDoc}
      */
-    public boolean add(@GuardSatisfied AbstractCollection<E> this, E e) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean add(@Growable @GuardSatisfied AbstractCollection<E> this, E e) {
         throw new UnsupportedOperationException();
     }
 
@@ -296,7 +303,8 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @throws ClassCastException            {@inheritDoc}
      * @throws NullPointerException          {@inheritDoc}
      */
-    public boolean remove(@GuardSatisfied @CanShrink AbstractCollection<E> this, @GuardSatisfied @UnknownSignedness Object o) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean remove(@Shrinkable @GuardSatisfied @CanShrink AbstractCollection<E> this, @GuardSatisfied @UnknownSignedness Object o) {
         Iterator<E> it = iterator();
         if (o==null) {
             while (it.hasNext()) {
@@ -333,7 +341,7 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @see #contains(Object)
      */
     @Pure
-    public boolean containsAll(@GuardSatisfied AbstractCollection<E> this, @GuardSatisfied Collection<? extends @UnknownSignedness Object> c) {
+    public boolean containsAll(@UnknownModifiability @GuardSatisfied AbstractCollection<E> this, @GuardSatisfied Collection<? extends @UnknownSignedness Object> c) {
         for (Object e : c)
             if (!contains(e))
                 return false;
@@ -359,7 +367,8 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      *
      * @see #add(Object)
      */
-    public boolean addAll(@GuardSatisfied AbstractCollection<E> this, Collection<? extends E> c) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean addAll(@Growable @GuardSatisfied AbstractCollection<E> this, Collection<? extends E> c) {
         boolean modified = false;
         for (E e : c)
             if (add(e))
@@ -389,7 +398,8 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @see #remove(Object)
      * @see #contains(Object)
      */
-    public boolean removeAll(@GuardSatisfied @CanShrink AbstractCollection<E> this, Collection<? extends @UnknownSignedness Object> c) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean removeAll(@Shrinkable @GuardSatisfied @CanShrink AbstractCollection<E> this, Collection<? extends @UnknownSignedness Object> c) {
         Objects.requireNonNull(c);
         boolean modified = false;
         Iterator<?> it = iterator();
@@ -424,7 +434,8 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @see #remove(Object)
      * @see #contains(Object)
      */
-    public boolean retainAll(@GuardSatisfied @CanShrink AbstractCollection<E> this, Collection<? extends @UnknownSignedness Object> c) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean retainAll(@Shrinkable @GuardSatisfied @CanShrink AbstractCollection<E> this, Collection<? extends @UnknownSignedness Object> c) {
         Objects.requireNonNull(c);
         boolean modified = false;
         Iterator<E> it = iterator();
@@ -453,7 +464,8 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      *
      * @throws UnsupportedOperationException {@inheritDoc}
      */
-    public void clear(@GuardSatisfied @CanShrink AbstractCollection<E> this) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public void clear(@Shrinkable @GuardSatisfied @CanShrink AbstractCollection<E> this) {
         Iterator<E> it = iterator();
         while (it.hasNext()) {
             it.next();
@@ -475,7 +487,7 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @return a string representation of this collection
      */
     @SideEffectFree
-    public String toString(@GuardSatisfied AbstractCollection<E> this) {
+    public String toString(@UnknownModifiability @GuardSatisfied AbstractCollection<E> this) {
         Iterator<E> it = iterator();
         if (! it.hasNext())
             return "[]";

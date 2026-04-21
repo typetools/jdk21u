@@ -27,6 +27,12 @@ package java.util;
 
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
+import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.Modifiable;
+import org.checkerframework.checker.modifiability.qual.PolyModifiable;
+import org.checkerframework.checker.modifiability.qual.PolyShrink;
+import org.checkerframework.checker.modifiability.qual.Replaceable;
+import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
@@ -35,6 +41,7 @@ import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.dataflow.qual.SideEffectsOnly;
@@ -164,7 +171,7 @@ import jdk.internal.access.SharedSecrets;
  */
 
 @CFComment({"lock/nullness: This collection can only contain null values"})
-@AnnotatedFor({"lock", "nullness", "index"})
+@AnnotatedFor({"lock", "nullness", "index", "modifiability"})
 public class IdentityHashMap<K,V>
     extends AbstractMap<K,V>
     implements Map<K,V>, java.io.Serializable, Cloneable
@@ -236,7 +243,7 @@ public class IdentityHashMap<K,V>
      * Constructs a new, empty identity hash map with a default expected
      * maximum size (21).
      */
-    public IdentityHashMap() {
+    public @Modifiable IdentityHashMap() {
         init(DEFAULT_CAPACITY);
     }
 
@@ -249,7 +256,7 @@ public class IdentityHashMap<K,V>
      * @param expectedMaxSize the expected maximum size of the map
      * @throws IllegalArgumentException if {@code expectedMaxSize} is negative
      */
-    public IdentityHashMap(@NonNegative int expectedMaxSize) {
+    public @Modifiable IdentityHashMap(@NonNegative int expectedMaxSize) {
         if (expectedMaxSize < 0)
             throw new IllegalArgumentException("expectedMaxSize is negative: "
                                                + expectedMaxSize);
@@ -291,7 +298,7 @@ public class IdentityHashMap<K,V>
      * @param m the map whose mappings are to be placed into this map
      * @throws NullPointerException if the specified map is null
      */
-    public IdentityHashMap(Map<? extends K, ? extends V> m) {
+    public @Modifiable IdentityHashMap(Map<? extends K, ? extends V> m) {
         // Allow for a bit of growth
         this((int) ((1 + m.size()) * 1.1));
         putAll(m);
@@ -457,7 +464,8 @@ public class IdentityHashMap<K,V>
      * @see     #containsKey(Object)
      */
     @EnsuresKeyFor(value={"#1"}, map={"this"})
-    public @Nullable V put(@GuardSatisfied IdentityHashMap<K, V> this, K key, V value) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public @Nullable V put(@Growable @Replaceable @GuardSatisfied IdentityHashMap<K, V> this, K key, V value) {
         final Object k = maskNull(key);
 
         retryAfterResize: for (;;) {
@@ -538,7 +546,8 @@ public class IdentityHashMap<K,V>
      * @param m mappings to be stored in this map
      * @throws NullPointerException if the specified map is null
      */
-    public void putAll(@GuardSatisfied IdentityHashMap<K, V> this, Map<? extends K, ? extends V> m) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public void putAll(@Growable @Replaceable @GuardSatisfied IdentityHashMap<K, V> this, Map<? extends K, ? extends V> m) {
         int n = m.size();
         if (n == 0)
             return;
@@ -560,7 +569,8 @@ public class IdentityHashMap<K,V>
      *         (A {@code null} return can also indicate that the map
      *         previously associated {@code null} with {@code key}.)
      */
-    public @Nullable V remove(@GuardSatisfied IdentityHashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public @Nullable V remove(@Shrinkable @GuardSatisfied IdentityHashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {
         Object k = maskNull(key);
         Object[] tab = table;
         int len = tab.length;
@@ -656,7 +666,8 @@ public class IdentityHashMap<K,V>
      * Removes all of the mappings from this map.
      * The map will be empty after this call returns.
      */
-    public void clear(@GuardSatisfied IdentityHashMap<K, V> this) {
+    @DoesNotUnrefineReceiver("modifiability")
+    public void clear(@Shrinkable @GuardSatisfied IdentityHashMap<K, V> this) {
         modCount++;
         Object[] tab = table;
         for (int i = 0; i < tab.length; i++)
@@ -749,7 +760,7 @@ public class IdentityHashMap<K,V>
      * @return a shallow copy of this map
      */
     @SideEffectFree
-    public Object clone(@GuardSatisfied IdentityHashMap<K, V> this) {
+    public @Modifiable Object clone(@GuardSatisfied IdentityHashMap<K, V> this) {
         try {
             IdentityHashMap<?,?> m = (IdentityHashMap<?,?>) super.clone();
             m.entrySet = null;
@@ -795,6 +806,7 @@ public class IdentityHashMap<K,V>
             return lastReturnedIndex;
         }
 
+        @DoesNotUnrefineReceiver("modifiability")
         public void remove() {
             if (lastReturnedIndex == -1)
                 throw new IllegalStateException();
@@ -897,6 +909,7 @@ public class IdentityHashMap<K,V>
             return lastReturnedEntry;
         }
 
+        @DoesNotUnrefineReceiver("modifiability")
         public void remove() {
             lastReturnedIndex =
                 ((null == lastReturnedEntry) ? -1 : lastReturnedEntry.index);
@@ -913,18 +926,21 @@ public class IdentityHashMap<K,V>
             }
 
             @SuppressWarnings("unchecked")
+            @Pure
             public K getKey() {
                 checkIndexForEntryUse();
                 return (K) unmaskNull(traversalTable[index]);
             }
 
             @SuppressWarnings("unchecked")
+            @Pure
             public V getValue() {
                 checkIndexForEntryUse();
                 return (V) traversalTable[index+1];
             }
 
             @SuppressWarnings("unchecked")
+            @DoesNotUnrefineReceiver("modifiability")
             public V setValue(V value) {
                 checkIndexForEntryUse();
                 V oldValue = (V) traversalTable[index+1];
@@ -935,6 +951,7 @@ public class IdentityHashMap<K,V>
                 return oldValue;
             }
 
+            @Pure
             public boolean equals(@Nullable Object o) {
                 if (index < 0)
                     return super.equals(o);
@@ -944,6 +961,7 @@ public class IdentityHashMap<K,V>
                         && e.getValue() == traversalTable[index+1];
             }
 
+            @Pure
             public int hashCode() {
                 if (lastReturnedIndex < 0)
                     return super.hashCode();
@@ -1015,7 +1033,7 @@ public class IdentityHashMap<K,V>
      * @see System#identityHashCode(Object)
      */
     @SideEffectFree
-    public Set<@KeyFor({"this"}) K> keySet(@GuardSatisfied IdentityHashMap<K, V> this) {
+    public @PolyShrink Set<@KeyFor({"this"}) K> keySet(@PolyShrink @GuardSatisfied IdentityHashMap<K, V> this) {
         Set<K> ks = keySet;
         if (ks == null) {
             ks = new KeySet();
@@ -1038,6 +1056,7 @@ public class IdentityHashMap<K,V>
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsKey(o);
         }
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean remove(@Nullable @UnknownSignedness Object o) {
             int oldSize = size;
             IdentityHashMap.this.remove(o);
@@ -1048,6 +1067,7 @@ public class IdentityHashMap<K,V>
          * the former contains an optimization that results in incorrect
          * behavior when c is a smaller "normal" (non-identity-based) Set.
          */
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean removeAll(Collection<? extends @UnknownSignedness Object> c) {
             Objects.requireNonNull(c);
             boolean modified = false;
@@ -1059,6 +1079,7 @@ public class IdentityHashMap<K,V>
             }
             return modified;
         }
+        @DoesNotUnrefineReceiver("modifiability")
         public void clear() {
             IdentityHashMap.this.clear();
         }
@@ -1073,7 +1094,6 @@ public class IdentityHashMap<K,V>
             return toArray(new Object[0]);
         }
         @SuppressWarnings("unchecked")
-        @SideEffectFree
         public <T> @Nullable T[] toArray(@PolyNull T[] a) {
             int expectedModCount = modCount;
             int size = size();
@@ -1129,7 +1149,7 @@ public class IdentityHashMap<K,V>
      * {@code containsAll} methods.</b>
      */
     @SideEffectFree
-    public Collection<V> values(@GuardSatisfied IdentityHashMap<K, V> this) {
+    public @PolyShrink Collection<V> values(@PolyShrink @GuardSatisfied IdentityHashMap<K, V> this) {
         Collection<V> vs = values;
         if (vs == null) {
             vs = new Values();
@@ -1152,6 +1172,7 @@ public class IdentityHashMap<K,V>
         public boolean contains(@Nullable @UnknownSignedness Object o) {
             return containsValue(o);
         }
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean remove(@Nullable @UnknownSignedness Object o) {
             for (Iterator<V> i = iterator(); i.hasNext(); ) {
                 if (i.next() == o) {
@@ -1161,6 +1182,7 @@ public class IdentityHashMap<K,V>
             }
             return false;
         }
+        @DoesNotUnrefineReceiver("modifiability")
         public void clear() {
             IdentityHashMap.this.clear();
         }
@@ -1169,7 +1191,6 @@ public class IdentityHashMap<K,V>
             return toArray(new Object[0]);
         }
         @SuppressWarnings("unchecked")
-        @SideEffectFree
         public <T> @Nullable T[] toArray(@PolyNull T[] a) {
             int expectedModCount = modCount;
             int size = size();
@@ -1244,7 +1265,7 @@ public class IdentityHashMap<K,V>
      * @return a set view of the identity-mappings contained in this map
      */
     @SideEffectFree
-    public Set<Map.Entry<@KeyFor({"this"}) K,V>> entrySet(@GuardSatisfied IdentityHashMap<K, V> this) {
+    public @PolyShrink Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K,V>> entrySet(@PolyModifiable @GuardSatisfied IdentityHashMap<K, V> this) {
         Set<Map.Entry<K,V>> es = entrySet;
         if (es != null)
             return es;
@@ -1254,7 +1275,7 @@ public class IdentityHashMap<K,V>
 
     private class EntrySet extends AbstractSet<Map.Entry<K,V>> {
         @SideEffectFree
-        public Iterator<Map.Entry<K,V>> iterator() {
+        public Iterator<Map.@Modifiable Entry<K,V>> iterator() {
             return new EntryIterator();
         }
         @Pure
@@ -1263,6 +1284,7 @@ public class IdentityHashMap<K,V>
             return o instanceof Entry<?, ?> entry
                     && containsMapping(entry.getKey(), entry.getValue());
         }
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean remove(@Nullable @UnknownSignedness Object o) {
             return o instanceof Entry<?, ?> entry
                     && removeMapping(entry.getKey(), entry.getValue());
@@ -1271,6 +1293,7 @@ public class IdentityHashMap<K,V>
         public @NonNegative int size() {
             return size;
         }
+        @DoesNotUnrefineReceiver("modifiability")
         public void clear() {
             IdentityHashMap.this.clear();
         }
@@ -1279,6 +1302,7 @@ public class IdentityHashMap<K,V>
          * the former contains an optimization that results in incorrect
          * behavior when c is a smaller "normal" (non-identity-based) Set.
          */
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean removeAll(Collection<? extends @UnknownSignedness Object> c) {
             Objects.requireNonNull(c);
             boolean modified = false;
@@ -1297,7 +1321,6 @@ public class IdentityHashMap<K,V>
         }
 
         @SuppressWarnings("unchecked")
-        @SideEffectFree
         public <T> @Nullable T[] toArray(@PolyNull T[] a) {
             int expectedModCount = modCount;
             int size = size();
@@ -1439,7 +1462,7 @@ public class IdentityHashMap<K,V>
 
     @SuppressWarnings("unchecked")
     @Override
-    public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
+    public void replaceAll(@Replaceable IdentityHashMap<K,V> this, BiFunction<? super K, ? super V, ? extends V> function) {
         Objects.requireNonNull(function);
         int expectedModCount = modCount;
 
@@ -1466,7 +1489,7 @@ public class IdentityHashMap<K,V>
      * {@code false}.
      */
     @Override
-    public boolean remove(Object key, Object value) {
+    public boolean remove(@Shrinkable IdentityHashMap<K,V> this, Object key, Object value) {
         return removeMapping(key, value);
     }
 
@@ -1480,7 +1503,7 @@ public class IdentityHashMap<K,V>
      * otherwise it returns {@code false}.
      */
     @Override
-    public boolean replace(K key, V oldValue, V newValue) {
+    public boolean replace(@Replaceable IdentityHashMap<K,V> this, K key, V oldValue, V newValue) {
         Object k = maskNull(key);
         Object[] tab = table;
         int len = tab.length;
