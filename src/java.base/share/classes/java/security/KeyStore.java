@@ -1810,6 +1810,7 @@ public @UsesObjectEquals class KeyStore {
         }
 
         KeyStore keystore = null;
+        String matched = null;
 
         try (DataInputStream dataStream =
             new DataInputStream(
@@ -1833,8 +1834,10 @@ public @UsesObjectEquals class KeyStore {
                                 if (CryptoAlgorithmConstraints.permits(
                                         "KEYSTORE", ksAlgo)) {
                                     keystore = new KeyStore(impl, p, ksAlgo);
-                                    break;
+                                } else {
+                                    matched = ksAlgo;
                                 }
+                                break;
                             }
                         } catch (NoSuchAlgorithmException e) {
                             // ignore
@@ -1864,9 +1867,14 @@ public @UsesObjectEquals class KeyStore {
                 return keystore;
             }
         }
-
-        throw new KeyStoreException("Unrecognized keystore format. "
-                + "Please load it with a specified type");
+        if (matched == null) {
+            throw new KeyStoreException("Unrecognized keystore format. "
+                    + "Please load it with a specified type");
+        } else {
+            throw new KeyStoreException("Keystore format " +
+                    matched +
+                    " disabled by jdk.crypto.disabledAlgorithms property");
+        }
     }
 
     /**
