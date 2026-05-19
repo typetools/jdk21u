@@ -1,4 +1,4 @@
-package org.checkerframework.framework.qual;
+package org.checkerframework.dataflow.qual;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

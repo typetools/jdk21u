@@ -28,14 +28,12 @@ package java.util;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.modifiability.qual.Growable;
-import org.checkerframework.checker.modifiability.qual.IteratorPolyMod;
 import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.PolyModifiable;
 import org.checkerframework.checker.modifiability.qual.PolyShrink;
 import org.checkerframework.checker.modifiability.qual.Replaceable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.modifiability.qual.ThrowsUOE;
-import org.checkerframework.checker.modifiability.qual.Ungrowable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
@@ -45,10 +43,10 @@ import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
-import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-// import org.checkerframework.dataflow.qual.SideEffectsOnly;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
 
@@ -1190,7 +1188,7 @@ public class TreeMap<K,V>
      * operations.
      */
     @DoesNotUnrefineReceiver("modifiability")
-    public @IteratorPolyMod @PolyShrink @Ungrowable Set<@KeyFor({"this"}) K> keySet(@PolyShrink @GuardSatisfied TreeMap<K, V> this) {
+    public @PolyShrink Set<@KeyFor({"this"}) K> keySet(@PolyShrink @GuardSatisfied TreeMap<K, V> this) {
         return navigableKeySet();
     }
 
@@ -1198,7 +1196,7 @@ public class TreeMap<K,V>
      * @since 1.6
      */
     @SideEffectFree
-    public @IteratorPolyMod @PolyShrink @Ungrowable NavigableSet<@KeyFor({"this"}) K> navigableKeySet(@PolyShrink @GuardSatisfied TreeMap<K, V> this) {
+    public @PolyShrink NavigableSet<@KeyFor({"this"}) K> navigableKeySet(@PolyShrink @GuardSatisfied TreeMap<K, V> this) {
         KeySet<K> nks = navigableKeySet;
         return (nks != null) ? nks : (navigableKeySet = new KeySet<>(this));
     }
@@ -1207,7 +1205,7 @@ public class TreeMap<K,V>
      * @since 1.6
      */
     @SideEffectFree
-    public @IteratorPolyMod @PolyShrink @Ungrowable NavigableSet<@KeyFor({"this"}) K> descendingKeySet(@PolyShrink @GuardSatisfied TreeMap<K, V> this) {
+    public @PolyShrink NavigableSet<@KeyFor({"this"}) K> descendingKeySet(@PolyShrink @GuardSatisfied TreeMap<K, V> this) {
         return descendingMap().navigableKeySet();
     }
 
@@ -1232,7 +1230,7 @@ public class TreeMap<K,V>
      * {@code retainAll} and {@code clear} operations.  It does not
      * support the {@code add} or {@code addAll} operations.
      */
-    public @IteratorPolyMod @PolyShrink @Ungrowable Collection<V> values(@PolyShrink @GuardSatisfied TreeMap<K, V> this) {
+    public @PolyShrink Collection<V> values(@PolyShrink @GuardSatisfied TreeMap<K, V> this) {
         Collection<V> vs = values;
         if (vs == null) {
             vs = new Values();
@@ -1264,7 +1262,7 @@ public class TreeMap<K,V>
      * {@code add} or {@code addAll} operations.
      */
     @SideEffectFree
-    public @IteratorPolyMod @PolyShrink @Ungrowable Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K,V>> entrySet(@PolyModifiable @GuardSatisfied TreeMap<K, V> this) {
+    public @PolyShrink Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K,V>> entrySet(@PolyModifiable @GuardSatisfied TreeMap<K, V> this) {
         EntrySet es = entrySet;
         return (es != null) ? es : (entrySet = new EntrySet());
     }
@@ -1614,7 +1612,7 @@ public class TreeMap<K,V>
             return next != null;
         }
 
-        // @SideEffectsOnly("this")
+        @SideEffectsOnly("this")
         final Entry<K,V> nextEntry() {
             Entry<K,V> e = next;
             if (e == null)
@@ -1626,7 +1624,7 @@ public class TreeMap<K,V>
             return e;
         }
 
-        // @SideEffectsOnly("this")
+        @SideEffectsOnly("this")
         final Entry<K,V> prevEntry() {
             Entry<K,V> e = next;
             if (e == null)
@@ -2054,18 +2052,18 @@ public class TreeMap<K,V>
         transient KeySet<K> navigableKeySetView;
 
         @SideEffectFree
-        public final @IteratorPolyMod @PolyShrink @Ungrowable NavigableSet<K> navigableKeySet(@PolyShrink NavigableSubMap<K,V> this) {
+        public final NavigableSet<K> navigableKeySet() {
             KeySet<K> nksv = navigableKeySetView;
             return (nksv != null) ? nksv :
                 (navigableKeySetView = new TreeMap.KeySet<>(this));
         }
 
-        public final @IteratorPolyMod @PolyShrink @Ungrowable Set<K> keySet(@PolyShrink NavigableSubMap<K,V> this) {
+        public final Set<K> keySet() {
             return navigableKeySet();
         }
 
         @SideEffectFree
-        public @IteratorPolyMod @PolyShrink @Ungrowable NavigableSet<K> descendingKeySet(@PolyShrink NavigableSubMap<K,V> this) {
+        public NavigableSet<K> descendingKeySet() {
             return descendingMap().navigableKeySet();
         }
 
@@ -2164,7 +2162,7 @@ public class TreeMap<K,V>
                 return next != null && next.key != fenceKey;
             }
 
-            // @SideEffectsOnly("this")
+            @SideEffectsOnly("this")
             final TreeMap.Entry<K,V> nextEntry() {
                 TreeMap.Entry<K,V> e = next;
                 if (e == null || e.key == fenceKey)
@@ -2176,7 +2174,7 @@ public class TreeMap<K,V>
                 return e;
             }
 
-            // @SideEffectsOnly("this")
+            @SideEffectsOnly("this")
             final TreeMap.Entry<K,V> prevEntry() {
                 TreeMap.Entry<K,V> e = next;
                 if (e == null || e.key == fenceKey)
@@ -2391,7 +2389,7 @@ public class TreeMap<K,V>
         }
 
         @SideEffectFree
-        public @IteratorPolyMod @PolyShrink @Ungrowable Set<Map.@PolyModifiable Entry<K,V>> entrySet(@PolyModifiable AscendingSubMap<K,V> this) {
+        public Set<Map.Entry<K,V>> entrySet() {
             EntrySetView es = entrySetView;
             return (es != null) ? es : (entrySetView = new AscendingEntrySetView());
         }
@@ -2484,7 +2482,7 @@ public class TreeMap<K,V>
         }
 
         @SideEffectFree
-        public @IteratorPolyMod @PolyShrink @Ungrowable Set<Map.@PolyModifiable Entry<K,V>> entrySet(@PolyModifiable DescendingSubMap<K,V> this) {
+        public Set<Map.Entry<K,V>> entrySet() {
             EntrySetView es = entrySetView;
             return (es != null) ? es : (entrySetView = new DescendingEntrySetView());
         }

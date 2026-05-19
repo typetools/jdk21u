@@ -27,17 +27,13 @@ package java.util;
 
 import org.checkerframework.checker.index.qual.CanShrink;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
-import org.checkerframework.checker.modifiability.qual.Growable;
-import org.checkerframework.checker.modifiability.qual.IteratorPolyMod;
-import org.checkerframework.checker.modifiability.qual.Modifiable;
-import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
-import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 
 /**
  * The {@code Stack} class represents a last-in-first-out
@@ -62,12 +58,12 @@ import org.checkerframework.framework.qual.CFComment;
  * @since   1.0
  */
 @CFComment({"lock/nullness: permit null elements"})
-@AnnotatedFor({"lock", "nullness", "modifiability"})
+@AnnotatedFor({"lock", "nullness"})
 public class Stack<E> extends Vector<E> {
     /**
      * Creates an empty Stack.
      */
-    public @Modifiable @IteratorPolyMod Stack() {
+    public Stack() {
     }
 
     /**
@@ -81,7 +77,7 @@ public class Stack<E> extends Vector<E> {
      * @see     java.util.Vector#addElement
      */
     @DoesNotUnrefineReceiver("modifiability")
-    public E push(@Growable @GuardSatisfied Stack<E> this, E item) {
+    public E push(@GuardSatisfied Stack<E> this, E item) {
         addElement(item);
 
         return item;
@@ -96,7 +92,7 @@ public class Stack<E> extends Vector<E> {
      * @throws  EmptyStackException  if this stack is empty.
      */
     @DoesNotUnrefineReceiver("modifiability")
-    public synchronized E pop(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink Stack<E> this) {
+    public synchronized E pop(@GuardSatisfied @NonEmpty @CanShrink Stack<E> this) {
         E       obj;
         int     len = size();
 

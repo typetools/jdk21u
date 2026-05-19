@@ -25,11 +25,12 @@
 
 package java.util;
 
+
 import org.checkerframework.checker.modifiability.qual.Growable;
-import org.checkerframework.checker.modifiability.qual.IteratorPolyMod;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
-import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
+
 
 /**
  * A collection that has a well-defined encounter order, that supports operations at both ends,
@@ -184,7 +185,7 @@ public interface SequencedCollection<E> extends Collection<E> {
      *         does not support this operation
      */
     @DoesNotUnrefineReceiver("modifiability")
-    default E removeFirst(@IteratorPolyMod @Shrinkable SequencedCollection<E> this) {
+    default E removeFirst(@Shrinkable SequencedCollection<E> this) {
         var it = this.iterator();
         E e = it.next();
         it.remove();
@@ -207,7 +208,7 @@ public interface SequencedCollection<E> extends Collection<E> {
      *         does not support this operation
      */
     @DoesNotUnrefineReceiver("modifiability")
-    default E removeLast(@IteratorPolyMod @Shrinkable SequencedCollection<E> this) {
+    default E removeLast(@Shrinkable SequencedCollection<E> this) {
         var it = this.reversed().iterator();
         E e = it.next();
         it.remove();

@@ -31,7 +31,6 @@ import org.checkerframework.checker.index.qual.PolyGrowShrink;
 import org.checkerframework.checker.index.qual.Positive;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.modifiability.qual.Growable;
-import org.checkerframework.checker.modifiability.qual.IteratorPolyMod;
 import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.PolyModifiable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
@@ -46,7 +45,7 @@ import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-// import org.checkerframework.dataflow.qual.SideEffectsOnly;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
 
@@ -152,7 +151,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * capacity (11) that orders its elements according to their
      * {@linkplain Comparable natural ordering}.
      */
-    public @Modifiable @IteratorPolyMod PriorityQueue() {
+    public @Modifiable PriorityQueue() {
         this(DEFAULT_INITIAL_CAPACITY, null);
     }
 
@@ -165,7 +164,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @throws IllegalArgumentException if {@code initialCapacity} is less
      *         than 1
      */
-    public @Modifiable @IteratorPolyMod PriorityQueue(@Positive int initialCapacity) {
+    public @Modifiable PriorityQueue(@Positive int initialCapacity) {
         this(initialCapacity, null);
     }
 
@@ -178,7 +177,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      *         natural ordering} of the elements will be used.
      * @since 1.8
      */
-    public @Modifiable @IteratorPolyMod PriorityQueue(Comparator<? super E> comparator) {
+    public @Modifiable PriorityQueue(Comparator<? super E> comparator) {
         this(DEFAULT_INITIAL_CAPACITY, comparator);
     }
 
@@ -193,7 +192,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @throws IllegalArgumentException if {@code initialCapacity} is
      *         less than 1
      */
-    public @Modifiable @IteratorPolyMod PriorityQueue(@Positive int initialCapacity,
+    public @Modifiable PriorityQueue(@Positive int initialCapacity,
                          Comparator<? super E> comparator) {
         // Note: This restriction of at least one is not actually needed,
         // but continues for 1.5 compatibility
@@ -219,7 +218,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @throws NullPointerException if the specified collection or any
      *         of its elements are null
      */
-    public @Modifiable @IteratorPolyMod @PolyNonEmpty PriorityQueue(@PolyNonEmpty Collection<? extends E> c) {
+    public @Modifiable @PolyNonEmpty PriorityQueue(@PolyNonEmpty Collection<? extends E> c) {
         if (c instanceof SortedSet<?>) {
             SortedSet<? extends E> ss = (SortedSet<? extends E>) c;
             this.comparator = (Comparator<? super E>) ss.comparator();
@@ -250,7 +249,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @throws NullPointerException if the specified priority queue or any
      *         of its elements are null
      */
-    public @Modifiable @IteratorPolyMod PriorityQueue(PriorityQueue<? extends E> c) {
+    public @Modifiable PriorityQueue(PriorityQueue<? extends E> c) {
         this.comparator = (Comparator<? super E>) c.comparator();
         initFromPriorityQueue(c);
     }
@@ -268,7 +267,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      * @throws NullPointerException if the specified sorted set or any
      *         of its elements are null
      */
-    public @Modifiable @IteratorPolyMod PriorityQueue(SortedSet<? extends E> c) {
+    public @Modifiable PriorityQueue(SortedSet<? extends E> c) {
         this.comparator = (Comparator<? super E>) c.comparator();
         initElementsFromCollection(c);
     }
@@ -550,7 +549,7 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
                 (forgetMeNot != null && !forgetMeNot.isEmpty());
         }
 
-        // @SideEffectsOnly("this")
+        @SideEffectsOnly("this")
         public E next(@NonEmpty Itr this) {
             if (expectedModCount != modCount)
                 throw new ConcurrentModificationException();

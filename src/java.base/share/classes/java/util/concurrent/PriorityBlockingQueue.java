@@ -39,7 +39,6 @@ import org.checkerframework.checker.index.qual.CanShrink;
 import org.checkerframework.checker.index.qual.PolyGrowShrink;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.modifiability.qual.Growable;
-import org.checkerframework.checker.modifiability.qual.IteratorPolyMod;
 import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.PolyModifiable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
@@ -52,10 +51,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
-// import org.checkerframework.dataflow.qual.SideEffectsOnly;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
 import java.lang.invoke.MethodHandles;
@@ -210,7 +209,7 @@ public class PriorityBlockingQueue<E extends Object> extends AbstractQueue<E>
      * initial capacity (11) that orders its elements according to
      * their {@linkplain Comparable natural ordering}.
      */
-    public @Modifiable @IteratorPolyMod PriorityBlockingQueue() {
+    public @Modifiable PriorityBlockingQueue() {
         this(DEFAULT_INITIAL_CAPACITY, null);
     }
 
@@ -223,7 +222,7 @@ public class PriorityBlockingQueue<E extends Object> extends AbstractQueue<E>
      * @throws IllegalArgumentException if {@code initialCapacity} is less
      *         than 1
      */
-    public @Modifiable @IteratorPolyMod PriorityBlockingQueue(int initialCapacity) {
+    public @Modifiable PriorityBlockingQueue(int initialCapacity) {
         this(initialCapacity, null);
     }
 
@@ -239,7 +238,7 @@ public class PriorityBlockingQueue<E extends Object> extends AbstractQueue<E>
      * @throws IllegalArgumentException if {@code initialCapacity} is less
      *         than 1
      */
-    public @Modifiable @IteratorPolyMod PriorityBlockingQueue(int initialCapacity,
+    public @Modifiable PriorityBlockingQueue(int initialCapacity,
                                  Comparator<? super E> comparator) {
         if (initialCapacity < 1)
             throw new IllegalArgumentException();
@@ -263,7 +262,7 @@ public class PriorityBlockingQueue<E extends Object> extends AbstractQueue<E>
      * @throws NullPointerException if the specified collection or any
      *         of its elements are null
      */
-    public @Modifiable @IteratorPolyMod PriorityBlockingQueue(Collection<? extends E> c) {
+    public @Modifiable PriorityBlockingQueue(Collection<? extends E> c) {
         boolean heapify = true; // true if not known to be in heap order
         boolean screen = true;  // true if must screen for nulls
         if (c instanceof SortedSet<?>) {
@@ -901,7 +900,7 @@ public class PriorityBlockingQueue<E extends Object> extends AbstractQueue<E>
             return cursor < array.length;
         }
 
-        // @SideEffectsOnly("this")
+        @SideEffectsOnly("this")
         public E next(@NonEmpty Itr this) {
             if (cursor >= array.length)
                 throw new NoSuchElementException();

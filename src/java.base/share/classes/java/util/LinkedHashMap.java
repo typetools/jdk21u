@@ -28,13 +28,11 @@ package java.util;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.modifiability.qual.Growable;
-import org.checkerframework.checker.modifiability.qual.IteratorPolyMod;
 import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.PolyModifiable;
 import org.checkerframework.checker.modifiability.qual.PolyShrink;
 import org.checkerframework.checker.modifiability.qual.Replaceable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
-import org.checkerframework.checker.modifiability.qual.Ungrowable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
@@ -42,10 +40,10 @@ import org.checkerframework.checker.nullness.qual.KeyFor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
-import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-// import org.checkerframework.dataflow.qual.SideEffectsOnly;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
 import java.util.function.Consumer;
@@ -655,7 +653,7 @@ public class LinkedHashMap<K,V>
      * @return a set view of the keys contained in this map
      */
     @SideEffectFree
-    public @IteratorPolyMod @PolyShrink @Ungrowable Set<K> keySet(@PolyShrink LinkedHashMap<K, V> this) {
+    public @PolyShrink Set<K> keySet(@PolyShrink LinkedHashMap<K, V> this) {
         return sequencedKeySet();
     }
 
@@ -668,7 +666,7 @@ public class LinkedHashMap<K,V>
      * @return {@inheritDoc}
      * @since 21
      */
-    public @PolyShrink @Ungrowable SequencedSet<K> sequencedKeySet(@PolyShrink LinkedHashMap<K, V> this) {
+    public @PolyShrink SequencedSet<K> sequencedKeySet(@PolyShrink LinkedHashMap<K, V> this) {
         Set<K> ks = keySet;
         if (ks == null) {
             SequencedSet<K> sks = new LinkedKeySet(false);
@@ -815,7 +813,7 @@ public class LinkedHashMap<K,V>
      *
      * @return a view of the values contained in this map
      */
-    public @IteratorPolyMod @PolyShrink @Ungrowable Collection<V> values(@PolyShrink LinkedHashMap<K, V> this) {
+    public @PolyShrink Collection<V> values(@PolyShrink LinkedHashMap<K, V> this) {
         return sequencedValues();
     }
 
@@ -828,7 +826,7 @@ public class LinkedHashMap<K,V>
      * @return {@inheritDoc}
      * @since 21
      */
-    public @PolyShrink @Ungrowable SequencedCollection<V> sequencedValues(@PolyShrink LinkedHashMap<K, V> this) {
+    public @PolyShrink SequencedCollection<V> sequencedValues(@PolyShrink LinkedHashMap<K, V> this) {
         Collection<V> vs = values;
         if (vs == null) {
             SequencedCollection<V> svs = new LinkedValues(false);
@@ -930,7 +928,7 @@ public class LinkedHashMap<K,V>
      * @return a set view of the mappings contained in this map
      */
     @SideEffectFree
-    public @IteratorPolyMod @PolyShrink @Ungrowable Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K,V>> entrySet(@PolyModifiable @GuardSatisfied LinkedHashMap<K, V> this) {
+    public @PolyShrink Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K,V>> entrySet(@PolyModifiable @GuardSatisfied LinkedHashMap<K, V> this) {
         return sequencedEntrySet();
     }
 
@@ -943,7 +941,7 @@ public class LinkedHashMap<K,V>
      * @return {@inheritDoc}
      * @since 21
      */
-    public @PolyShrink @Ungrowable SequencedSet<Map.@PolyModifiable Entry<K, V>> sequencedEntrySet(@PolyModifiable LinkedHashMap<K, V> this) {
+    public @PolyShrink SequencedSet<Map.@PolyModifiable Entry<K, V>> sequencedEntrySet(@PolyModifiable LinkedHashMap<K, V> this) {
         Set<Map.Entry<K, V>> es = entrySet;
         if (es == null) {
             SequencedSet<Map.Entry<K, V>> ses = new LinkedEntrySet(false);
@@ -1082,7 +1080,7 @@ public class LinkedHashMap<K,V>
             return next != null;
         }
 
-        // @SideEffectsOnly("this")
+        @SideEffectsOnly("this")
         final LinkedHashMap.Entry<K,V> nextNode(@NonEmpty LinkedHashIterator this) {
             LinkedHashMap.Entry<K,V> e = next;
             if (modCount != expectedModCount)
@@ -1229,15 +1227,15 @@ public class LinkedHashMap<K,V>
             base.clear();
         }
 
-        public @IteratorPolyMod @PolyShrink @Ungrowable Set<K> keySet(@PolyShrink ReversedLinkedHashMapView<K,V> this) {
+        public Set<K> keySet() {
             return base.sequencedKeySet().reversed();
         }
 
-        public @IteratorPolyMod @PolyShrink @Ungrowable Collection<V> values(@PolyShrink ReversedLinkedHashMapView<K,V> this) {
+        public Collection<V> values() {
             return base.sequencedValues().reversed();
         }
 
-        public @IteratorPolyMod @PolyShrink @Ungrowable Set<Map.@PolyModifiable Entry<K, V>> entrySet(@PolyModifiable ReversedLinkedHashMapView<K,V> this) {
+        public Set<Entry<K, V>> entrySet() {
             return base.sequencedEntrySet().reversed();
         }
 

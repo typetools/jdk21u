@@ -19,5 +19,5 @@ import org.checkerframework.framework.qual.PolymorphicQualifier;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-@PolymorphicQualifier(MaybeGrow.class)
+@PolymorphicQualifier(UnknownGrow.class)
 public @interface PolyGrow {}

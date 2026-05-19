@@ -36,7 +36,6 @@
 package java.util.concurrent;
 
 import org.checkerframework.checker.modifiability.qual.Growable;
-import org.checkerframework.checker.modifiability.qual.IteratorPolyMod;
 import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.PolyModifiable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
@@ -48,10 +47,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
-import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-// import org.checkerframework.dataflow.qual.SideEffectsOnly;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
@@ -154,7 +153,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
     /**
      * Creates a new {@code DelayQueue} that is initially empty.
      */
-    public @Modifiable @IteratorPolyMod DelayQueue() {}
+    public @Modifiable DelayQueue() {}
 
     /**
      * Creates a {@code DelayQueue} initially containing the elements of the
@@ -164,7 +163,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
      * @throws NullPointerException if the specified collection or any
      *         of its elements are null
      */
-    public @Modifiable @IteratorPolyMod DelayQueue(Collection<? extends E> c) {
+    public @Modifiable DelayQueue(Collection<? extends E> c) {
         this.addAll(c);
     }
 
@@ -600,7 +599,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
         }
 
         @SuppressWarnings("unchecked")
-        // @SideEffectsOnly("this")
+        @SideEffectsOnly("this")
         public E next(@NonEmpty Itr this) {
             if (cursor >= array.length)
                 throw new NoSuchElementException();

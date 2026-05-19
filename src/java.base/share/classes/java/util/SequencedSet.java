@@ -25,7 +25,7 @@
 
 package java.util;
 
-import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 
 /**
  * A collection that is both a {@link SequencedCollection} and a {@link Set}. As such,

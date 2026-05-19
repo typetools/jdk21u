@@ -7,13 +7,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Convenience alias usually meaning {@code @Growable @Shrinkable @Replaceable}. Calling a mutating
- * operation (growing, shrinking, or replacing) on this collection will not result in throwing
- * {@link UnsupportedOperationException}.
+ * Convenience alias meaning {@code @Growable @Shrinkable @Replaceable}. Calling grow, shrink, and
+ * replace operations such as {@code add}, {@code remove}, {@code set}, etc. on this collection will
+ * not result in throwing {@link UnsupportedOperationException}.
  *
- * <p>As an exception, {@code @Modifiable} means {@code @Maybe*} if the type does not support a
- * given category of operation; for example, {@code @Modifiable Iterator} means
- * {@code @MaybeGrow @Shrinkable @MaybeReplace Iterator}.
+ * <p>This annotation is not part of the type hierarchy; the Modifiability Checker expands it to
+ * {@code @Growable @Shrinkable @Replaceable} on each annotated type.
  *
  * @checker_framework.manual #modifiability-checker Modifiability Checker
  */

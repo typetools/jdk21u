@@ -32,10 +32,10 @@ import org.checkerframework.checker.index.qual.IndexOrHigh;
 import org.checkerframework.checker.index.qual.PolyGrowShrink;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.modifiability.qual.Growable;
-import org.checkerframework.checker.modifiability.qual.IteratorPolyMod;
 import org.checkerframework.checker.modifiability.qual.PolyModifiable;
 import org.checkerframework.checker.modifiability.qual.Replaceable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
+import org.checkerframework.checker.modifiability.qual.UnknownModifiability;
 import org.checkerframework.checker.modifiability.qual.Unmodifiable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
@@ -44,10 +44,10 @@ import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.common.value.qual.StaticallyExecutable;
-import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
+import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-// import org.checkerframework.dataflow.qual.SideEffectsOnly;
+import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
 
@@ -151,7 +151,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     @Pure
-    public abstract E get(@GuardSatisfied AbstractList<E> this, @IndexFor({"this"}) int index);
+    public abstract E get(@UnknownModifiability @GuardSatisfied AbstractList<E> this, @IndexFor({"this"}) int index);
 
     /**
      * {@inheritDoc}
@@ -220,7 +220,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      */
     @Pure
     @StaticallyExecutable
-    public @GTENegativeOne int indexOf(@GuardSatisfied AbstractList<E> this, @GuardSatisfied @UnknownSignedness Object o) {
+    public @GTENegativeOne int indexOf(@UnknownModifiability @GuardSatisfied AbstractList<E> this, @GuardSatisfied @UnknownSignedness Object o) {
         ListIterator<E> it = listIterator();
         if (o==null) {
             while (it.hasNext())
@@ -248,7 +248,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      */
     @Pure
     @StaticallyExecutable
-    public @GTENegativeOne int lastIndexOf(@GuardSatisfied AbstractList<E> this, @GuardSatisfied @UnknownSignedness Object o) {
+    public @GTENegativeOne int lastIndexOf(@UnknownModifiability @GuardSatisfied AbstractList<E> this, @GuardSatisfied @UnknownSignedness Object o) {
         ListIterator<E> it = listIterator(size());
         if (o==null) {
             while (it.hasPrevious())
@@ -339,7 +339,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * @return an iterator over the elements in this list in proper sequence
      */
     @SideEffectFree
-    public @PolyGrowShrink @PolyNonEmpty Iterator<E> iterator(@PolyGrowShrink @PolyNonEmpty AbstractList<E> this) {
+    public @PolyGrowShrink @PolyModifiable @PolyNonEmpty Iterator<E> iterator(@PolyGrowShrink @PolyModifiable @PolyNonEmpty AbstractList<E> this) {
         return new Itr();
     }
 
@@ -351,7 +351,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      *
      * @see #listIterator(int)
      */
-    public @PolyGrowShrink @PolyNonEmpty ListIterator<E> listIterator(@PolyGrowShrink @PolyNonEmpty AbstractList<E> this) {
+    public @PolyGrowShrink @PolyModifiable @PolyNonEmpty ListIterator<E> listIterator(@PolyGrowShrink @PolyModifiable @PolyNonEmpty AbstractList<E> this) {
         return listIterator(0);
     }
 
@@ -378,7 +378,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      *
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
-    public @PolyGrowShrink @PolyNonEmpty ListIterator<E> listIterator(@PolyGrowShrink @PolyNonEmpty AbstractList<E> this, final @IndexOrHigh({"this"}) int index) {
+    public @PolyGrowShrink @PolyModifiable ListIterator<E> listIterator(@PolyGrowShrink @PolyModifiable AbstractList<E> this, final @IndexOrHigh({"this"}) int index) {
         rangeCheckForAdd(index);
 
         return new ListItr(index);
@@ -410,7 +410,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
             return cursor != size();
         }
 
-        // @SideEffectsOnly("this")
+        @SideEffectsOnly("this")
         public E next(@NonEmpty Itr this) {
             checkForComodification();
             try {
@@ -584,7 +584,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * @return {@code true} if the specified object is equal to this list
      */
     @Pure
-    public boolean equals(@GuardSatisfied AbstractList<E> this, @GuardSatisfied @Nullable Object o) {
+    public boolean equals(@UnknownModifiability @GuardSatisfied AbstractList<E> this, @GuardSatisfied @Nullable Object o) {
         if (o == this)
             return true;
         if (!(o instanceof List))
@@ -612,7 +612,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * @return the hash code value for this list
      */
     @Pure
-    public int hashCode(@GuardSatisfied AbstractList<E> this) {
+    public int hashCode(@UnknownModifiability @GuardSatisfied AbstractList<E> this) {
         int hashCode = 1;
         for (E e : this)
             hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
@@ -643,7 +643,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * @param toIndex index after last element to be removed
      */
     @DoesNotUnrefineReceiver("modifiability")
-    protected void removeRange(@IteratorPolyMod @Shrinkable @GuardSatisfied @CanShrink AbstractList<E> this, @IndexOrHigh({"this"}) int fromIndex, @IndexOrHigh({"this"}) int toIndex) {
+    protected void removeRange(@Shrinkable @GuardSatisfied @CanShrink AbstractList<E> this, @IndexOrHigh({"this"}) int fromIndex, @IndexOrHigh({"this"}) int toIndex) {
         ListIterator<E> it = listIterator(fromIndex);
         for (int i=0, n=toIndex-fromIndex; i<n; i++) {
             it.next();
@@ -898,7 +898,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
                     return nextIndex() < size;
                 }
 
-                // @SideEffectsOnly("this")
+                @SideEffectsOnly("this")
                 public E next(/*@NonEmpty ListIterator<E> this*/) {
                     if (hasNext())
                         return i.next();
@@ -911,7 +911,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
                     return previousIndex() >= 0;
                 }
 
-                // @SideEffectsOnly("this")
+                @SideEffectsOnly("this")
                 public E previous() {
                     if (hasPrevious())
                         return i.previous();
