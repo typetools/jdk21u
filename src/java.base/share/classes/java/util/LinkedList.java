@@ -32,6 +32,7 @@ import org.checkerframework.checker.index.qual.PolyGrowShrink;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.lock.qual.ReleasesNoLocks;
 import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.IteratorPolyMod;
 import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.PolyModifiable;
 import org.checkerframework.checker.modifiability.qual.Replaceable;
@@ -45,10 +46,10 @@ import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.common.value.qual.StaticallyExecutable;
-import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-import org.checkerframework.dataflow.qual.SideEffectsOnly;
+// import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
 
@@ -143,7 +144,7 @@ public class LinkedList<E>
     /**
      * Constructs an empty list.
      */
-    public @Modifiable LinkedList() {
+    public @Modifiable @IteratorPolyMod LinkedList() {
     }
 
     /**
@@ -154,7 +155,7 @@ public class LinkedList<E>
      * @param  c the collection whose elements are to be placed into this list
      * @throws NullPointerException if the specified collection is null
      */
-    public @Modifiable @PolyNonEmpty LinkedList(@PolyNonEmpty Collection<? extends E> c) {
+    public @Modifiable @IteratorPolyMod @PolyNonEmpty LinkedList(@PolyNonEmpty Collection<? extends E> c) {
         this();
         addAll(c);
     }
@@ -966,7 +967,7 @@ public class LinkedList<E>
             return nextIndex < size;
         }
 
-        @SideEffectsOnly("this")
+        // @SideEffectsOnly("this")
         public E next(@NonEmpty ListItr this) {
             checkForComodification();
             if (!hasNext())
@@ -1086,7 +1087,7 @@ public class LinkedList<E>
         public boolean hasNext() {
             return itr.hasPrevious();
         }
-        @SideEffectsOnly("this")
+        // @SideEffectsOnly("this")
         public E next(@NonEmpty DescendingIterator this) {
             return itr.previous();
         }
@@ -1112,7 +1113,7 @@ public class LinkedList<E>
      * @return a shallow copy of this {@code LinkedList} instance
      */
     @SideEffectFree
-    public @Modifiable Object clone(@GuardSatisfied LinkedList<E> this) {
+    public @Modifiable @IteratorPolyMod Object clone(@GuardSatisfied LinkedList<E> this) {
         LinkedList<E> clone = superClone();
 
         // Put clone into "virgin" state

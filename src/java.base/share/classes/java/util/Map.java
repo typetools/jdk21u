@@ -29,12 +29,13 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.lock.qual.ReleasesNoLocks;
 import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.IteratorPolyMod;
 import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.PolyModifiable;
 import org.checkerframework.checker.modifiability.qual.PolyShrink;
 import org.checkerframework.checker.modifiability.qual.Replaceable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
-import org.checkerframework.checker.modifiability.qual.UnknownModifiability;
+import org.checkerframework.checker.modifiability.qual.Ungrowable;
 import org.checkerframework.checker.modifiability.qual.Unmodifiable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmpty;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
@@ -48,7 +49,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.common.aliasing.qual.NonLeaked;
-import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
@@ -203,7 +204,7 @@ public interface Map<K, V> {
      * @return the number of key-value mappings in this map
      */
     @Pure
-    @NonNegative int size(@UnknownModifiability @GuardSatisfied Map<K, V> this);
+    @NonNegative int size(@GuardSatisfied Map<K, V> this);
 
     /**
      * Returns {@code true} if this map contains no key-value mappings.
@@ -212,7 +213,7 @@ public interface Map<K, V> {
      */
     @Pure
     @EnsuresNonEmptyIf(result = false, expression = "this")
-    boolean isEmpty(@UnknownModifiability @GuardSatisfied Map<K, V> this);
+    boolean isEmpty(@GuardSatisfied Map<K, V> this);
 
     /**
      * Returns {@code true} if this map contains a mapping for the specified
@@ -233,7 +234,7 @@ public interface Map<K, V> {
     @EnsuresKeyForIf(expression={"#1"}, result=true, map={"this"})
     @EnsuresNonEmptyIf(result=true, expression={"this"})
     @Pure
-    boolean containsKey(@UnknownModifiability @GuardSatisfied Map<K, V> this, @GuardSatisfied @UnknownSignedness Object key);
+    boolean containsKey(@GuardSatisfied Map<K, V> this, @GuardSatisfied @UnknownSignedness Object key);
 
     /**
      * Returns {@code true} if this map maps one or more keys to the
@@ -253,7 +254,7 @@ public interface Map<K, V> {
      */
     @EnsuresNonEmptyIf(result=true, expression={"this"})
     @Pure
-    boolean containsValue(@UnknownModifiability @GuardSatisfied Map<K, V> this, @GuardSatisfied @UnknownSignedness Object value);
+    boolean containsValue(@GuardSatisfied Map<K, V> this, @GuardSatisfied @UnknownSignedness Object value);
 
     /**
      * Returns the value to which the specified key is mapped,
@@ -280,7 +281,7 @@ public interface Map<K, V> {
      *         does not permit null keys ({@linkplain Collection##optional-restrictions optional})
      */
     @Pure
-    @Nullable V get(@UnknownModifiability @GuardSatisfied Map<K, V> this, @UnknownSignedness @GuardSatisfied Object key);
+    @Nullable V get(@GuardSatisfied Map<K, V> this, @UnknownSignedness @GuardSatisfied Object key);
 
     // Modification Operations
 
@@ -402,7 +403,7 @@ public interface Map<K, V> {
      * @return a set view of the keys contained in this map
      */
     @SideEffectFree
-    @PolyNonEmpty @PolyShrink Set<@KeyFor({"this"}) K> keySet(@PolyShrink @GuardSatisfied @PolyNonEmpty Map<K, V> this);
+    @IteratorPolyMod @PolyShrink @Ungrowable @PolyNonEmpty Set<@KeyFor({"this"}) K> keySet(@PolyShrink @GuardSatisfied @PolyNonEmpty Map<K, V> this);
 
     /**
      * Returns a {@link Collection} view of the values contained in this map.
@@ -420,7 +421,7 @@ public interface Map<K, V> {
      * @return a collection view of the values contained in this map
      */
     @SideEffectFree
-    @PolyNonEmpty @PolyShrink Collection<V> values(@PolyShrink @GuardSatisfied @PolyNonEmpty Map<K, V> this);
+    @IteratorPolyMod @PolyShrink @Ungrowable @PolyNonEmpty Collection<V> values(@PolyShrink @GuardSatisfied @PolyNonEmpty Map<K, V> this);
 
     /**
      * Returns a {@link Set} view of the mappings contained in this map.
@@ -439,7 +440,7 @@ public interface Map<K, V> {
      * @return a set view of the mappings contained in this map
      */
     @SideEffectFree
-    @PolyNonEmpty @PolyShrink Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K, V>> entrySet(@PolyModifiable @GuardSatisfied @PolyNonEmpty Map<K, V> this);
+    @IteratorPolyMod @PolyShrink @Ungrowable @PolyNonEmpty Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K, V>> entrySet(@PolyModifiable @GuardSatisfied @PolyNonEmpty Map<K, V> this);
 
     /**
      * A map entry (key-value pair). The Entry may be unmodifiable, or the
@@ -510,7 +511,7 @@ public interface Map<K, V> {
          *         removed from the backing map.
          */
         @Pure
-        K getKey(Map.@UnknownModifiability @GuardSatisfied Entry<K, V> this);
+        K getKey(Map.@GuardSatisfied Entry<K, V> this);
 
         /**
          * Returns the value corresponding to this entry.  If the mapping
@@ -523,7 +524,7 @@ public interface Map<K, V> {
          *         removed from the backing map.
          */
         @Pure
-        V getValue(Map.@UnknownModifiability @GuardSatisfied Entry<K, V> this);
+        V getValue(Map.@GuardSatisfied Entry<K, V> this);
 
         /**
          * Replaces the value corresponding to this entry with the specified
@@ -567,7 +568,7 @@ public interface Map<K, V> {
          *         entry
          */
         @Pure
-        boolean equals(Map.@UnknownModifiability @GuardSatisfied Entry<K, V> this, @GuardSatisfied @Nullable Object o);
+        boolean equals(Map.@GuardSatisfied Entry<K, V> this, @GuardSatisfied @Nullable Object o);
 
         /**
          * Returns the hash code value for this map entry.  The hash code
@@ -586,7 +587,7 @@ public interface Map<K, V> {
          * @see #equals(Object)
          */
         @Pure
-        int hashCode(Map.@UnknownModifiability @GuardSatisfied Entry<K, V> this);
+        int hashCode(Map.@GuardSatisfied Entry<K, V> this);
 
         /**
          * Returns a comparator that compares {@link Map.Entry} in natural order on key.
@@ -687,7 +688,7 @@ public interface Map<K, V> {
          */
         @SuppressWarnings("unchecked")
         public static <K extends @NonNull Object, V extends @NonNull Object> 
-        Map.@Unmodifiable Entry<K, V> copyOf(Map.@UnknownModifiability Entry<? extends K, ? extends V> e) {
+        Map.@Unmodifiable Entry<K, V> copyOf(Map.Entry<? extends K, ? extends V> e) {
             Objects.requireNonNull(e);
             if (e instanceof KeyValueHolder) {
                 return (Map.Entry<K, V>) e;
@@ -712,7 +713,7 @@ public interface Map<K, V> {
      * @return {@code true} if the specified object is equal to this map
      */
     @Pure
-    boolean equals(@UnknownModifiability @GuardSatisfied Map<K, V> this, @GuardSatisfied @Nullable Object o);
+    boolean equals(@GuardSatisfied Map<K, V> this, @GuardSatisfied @Nullable Object o);
 
     /**
      * Returns the hash code value for this map.  The hash code of a map is
@@ -728,7 +729,7 @@ public interface Map<K, V> {
      * @see #equals(Object)
      */
     @Pure
-    int hashCode(@UnknownModifiability @GuardSatisfied Map<K, V> this);
+    int hashCode(@GuardSatisfied Map<K, V> this);
 
     // Defaultable methods
 
@@ -1818,7 +1819,7 @@ public interface Map<K, V> {
      * @since 10
      */
     @SuppressWarnings({"rawtypes","unchecked"})
-    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @PolyNonEmpty Map<K, V> copyOf(@UnknownModifiability @PolyNonEmpty Map<? extends K, ? extends V> map) {
+    static <K extends @NonNull Object, V extends @NonNull Object> @Unmodifiable @PolyNonEmpty Map<K, V> copyOf(@PolyNonEmpty Map<? extends K, ? extends V> map) {
         if (map instanceof ImmutableCollections.AbstractImmutableMap) {
             return (Map<K,V>)map;
         } else if (map.isEmpty()) { // Implicit nullcheck of map

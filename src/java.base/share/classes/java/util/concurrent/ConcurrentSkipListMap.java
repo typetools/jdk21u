@@ -37,12 +37,14 @@ package java.util.concurrent;
 
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.IteratorPolyMod;
 import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.PolyModifiable;
 import org.checkerframework.checker.modifiability.qual.PolyShrink;
 import org.checkerframework.checker.modifiability.qual.Replaceable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.modifiability.qual.ThrowsUOE;
+import org.checkerframework.checker.modifiability.qual.Ungrowable;
 import org.checkerframework.checker.modifiability.qual.Unmodifiable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
@@ -52,10 +54,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
-import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-import org.checkerframework.dataflow.qual.SideEffectsOnly;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
+// import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 
 import java.lang.invoke.MethodHandles;
@@ -1648,14 +1650,14 @@ public class ConcurrentSkipListMap<K,V> extends AbstractMap<K,V>
      *
      * @return a navigable set view of the keys in this map
      */
-    public @PolyShrink NavigableSet<K> keySet(@PolyShrink ConcurrentSkipListMap<K,V> this) {
+    public @IteratorPolyMod @PolyShrink @Ungrowable NavigableSet<K> keySet(@PolyShrink ConcurrentSkipListMap<K,V> this) {
         KeySet<K,V> ks;
         if ((ks = keySet) != null) return ks;
         return keySet = new KeySet<>(this);
     }
 
     @SideEffectFree
-    public @PolyShrink NavigableSet<K> navigableKeySet(@PolyShrink ConcurrentSkipListMap<K,V> this) {
+    public @IteratorPolyMod @PolyShrink @Ungrowable NavigableSet<K> navigableKeySet(@PolyShrink ConcurrentSkipListMap<K,V> this) {
         KeySet<K,V> ks;
         if ((ks = keySet) != null) return ks;
         return keySet = new KeySet<>(this);
@@ -1680,7 +1682,7 @@ public class ConcurrentSkipListMap<K,V> extends AbstractMap<K,V>
      * <p>The view's iterators and spliterators are
      * <a href="package-summary.html#Weakly"><i>weakly consistent</i></a>.
      */
-    public @PolyShrink Collection<V> values(@PolyShrink ConcurrentSkipListMap<K,V> this) {
+    public @IteratorPolyMod @PolyShrink @Ungrowable Collection<V> values(@PolyShrink ConcurrentSkipListMap<K,V> this) {
         Values<K,V> vs;
         if ((vs = values) != null) return vs;
         return values = new Values<>(this);
@@ -1714,7 +1716,7 @@ public class ConcurrentSkipListMap<K,V> extends AbstractMap<K,V>
      *         sorted in ascending key order
      */
     @SideEffectFree
-    public @PolyShrink Set<Map.@Unmodifiable Entry<K,V>> entrySet(@PolyShrink ConcurrentSkipListMap<K,V> this) {
+    public @IteratorPolyMod @PolyShrink @Ungrowable Set<Map.@Unmodifiable Entry<K,V>> entrySet(@PolyShrink ConcurrentSkipListMap<K,V> this) {
         EntrySet<K,V> es;
         if ((es = entrySet) != null) return es;
         return entrySet = new EntrySet<K,V>(this);
@@ -1729,7 +1731,7 @@ public class ConcurrentSkipListMap<K,V> extends AbstractMap<K,V>
     }
 
     @SideEffectFree
-    public @PolyShrink NavigableSet<K> descendingKeySet(@PolyShrink ConcurrentSkipListMap<K,V> this) {
+    public @IteratorPolyMod @PolyShrink @Ungrowable NavigableSet<K> descendingKeySet(@PolyShrink ConcurrentSkipListMap<K,V> this) {
         return descendingMap().navigableKeySet();
     }
 
@@ -3009,34 +3011,34 @@ public class ConcurrentSkipListMap<K,V> extends AbstractMap<K,V>
 
         /* ---------------- Submap Views -------------- */
 
-        public NavigableSet<K> keySet() {
+        public @IteratorPolyMod @PolyShrink @Ungrowable NavigableSet<K> keySet(@PolyShrink SubMap<K,V> this) {
             KeySet<K,V> ks;
             if ((ks = keySetView) != null) return ks;
             return keySetView = new KeySet<>(this);
         }
 
         @SideEffectFree
-        public NavigableSet<K> navigableKeySet() {
+        public @IteratorPolyMod @PolyShrink @Ungrowable NavigableSet<K> navigableKeySet(@PolyShrink SubMap<K,V> this) {
             KeySet<K,V> ks;
             if ((ks = keySetView) != null) return ks;
             return keySetView = new KeySet<>(this);
         }
 
-        public Collection<V> values() {
+        public @IteratorPolyMod @PolyShrink @Ungrowable Collection<V> values(@PolyShrink SubMap<K,V> this) {
             Values<K,V> vs;
             if ((vs = valuesView) != null) return vs;
             return valuesView = new Values<>(this);
         }
 
         @SideEffectFree
-        public Set<Map.Entry<K,V>> entrySet() {
+        public @IteratorPolyMod @PolyShrink @Ungrowable Set<Map.@Unmodifiable Entry<K,V>> entrySet(@PolyShrink SubMap<K,V> this) {
             EntrySet<K,V> es;
             if ((es = entrySetView) != null) return es;
             return entrySetView = new EntrySet<K,V>(this);
         }
 
         @SideEffectFree
-        public NavigableSet<K> descendingKeySet() {
+        public @IteratorPolyMod NavigableSet<K> descendingKeySet() {
             return descendingMap().navigableKeySet();
         }
 

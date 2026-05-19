@@ -25,13 +25,22 @@
 
 package java.util;
 
+import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.IteratorPolyMod;
+import org.checkerframework.checker.modifiability.qual.PolyModifiable;
+import org.checkerframework.checker.modifiability.qual.PolyShrink;
+import org.checkerframework.checker.modifiability.qual.Replaceable;
+import org.checkerframework.checker.modifiability.qual.Shrinkable;
+import org.checkerframework.checker.modifiability.qual.Ungrowable;
 import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.framework.qual.AnnotatedFor;
 
 /**
  * Provides a reversed-ordered view of a SortedMap. Not serializable.
  *
  * TODO: copy in equals and hashCode from AbstractMap
  */
+@AnnotatedFor({"modifiability"})
 class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements SortedMap<K, V> {
     final SortedMap<K, V> base;
     final Comparator<? super K> cmp;
@@ -61,7 +70,7 @@ class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements Sorte
 
     // ========== Map ==========
 
-    public void clear() {
+    public void clear(@Shrinkable ReverseOrderSortedMapView<K,V> this) {
         base.clear();
     }
 
@@ -81,15 +90,15 @@ class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements Sorte
         return base.isEmpty();
     }
 
-    public V put(K key, V value) {
+    public V put(@Growable @Replaceable ReverseOrderSortedMapView<K,V> this, K key, V value) {
         return base.put(key, value);
     }
 
-    public void putAll(Map<? extends K, ? extends V> m) {
+    public void putAll(@Growable @Replaceable ReverseOrderSortedMapView<K,V> this, Map<? extends K, ? extends V> m) {
         base.putAll(m);
     }
 
-    public V remove(Object key) {
+    public V remove(@Shrinkable ReverseOrderSortedMapView<K,V> this, Object key) {
         return base.remove(key);
     }
 
@@ -97,7 +106,7 @@ class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements Sorte
         return base.size();
     }
 
-    public Set<K> keySet() {
+    public @IteratorPolyMod @PolyShrink @Ungrowable Set<K> keySet(@PolyShrink ReverseOrderSortedMapView<K,V> this) {
         return new AbstractSet<>() {
             // inherit add(), which throws UOE
             public Iterator<K> iterator() { return descendingKeyIterator(base); }
@@ -108,7 +117,7 @@ class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements Sorte
         };
     }
 
-    public Collection<V> values() {
+    public @IteratorPolyMod @PolyShrink @Ungrowable Collection<V> values(@PolyShrink ReverseOrderSortedMapView<K,V> this) {
         return new AbstractCollection<>() {
             // inherit add(), which throws UOE
             public Iterator<V> iterator() { return descendingValueIterator(base); }
@@ -119,7 +128,7 @@ class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements Sorte
         };
     }
 
-    public Set<Entry<K, V>> entrySet() {
+    public @IteratorPolyMod @PolyShrink @Ungrowable Set<Map.@PolyModifiable Entry<K, V>> entrySet(@PolyModifiable ReverseOrderSortedMapView<K,V> this) {
         return new AbstractSet<>() {
             // inherit add(), which throws UOE
             public Iterator<Entry<K, V>> iterator() { return descendingEntryIterator(base); }
@@ -152,19 +161,19 @@ class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements Sorte
         return base.firstEntry();
     }
 
-    public Map.Entry<K,V> pollFirstEntry() {
+    public Map.Entry<K,V> pollFirstEntry(@Shrinkable ReverseOrderSortedMapView<K,V> this) {
         return base.pollLastEntry();
     }
 
-    public Map.Entry<K,V> pollLastEntry() {
+    public Map.Entry<K,V> pollLastEntry(@Shrinkable ReverseOrderSortedMapView<K,V> this) {
         return base.pollFirstEntry();
     }
 
-    public V putFirst(K k, V v) {
+    public V putFirst(@Growable @Replaceable ReverseOrderSortedMapView<K,V> this, K k, V v) {
         return base.putLast(k, v);
     }
 
-    public V putLast(K k, V v) {
+    public V putLast(@Growable @Replaceable ReverseOrderSortedMapView<K,V> this, K k, V v) {
         return base.putFirst(k, v);
     }
 
@@ -175,7 +184,7 @@ class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements Sorte
         return cmp;
     }
 
-    public SortedMap<K, V> subMap(K fromKey, K toKey) {
+    public @PolyModifiable SortedMap<K, V> subMap(@PolyModifiable ReverseOrderSortedMapView<K,V> this, K fromKey, K toKey) {
         if (cmp.compare(fromKey, toKey) <= 0) {
             return new Submap(fromKey, toKey);
         } else {
@@ -183,11 +192,11 @@ class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements Sorte
         }
     }
 
-    public SortedMap<K, V> headMap(K toKey) {
+    public @PolyModifiable SortedMap<K, V> headMap(@PolyModifiable ReverseOrderSortedMapView<K,V> this, K toKey) {
         return new Submap(null, toKey);
     }
 
-    public SortedMap<K, V> tailMap(K fromKey) {
+    public @PolyModifiable SortedMap<K, V> tailMap(@PolyModifiable ReverseOrderSortedMapView<K,V> this, K fromKey) {
         return new Submap(fromKey, null);
     }
 
@@ -272,7 +281,7 @@ class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements Sorte
 
         public K getKey()             { return key; }
         public V getValue()           { return value; }
-        public V setValue(V newValue) { return map.put(key, newValue); }
+        public V setValue(@Replaceable ViewEntry<K,V> this, V newValue) { return map.put(key, newValue); }
 
         public boolean equals(Object o) {
             return o instanceof Map.Entry<?, ?> e
@@ -394,7 +403,7 @@ class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements Sorte
             return ReverseOrderSortedMapView.toString(this, entryIterator());
         }
 
-        public Set<Entry<K, V>> entrySet() {
+        public @IteratorPolyMod @PolyShrink @Ungrowable Set<Map.@PolyModifiable Entry<K, V>> entrySet(@PolyModifiable Submap this) {
             return new AbstractSet<>() {
                 public Iterator<Entry<K, V>> iterator() {
                     return entryIterator();
@@ -411,14 +420,14 @@ class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements Sorte
             };
         }
 
-        public V put(K key, V value) {
+        public V put(@Growable @Replaceable Submap this, K key, V value) {
             if (aboveHead(key) && belowTail(key))
                 return base.put(key, value);
             else
                 throw new IllegalArgumentException();
         }
 
-        public V remove(Object o) {
+        public V remove(@Shrinkable Submap this, Object o) {
             @SuppressWarnings("unchecked")
             K key = (K) o;
             if (aboveHead(key) && belowTail(key))
@@ -450,7 +459,7 @@ class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements Sorte
             return last.getKey();
         }
 
-        public SortedMap<K, V> subMap(K from, K to) {
+        public @PolyModifiable SortedMap<K, V> subMap(@PolyModifiable Submap this, K from, K to) {
             if (aboveHead(from) && belowTail(from) &&
                 aboveHead(to) && belowTail(to) &&
                 cmp.compare(from, to) <= 0) {
@@ -460,14 +469,14 @@ class ReverseOrderSortedMapView<K, V> extends AbstractMap<K, V> implements Sorte
             }
         }
 
-        public SortedMap<K, V> headMap(K to) {
+        public @PolyModifiable SortedMap<K, V> headMap(@PolyModifiable Submap this, K to) {
             if (aboveHead(to) && belowTail(to))
                 return new Submap(head, to);
             else
                 throw new IllegalArgumentException();
         }
 
-        public SortedMap<K, V> tailMap(K from) {
+        public @PolyModifiable SortedMap<K, V> tailMap(@PolyModifiable Submap this, K from) {
             if (aboveHead(from) && belowTail(from))
                 return new Submap(from, tail);
             else
