@@ -28,12 +28,12 @@ package java.util;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.lock.qual.ReleasesNoLocks;
-import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.Growable;
+import org.checkerframework.checker.modifiability.qual.Modifiable;
+import org.checkerframework.checker.modifiability.qual.PolyModifiable;
+import org.checkerframework.checker.modifiability.qual.PolyShrink;
 import org.checkerframework.checker.modifiability.qual.Replaceable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
-import org.checkerframework.checker.modifiability.qual.PolyShrink;
-import org.checkerframework.checker.modifiability.qual.PolyModifiable;
 import org.checkerframework.checker.modifiability.qual.UnknownModifiability;
 import org.checkerframework.checker.modifiability.qual.Unmodifiable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
@@ -46,7 +46,7 @@ import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-import org.checkerframework.dataflow.qual.SideEffectsOnly;
+// import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
 
@@ -403,7 +403,7 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
                             return i.hasNext();
                         }
 
-                        @SideEffectsOnly("this")
+                        // @SideEffectsOnly("this")
                         public K next(/*@NonEmpty Iterator<K> this*/) {
                             return i.next().getKey();
                         }
@@ -473,7 +473,7 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
                             return i.hasNext();
                         }
 
-                        @SideEffectsOnly("this")
+                        // @SideEffectsOnly("this")
                         public V next(/*@NonEmpty Iterator<V> this*/) {
                             return i.next().getValue();
                         }

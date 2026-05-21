@@ -27,7 +27,7 @@ package java.lang;
 
 import org.checkerframework.common.value.qual.StaticallyExecutable;
 import org.checkerframework.dataflow.qual.Pure;
-import org.checkerframework.dataflow.qual.SideEffectsOnly;
+// import org.checkerframework.dataflow.qual.SideEffectsOnly;
 
 import java.util.Arrays;
 import java.util.Locale;
