@@ -31,11 +31,11 @@ import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.modifiability.qual.UnknownModifiability;
 import org.checkerframework.checker.modifiability.qual.Unmodifiable;
 import org.checkerframework.dataflow.qual.Deterministic;
-import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
-
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 /**
  * <p>Hash table and linked list implementation of the {@code Set} interface,
@@ -216,7 +216,7 @@ public class LinkedHashSet<E>
      * @since 1.8
      */
     @Override
-    @DoesNotUnrefineReceiver("modifiability")
+    @SideEffectFree
     public Spliterator<E> spliterator() {
         return Spliterators.spliterator(this, Spliterator.DISTINCT | Spliterator.ORDERED);
     }
@@ -254,6 +254,7 @@ public class LinkedHashSet<E>
      *
      * @since 21
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public void addFirst(@Growable LinkedHashSet<E> this, E e) {
         map().putFirst(e, PRESENT);
@@ -267,6 +268,7 @@ public class LinkedHashSet<E>
      *
      * @since 21
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public void addLast(@Growable LinkedHashSet<E> this, E e) {
         map().putLast(e, PRESENT);
@@ -300,6 +302,7 @@ public class LinkedHashSet<E>
      * @throws NoSuchElementException {@inheritDoc}
      * @since 21
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public E removeFirst(@Shrinkable LinkedHashSet<E> this) {
         return map().sequencedKeySet().removeFirst();
@@ -311,6 +314,7 @@ public class LinkedHashSet<E>
      * @throws NoSuchElementException {@inheritDoc}
      * @since 21
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public E removeLast(@Shrinkable LinkedHashSet<E> this) {
         return map().sequencedKeySet().removeLast();
@@ -325,19 +329,26 @@ public class LinkedHashSet<E>
      * @return {@inheritDoc}
      * @since 21
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public SequencedSet<E> reversed() {
         class ReverseLinkedHashSetView extends AbstractSet<E> implements SequencedSet<E> {
+            @Pure
             public int size()                  { return LinkedHashSet.this.size(); }
+            @SideEffectFree
             public Iterator<E> iterator()      { return map().sequencedKeySet().reversed().iterator(); }
             public boolean add(@Growable ReverseLinkedHashSetView this, E e)            { return LinkedHashSet.this.add(e); }
             public void addFirst(@Growable ReverseLinkedHashSetView this, E e)          { LinkedHashSet.this.addLast(e); }
             public void addLast(@Growable ReverseLinkedHashSetView this, E e)           { LinkedHashSet.this.addFirst(e); }
+            @Pure
             public E getFirst()                { return LinkedHashSet.this.getLast(); }
+            @Pure
             public E getLast()                 { return LinkedHashSet.this.getFirst(); }
             public E removeFirst(@Shrinkable ReverseLinkedHashSetView this)             { return LinkedHashSet.this.removeLast(); }
             public E removeLast(@Shrinkable ReverseLinkedHashSetView this)              { return LinkedHashSet.this.removeFirst(); }
             public SequencedSet<E> reversed()  { return LinkedHashSet.this; }
+            @Pure
+            @SideEffectFree
             public Object[] toArray() { return map().keysToArray(new Object[map.size()], true); }
             public <T> T[] toArray(T[] a) { return map().keysToArray(map.prepareArray(a), true); }
         }

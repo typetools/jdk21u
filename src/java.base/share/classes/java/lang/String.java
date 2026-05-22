@@ -1934,8 +1934,8 @@ public final class String
      * @see  #compareTo(String)
      * @see  #equalsIgnoreCase(String)
      */
-    @EnsuresNonNullIf(expression={"#1"}, result=true)
     @Pure
+    @EnsuresNonNullIf(expression={"#1"}, result=true)
     @StaticallyExecutable
     public boolean equals(@GuardSatisfied @Nullable Object anObject) {
         if (this == anObject) {
@@ -2073,8 +2073,8 @@ public final class String
      * @see  #equals(Object)
      * @see  #codePoints()
      */
-    @EnsuresNonNullIf(expression={"#1"}, result=true)
     @Pure
+    @EnsuresNonNullIf(expression={"#1"}, result=true)
     @StaticallyExecutable
     public boolean equalsIgnoreCase(@Nullable String anotherString) {
         return (this == anotherString) ? true

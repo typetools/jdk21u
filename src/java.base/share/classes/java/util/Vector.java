@@ -44,12 +44,12 @@ import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.common.value.qual.StaticallyExecutable;
-import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 // import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -358,10 +358,12 @@ public class Vector<E>
      * @return  an enumeration of the components of this vector
      * @see     Iterator
      */
+    @SideEffectFree
     public @PolyGrowShrink @PolyNonEmpty Enumeration<E> elements(@PolyGrowShrink @PolyNonEmpty Vector<E> this) {
         return new Enumeration<E>() {
             int count = 0;
 
+            @Pure
             @EnsuresNonEmptyIf(result = true, expression = "this")
             public boolean hasMoreElements() {
                 return count < elementCount;
@@ -503,6 +505,7 @@ public class Vector<E>
      * @throws ArrayIndexOutOfBoundsException if the index is out of range
      *         ({@code index < 0 || index >= size()})
      */
+    @Pure
     public synchronized E elementAt(@NonNegative int index) {
         if (index >= elementCount) {
             throw new ArrayIndexOutOfBoundsException(index + " >= " + elementCount);
@@ -559,6 +562,7 @@ public class Vector<E>
      * @throws ArrayIndexOutOfBoundsException if the index is out of range
      *         ({@code index < 0 || index >= size()})
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public synchronized void setElementAt(@Replaceable @GuardSatisfied Vector<E> this, E obj, @NonNegative int index) {
         if (index >= elementCount) {
@@ -587,6 +591,7 @@ public class Vector<E>
      * @throws ArrayIndexOutOfBoundsException if the index is out of range
      *         ({@code index < 0 || index >= size()})
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public synchronized void removeElementAt(@Shrinkable @GuardSatisfied @CanShrink Vector<E> this, @NonNegative int index) {
         if (index >= elementCount) {
@@ -628,6 +633,7 @@ public class Vector<E>
      * @throws ArrayIndexOutOfBoundsException if the index is out of range
      *         ({@code index < 0 || index > size()})
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public synchronized void insertElementAt(@Growable @GuardSatisfied Vector<E> this, E obj, @NonNegative int index) {
         if (index > elementCount) {
@@ -657,6 +663,7 @@ public class Vector<E>
      *
      * @param   obj   the component to be added
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public synchronized void addElement(@Growable @GuardSatisfied Vector<E> this, E obj) {
         modCount++;
@@ -678,6 +685,7 @@ public class Vector<E>
      * @return  {@code true} if the argument was a component of this
      *          vector; {@code false} otherwise.
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public synchronized boolean removeElement(@Shrinkable @GuardSatisfied @CanShrink Vector<E> this, Object obj) {
         modCount++;
@@ -695,6 +703,7 @@ public class Vector<E>
      * <p>This method is identical in functionality to the {@link #clear}
      * method (which is part of the {@link List} interface).
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public synchronized void removeAllElements(@Shrinkable @GuardSatisfied @CanShrink Vector<E> this) {
         final Object[] es = elementData;
@@ -782,6 +791,7 @@ public class Vector<E>
     }
 
     @SuppressWarnings("unchecked")
+    @Pure
     static <E> E elementAt(Object[] es, int index) {
         return (E) es[index];
     }
@@ -814,6 +824,7 @@ public class Vector<E>
      *         ({@code index < 0 || index >= size()})
      * @since 1.2
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public synchronized E set(@Replaceable @GuardSatisfied Vector<E> this, @NonNegative int index, E element) {
         if (index >= elementCount)
@@ -845,6 +856,7 @@ public class Vector<E>
      */
     // @SideEffectsOnly("this")
     @EnsuresNonEmpty("this")
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public synchronized boolean add(@Growable @GuardSatisfied Vector<E> this, E e) {
         modCount++;
@@ -863,6 +875,7 @@ public class Vector<E>
      * @return true if the Vector contained the specified element
      * @since 1.2
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public boolean remove(@Shrinkable @GuardSatisfied @CanShrink Vector<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
         return removeElement(o);
@@ -879,6 +892,7 @@ public class Vector<E>
      *         ({@code index < 0 || index > size()})
      * @since 1.2
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public void add(@Growable @GuardSatisfied Vector<E> this, @NonNegative int index, E element) {
         insertElementAt(element, index);
@@ -895,6 +909,7 @@ public class Vector<E>
      *         ({@code index < 0 || index >= size()})
      * @since 1.2
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public synchronized E remove(@Shrinkable @GuardSatisfied @CanShrink Vector<E> this, @NonNegative int index) {
         modCount++;
@@ -917,6 +932,7 @@ public class Vector<E>
      *
      * @since 1.2
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public void clear(@Shrinkable @GuardSatisfied @CanShrink Vector<E> this) {
         removeAllElements();
@@ -952,6 +968,7 @@ public class Vector<E>
      * @throws NullPointerException if the specified collection is null
      * @since 1.2
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public boolean addAll(@Growable @GuardSatisfied Vector<E> this, Collection<? extends E> c) {
         Object[] a = c.toArray();
@@ -987,6 +1004,7 @@ public class Vector<E>
      *         or if the specified collection is null
      * @since 1.2
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public boolean removeAll(@Shrinkable @GuardSatisfied @CanShrink Vector<E> this, Collection<? extends @UnknownSignedness Object> c) {
         Objects.requireNonNull(c);
@@ -1012,6 +1030,7 @@ public class Vector<E>
      *         or if the specified collection is null
      * @since 1.2
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public boolean retainAll(@Shrinkable @GuardSatisfied @CanShrink Vector<E> this, Collection<? extends @UnknownSignedness Object> c) {
         Objects.requireNonNull(c);
@@ -1023,6 +1042,7 @@ public class Vector<E>
      */
     @SuppressWarnings({"unchecked"})
     @Override
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public boolean removeIf(@Shrinkable @CanShrink Vector<E> this, Predicate<? super E> filter) {
         Objects.requireNonNull(filter);
@@ -1093,6 +1113,7 @@ public class Vector<E>
      * @throws NullPointerException if the specified collection is null
      * @since 1.2
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public synchronized boolean addAll(@Growable @GuardSatisfied Vector<E> this, @NonNegative int index, Collection<? extends E> c) {
         if (index < 0 || index > elementCount)
@@ -1199,6 +1220,7 @@ public class Vector<E>
      * This call shortens the list by {@code (toIndex - fromIndex)} elements.
      * (If {@code toIndex==fromIndex}, this operation has no effect.)
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     protected synchronized void removeRange(@Shrinkable @GuardSatisfied @CanShrink Vector<E> this, int fromIndex, int toIndex) {
         modCount++;
@@ -1318,6 +1340,7 @@ public class Vector<E>
         }
 
         // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public E next(@NonEmpty Itr this) {
             synchronized (Vector.this) {
                 checkForComodification();
@@ -1329,6 +1352,7 @@ public class Vector<E>
             }
         }
 
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public void remove() {
             if (lastRet == -1)
@@ -1404,6 +1428,7 @@ public class Vector<E>
             }
         }
 
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public void set(E e) {
             if (lastRet == -1)
@@ -1414,6 +1439,7 @@ public class Vector<E>
             }
         }
 
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public void add(E e) {
             int i = cursor;
@@ -1464,6 +1490,7 @@ public class Vector<E>
 
     @SuppressWarnings("unchecked")
     @Override
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     public synchronized void sort(@Replaceable Vector<E> this, Comparator<? super E> c) {
         final int expectedModCount = modCount;

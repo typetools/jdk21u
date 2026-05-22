@@ -48,6 +48,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 import java.util.Collection;
 import java.util.Queue;
@@ -211,8 +212,9 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      *         element prevents it from being added to this queue
      */
     @EnsuresNonEmpty("this")
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     boolean add(@Growable BlockingQueue<E> this, E e);
-
     /**
      * Inserts the specified element into this queue if it is possible to do
      * so immediately without violating capacity restrictions, returning
@@ -230,8 +232,9 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this queue
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     boolean offer(@Growable BlockingQueue<E> this, E e);
-
     /**
      * Inserts the specified element into this queue, waiting if necessary
      * for space to become available.
@@ -244,8 +247,9 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this queue
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     void put(@Growable BlockingQueue<E> this, E e) throws InterruptedException;
-
     /**
      * Inserts the specified element into this queue, waiting up to the
      * specified wait time if necessary for space to become available.
@@ -264,8 +268,9 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this queue
      */
-    boolean offer(@Growable BlockingQueue<E> this, E e, long timeout, TimeUnit unit)
-        throws InterruptedException;
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    boolean offer(@Growable BlockingQueue<E> this, E e, long timeout, TimeUnit unit)        throws InterruptedException;
 
     /**
      * Retrieves and removes the head of this queue, waiting if necessary
@@ -274,8 +279,9 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      * @return the head of this queue
      * @throws InterruptedException if interrupted while waiting
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     E take(@Shrinkable BlockingQueue<E> this) throws InterruptedException;
-
     /**
      * Retrieves and removes the head of this queue, waiting up to the
      * specified wait time if necessary for an element to become available.
@@ -288,8 +294,9 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      *         specified waiting time elapses before an element is available
      * @throws InterruptedException if interrupted while waiting
      */
-    @Nullable E poll(@Shrinkable BlockingQueue<E> this, long timeout, TimeUnit unit)
-        throws InterruptedException;
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    @Nullable E poll(@Shrinkable BlockingQueue<E> this, long timeout, TimeUnit unit)        throws InterruptedException;
 
     /**
      * Returns the number of additional elements that this queue can ideally
@@ -322,8 +329,9 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      * @throws NullPointerException if the specified element is null
      * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     boolean remove(@Shrinkable @CanShrink BlockingQueue<E> this, @UnknownSignedness Object o);
-
     /**
      * Returns {@code true} if this queue contains the specified element.
      * More formally, returns {@code true} if and only if this queue contains
@@ -364,8 +372,9 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      *         queue, or some property of an element of this queue prevents
      *         it from being added to the specified collection
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     int drainTo(@Shrinkable @GuardSatisfied @CanShrink BlockingQueue<E> this, @Growable Collection<? super E> c);
-
     /**
      * Removes at most the given number of available elements from
      * this queue and adds them to the given collection.  A failure
@@ -389,5 +398,6 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      *         queue, or some property of an element of this queue prevents
      *         it from being added to the specified collection
      */
-    int drainTo(@Shrinkable @GuardSatisfied @CanShrink BlockingQueue<E> this, @Growable Collection<? super E> c, int maxElements);
-}
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    int drainTo(@Shrinkable @GuardSatisfied @CanShrink BlockingQueue<E> this, @Growable Collection<? super E> c, int maxElements);}

@@ -39,6 +39,7 @@ import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 /**
  * This class provides a skeletal implementation of the {@code List}
@@ -130,8 +131,9 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
      * @throws IllegalArgumentException      {@inheritDoc}
      * @throws IndexOutOfBoundsException     {@inheritDoc}
      */
-    public E set(@Replaceable @GuardSatisfied AbstractSequentialList<E> this, int index, E element) {
-        try {
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    public E set(@Replaceable @GuardSatisfied AbstractSequentialList<E> this, int index, E element) {        try {
             ListIterator<E> e = listIterator(index);
             E oldVal = e.next();
             e.set(element);
@@ -161,8 +163,9 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
      * @throws IllegalArgumentException      {@inheritDoc}
      * @throws IndexOutOfBoundsException     {@inheritDoc}
      */
-    public void add(@Growable @GuardSatisfied AbstractSequentialList<E> this, int index, E element) {
-        try {
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    public void add(@Growable @GuardSatisfied AbstractSequentialList<E> this, int index, E element) {        try {
             listIterator(index).add(element);
         } catch (NoSuchElementException exc) {
             throw new IndexOutOfBoundsException("Index: "+index);
@@ -186,8 +189,9 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
      * @throws UnsupportedOperationException {@inheritDoc}
      * @throws IndexOutOfBoundsException     {@inheritDoc}
      */
-    public E remove(@Shrinkable @GuardSatisfied @CanShrink AbstractSequentialList<E> this, int index) {
-        try {
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    public E remove(@Shrinkable @GuardSatisfied @CanShrink AbstractSequentialList<E> this, int index) {        try {
             ListIterator<E> e = listIterator(index);
             E outCast = e.next();
             e.remove();
@@ -229,8 +233,9 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
      * @throws IllegalArgumentException      {@inheritDoc}
      * @throws IndexOutOfBoundsException     {@inheritDoc}
      */
-    public boolean addAll(@Growable @GuardSatisfied AbstractSequentialList<E> this, int index, Collection<? extends E> c) {
-        try {
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean addAll(@Growable @GuardSatisfied AbstractSequentialList<E> this, int index, Collection<? extends E> c) {        try {
             boolean modified = false;
             ListIterator<E> e1 = listIterator(index);
             for (E e : c) {

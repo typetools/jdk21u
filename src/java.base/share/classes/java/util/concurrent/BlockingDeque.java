@@ -52,6 +52,7 @@ import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 import java.util.Deque;
 import java.util.Iterator;
@@ -235,8 +236,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws NullPointerException if the specified element is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     void addFirst(@Growable BlockingDeque<E> this, E e);
-
     /**
      * Inserts the specified element at the end of this deque if it is
      * possible to do so immediately without violating capacity restrictions,
@@ -250,8 +252,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws NullPointerException if the specified element is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     void addLast(@Growable BlockingDeque<E> this, E e);
-
     /**
      * Inserts the specified element at the front of this deque if it is
      * possible to do so immediately without violating capacity restrictions,
@@ -266,8 +269,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws NullPointerException if the specified element is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     boolean offerFirst(@Growable BlockingDeque<E> this, E e);
-
     /**
      * Inserts the specified element at the end of this deque if it is
      * possible to do so immediately without violating capacity restrictions,
@@ -282,8 +286,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws NullPointerException if the specified element is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     boolean offerLast(@Growable BlockingDeque<E> this, E e);
-
     /**
      * Inserts the specified element at the front of this deque,
      * waiting if necessary for space to become available.
@@ -296,8 +301,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this deque
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     void putFirst(@Growable BlockingDeque<E> this, E e) throws InterruptedException;
-
     /**
      * Inserts the specified element at the end of this deque,
      * waiting if necessary for space to become available.
@@ -310,8 +316,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this deque
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     void putLast(@Growable BlockingDeque<E> this, E e) throws InterruptedException;
-
     /**
      * Inserts the specified element at the front of this deque,
      * waiting up to the specified wait time if necessary for space to
@@ -331,8 +338,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this deque
      */
-    boolean offerFirst(@Growable BlockingDeque<E> this, E e, long timeout, TimeUnit unit)
-        throws InterruptedException;
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    boolean offerFirst(@Growable BlockingDeque<E> this, E e, long timeout, TimeUnit unit)        throws InterruptedException;
 
     /**
      * Inserts the specified element at the end of this deque,
@@ -353,8 +361,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this deque
      */
-    boolean offerLast(@Growable BlockingDeque<E> this, E e, long timeout, TimeUnit unit)
-        throws InterruptedException;
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    boolean offerLast(@Growable BlockingDeque<E> this, E e, long timeout, TimeUnit unit)        throws InterruptedException;
 
     /**
      * Retrieves and removes the first element of this deque, waiting
@@ -363,8 +372,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @return the head of this deque
      * @throws InterruptedException if interrupted while waiting
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     E takeFirst(@Shrinkable @CanShrink BlockingDeque<E> this) throws InterruptedException;
-
     /**
      * Retrieves and removes the last element of this deque, waiting
      * if necessary until an element becomes available.
@@ -372,8 +382,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @return the tail of this deque
      * @throws InterruptedException if interrupted while waiting
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     E takeLast(@Shrinkable @CanShrink BlockingDeque<E> this) throws InterruptedException;
-
     /**
      * Retrieves and removes the first element of this deque, waiting
      * up to the specified wait time if necessary for an element to
@@ -387,8 +398,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      *         waiting time elapses before an element is available
      * @throws InterruptedException if interrupted while waiting
      */
-    @Nullable E pollFirst(@Shrinkable @CanShrink BlockingDeque<E> this, long timeout, TimeUnit unit)
-        throws InterruptedException;
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    @Nullable E pollFirst(@Shrinkable @CanShrink BlockingDeque<E> this, long timeout, TimeUnit unit)        throws InterruptedException;
 
     /**
      * Retrieves and removes the last element of this deque, waiting
@@ -403,8 +415,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      *         waiting time elapses before an element is available
      * @throws InterruptedException if interrupted while waiting
      */
-    @Nullable E pollLast(@Shrinkable @CanShrink BlockingDeque<E> this, long timeout, TimeUnit unit)
-        throws InterruptedException;
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    @Nullable E pollLast(@Shrinkable @CanShrink BlockingDeque<E> this, long timeout, TimeUnit unit)        throws InterruptedException;
 
     /**
      * Removes the first occurrence of the specified element from this deque.
@@ -422,8 +435,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws NullPointerException if the specified element is null
      * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     boolean removeFirstOccurrence(@Shrinkable @CanShrink BlockingDeque<E> this, Object o);
-
     /**
      * Removes the last occurrence of the specified element from this deque.
      * If the deque does not contain the element, it is unchanged.
@@ -440,8 +454,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws NullPointerException if the specified element is null
      * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     boolean removeLastOccurrence(@Shrinkable @CanShrink BlockingDeque<E> this, Object o);
-
     // *** BlockingQueue methods ***
 
     /**
@@ -463,6 +478,8 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this deque
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     @EnsuresNonEmpty("this")
     boolean add(@Growable BlockingDeque<E> this, E e);
 
@@ -484,8 +501,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this deque
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     boolean offer(@Growable BlockingDeque<E> this, E e);
-
     /**
      * Inserts the specified element into the queue represented by this deque
      * (in other words, at the tail of this deque), waiting if necessary for
@@ -501,8 +519,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this deque
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     void put(@Growable BlockingDeque<E> this, E e) throws InterruptedException;
-
     /**
      * Inserts the specified element into the queue represented by this deque
      * (in other words, at the tail of this deque), waiting up to the
@@ -521,8 +540,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this deque
      */
-    boolean offer(@Growable BlockingDeque<E> this, E e, long timeout, TimeUnit unit)
-        throws InterruptedException;
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    boolean offer(@Growable BlockingDeque<E> this, E e, long timeout, TimeUnit unit)        throws InterruptedException;
 
     /**
      * Retrieves and removes the head of the queue represented by this deque
@@ -535,8 +555,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @return the head of the queue represented by this deque
      * @throws NoSuchElementException if this deque is empty
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     E remove(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink BlockingDeque<E> this);
-
     /**
      * Retrieves and removes the head of the queue represented by this deque
      * (in other words, the first element of this deque), or returns
@@ -546,8 +567,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      *
      * @return the head of this deque, or {@code null} if this deque is empty
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     @Nullable E poll(@Shrinkable @CanShrink BlockingDeque<E> this);
-
     /**
      * Retrieves and removes the head of the queue represented by this deque
      * (in other words, the first element of this deque), waiting if
@@ -558,8 +580,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @return the head of this deque
      * @throws InterruptedException if interrupted while waiting
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     E take(@Shrinkable @CanShrink BlockingDeque<E> this) throws InterruptedException;
-
     /**
      * Retrieves and removes the head of the queue represented by this deque
      * (in other words, the first element of this deque), waiting up to the
@@ -572,8 +595,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      *         specified waiting time elapses before an element is available
      * @throws InterruptedException if interrupted while waiting
      */
-    @Nullable E poll(@Shrinkable @CanShrink BlockingDeque<E> this, long timeout, TimeUnit unit)
-        throws InterruptedException;
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    @Nullable E poll(@Shrinkable @CanShrink BlockingDeque<E> this, long timeout, TimeUnit unit)        throws InterruptedException;
 
     /**
      * Retrieves, but does not remove, the head of the queue represented by
@@ -586,6 +610,7 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @return the head of this deque
      * @throws NoSuchElementException if this deque is empty
      */
+    @Pure
     E element(@NonEmpty BlockingDeque<E> this);
 
     /**
@@ -597,6 +622,7 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      *
      * @return the head of this deque, or {@code null} if this deque is empty
      */
+    @Pure
     @Nullable E peek();
 
     /**
@@ -618,8 +644,9 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws NullPointerException if the specified element is null
      * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      */
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     boolean remove(@Shrinkable @CanShrink BlockingDeque<E> this, @UnknownSignedness Object o);
-
     /**
      * Returns {@code true} if this deque contains the specified element.
      * More formally, returns {@code true} if and only if this deque contains
@@ -652,7 +679,7 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @return an iterator over the elements in this deque in proper sequence
      */
     @SideEffectFree
-    @PolyModifiable @PolyGrowShrink @PolyNonEmpty Iterator<E> iterator(@PolyModifiable @PolyGrowShrink @PolyNonEmpty BlockingDeque<E> this);
+    @PolyGrowShrink @PolyModifiable @PolyNonEmpty Iterator<E> iterator(@PolyGrowShrink @PolyModifiable @PolyNonEmpty BlockingDeque<E> this);
 
     // *** Stack methods ***
 
@@ -669,5 +696,6 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      * @throws NullPointerException if the specified element is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
-    void push(@Growable BlockingDeque<E> this, E e);
-}
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    void push(@Growable BlockingDeque<E> this, E e);}

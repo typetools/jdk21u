@@ -28,6 +28,7 @@ package java.util;
 import org.checkerframework.common.value.qual.StaticallyExecutable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -46,6 +47,7 @@ class ReverseOrderListView<E> implements List<E> {
     final List<E> base;
     final boolean modifiable;
 
+    @SideEffectFree
     public static <T> List<T> of(List<T> list, boolean modifiable) {
         if (list instanceof ReverseOrderListView<T> rolv) {
             return rolv.base;
@@ -84,6 +86,7 @@ class ReverseOrderListView<E> implements List<E> {
 
     class DescendingIterator implements Iterator<E> {
         final ListIterator<E> it = base.listIterator(base.size());
+        @Pure
         public boolean hasNext() { return it.hasPrevious(); }
         public E next() { return it.previous(); }
         public void remove() {
@@ -102,6 +105,7 @@ class ReverseOrderListView<E> implements List<E> {
             it = base.listIterator(size - pos);
         }
 
+        @Pure
         public boolean hasNext() {
             return it.hasPrevious();
         }
@@ -119,10 +123,12 @@ class ReverseOrderListView<E> implements List<E> {
             return it.next();
         }
 
+        @Pure
         public int nextIndex() {
             return base.size() - it.nextIndex();
         }
 
+        @Pure
         public int previousIndex() {
             return nextIndex() - 1;
         }
@@ -151,10 +157,12 @@ class ReverseOrderListView<E> implements List<E> {
             action.accept(e);
     }
 
+    @SideEffectFree
     public Iterator<E> iterator() {
         return new DescendingIterator();
     }
 
+    @SideEffectFree
     public Spliterator<E> spliterator() {
         return Spliterators.spliterator(this, Spliterator.ORDERED);
     }
@@ -185,15 +193,18 @@ class ReverseOrderListView<E> implements List<E> {
         base.clear();
     }
 
+    @Pure
     public boolean contains(Object o) {
         return base.contains(o);
     }
 
+    @Pure
     public boolean containsAll(Collection<?> c) {
         return base.containsAll(c);
     }
 
     // copied from AbstractList
+    @Pure
     public boolean equals(Object o) {
         if (o == this)
             return true;
@@ -212,6 +223,7 @@ class ReverseOrderListView<E> implements List<E> {
     }
 
     // copied from AbstractList
+    @Pure
     public int hashCode() {
         int hashCode = 1;
         for (E e : this)
@@ -219,6 +231,7 @@ class ReverseOrderListView<E> implements List<E> {
         return hashCode;
     }
 
+    @Pure
     public boolean isEmpty() {
         return base.isEmpty();
     }
@@ -279,6 +292,7 @@ class ReverseOrderListView<E> implements List<E> {
         return modified;
     }
 
+    @Pure
     public int size() {
         return base.size();
     }
@@ -303,6 +317,7 @@ class ReverseOrderListView<E> implements List<E> {
     }
 
     // copied from AbstractCollection
+    @SideEffectFree
     public String toString() {
         Iterator<E> it = iterator();
         if (! it.hasNext())
@@ -385,6 +400,7 @@ class ReverseOrderListView<E> implements List<E> {
         return base.removeIf(filter);
     }
 
+    @DoesNotUnrefineReceiver("modifiability")
     public void replaceAll(UnaryOperator<E> operator) {
         checkModifiable();
         base.replaceAll(operator);
@@ -402,6 +418,7 @@ class ReverseOrderListView<E> implements List<E> {
         return base.set(size - index - 1, element);
     }
 
+    @SideEffectFree
     public List<E> subList(int fromIndex, int toIndex) {
         int size = base.size();
         Objects.checkFromToIndex(fromIndex, toIndex, size);

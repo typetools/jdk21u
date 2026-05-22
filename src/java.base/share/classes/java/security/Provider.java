@@ -28,6 +28,7 @@ package java.security;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 import javax.security.auth.login.Configuration;
 import jdk.internal.event.SecurityProviderServiceEvent;
@@ -637,6 +638,7 @@ public abstract class Provider extends Properties {
      * @since 1.8
      */
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized void replaceAll(BiFunction<? super Object,
             ? super Object, ? extends Object> function) {
         check("putProviderProperty." + name);
@@ -665,6 +667,7 @@ public abstract class Provider extends Properties {
      * @since 1.8
      */
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized @PolyNull Object compute(Object key, BiFunction<? super Object,
             ? super Object, ? extends @PolyNull Object> remappingFunction) {
         check("putProviderProperty." + name);
@@ -695,6 +698,7 @@ public abstract class Provider extends Properties {
      * @since 1.8
      */
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized @PolyNull Object computeIfAbsent(Object key,
             Function<? super Object, ? extends @PolyNull Object> mappingFunction) {
         check("putProviderProperty." + name);
@@ -724,6 +728,7 @@ public abstract class Provider extends Properties {
      * @since 1.8
      */
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized @PolyNull Object computeIfPresent(Object key,
             BiFunction<? super Object, ? super Object, ? extends @PolyNull Object>
             remappingFunction) {
@@ -757,6 +762,7 @@ public abstract class Provider extends Properties {
      * @since 1.8
      */
     @Override
+    @DoesNotUnrefineReceiver("modifiability")
     public synchronized @PolyNull Object merge(Object key, Object value,
             BiFunction<? super Object, ? super Object, ? extends @PolyNull Object>
             remappingFunction) {

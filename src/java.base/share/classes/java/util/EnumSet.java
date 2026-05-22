@@ -29,8 +29,9 @@ import org.checkerframework.checker.modifiability.qual.Growable;
 import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 import jdk.internal.access.SharedSecrets;
 
@@ -148,6 +149,7 @@ public abstract sealed class EnumSet<E extends Enum<E>> extends AbstractSet<E>
      * Adds all of the elements from the appropriate enum type to this enum
      * set, which is empty prior to the call.
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     abstract void addAll(@Growable EnumSet<E> this);
 
@@ -160,6 +162,7 @@ public abstract sealed class EnumSet<E extends Enum<E>> extends AbstractSet<E>
      * @return A copy of the specified enum set.
      * @throws NullPointerException if {@code s} is null
      */
+    @SideEffectFree
     public static <E extends Enum<E>> @Modifiable EnumSet<E> copyOf(EnumSet<E> s) {
         return s.clone();
     }
@@ -178,6 +181,7 @@ public abstract sealed class EnumSet<E extends Enum<E>> extends AbstractSet<E>
      *     {@code EnumSet} instance and contains no elements
      * @throws NullPointerException if {@code c} is null
      */
+    @SideEffectFree
     public static <E extends Enum<E>> @Modifiable EnumSet<E> copyOf(Collection<E> c) {
         if (c instanceof EnumSet) {
             return ((EnumSet<E>)c).clone();
@@ -223,6 +227,7 @@ public abstract sealed class EnumSet<E extends Enum<E>> extends AbstractSet<E>
      * @throws NullPointerException if {@code e} is null
      * @return an enum set initially containing the specified element
      */
+    @SideEffectFree
     public static <E extends Enum<E>> @Modifiable EnumSet<E> of(E e) {
         EnumSet<E> result = noneOf(e.getDeclaringClass());
         result.add(e);
@@ -244,6 +249,7 @@ public abstract sealed class EnumSet<E extends Enum<E>> extends AbstractSet<E>
      * @throws NullPointerException if any parameters are null
      * @return an enum set initially containing the specified elements
      */
+    @SideEffectFree
     public static <E extends Enum<E>> @Modifiable EnumSet<E> of(E e1, E e2) {
         EnumSet<E> result = noneOf(e1.getDeclaringClass());
         result.add(e1);
@@ -267,6 +273,7 @@ public abstract sealed class EnumSet<E extends Enum<E>> extends AbstractSet<E>
      * @throws NullPointerException if any parameters are null
      * @return an enum set initially containing the specified elements
      */
+    @SideEffectFree
     public static <E extends Enum<E>> @Modifiable EnumSet<E> of(E e1, E e2, E e3) {
         EnumSet<E> result = noneOf(e1.getDeclaringClass());
         result.add(e1);
@@ -292,6 +299,7 @@ public abstract sealed class EnumSet<E extends Enum<E>> extends AbstractSet<E>
      * @throws NullPointerException if any parameters are null
      * @return an enum set initially containing the specified elements
      */
+    @SideEffectFree
     public static <E extends Enum<E>> @Modifiable EnumSet<E> of(E e1, E e2, E e3, E e4) {
         EnumSet<E> result = noneOf(e1.getDeclaringClass());
         result.add(e1);
@@ -346,6 +354,7 @@ public abstract sealed class EnumSet<E extends Enum<E>> extends AbstractSet<E>
      * @return an enum set initially containing the specified elements
      */
     @SafeVarargs
+    @SideEffectFree
     public static <E extends Enum<E>> @Modifiable EnumSet<E> of(E first, E... rest) {
         EnumSet<E> result = noneOf(first.getDeclaringClass());
         result.add(first);
@@ -380,6 +389,7 @@ public abstract sealed class EnumSet<E extends Enum<E>> extends AbstractSet<E>
      * Adds the specified range to this enum set, which is empty prior
      * to the call.
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     abstract void addRange(@Growable EnumSet<E> this, E from, E to);
 
@@ -401,6 +411,7 @@ public abstract sealed class EnumSet<E extends Enum<E>> extends AbstractSet<E>
     /**
      * Complements the contents of this enum set.
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     abstract void complement(@Growable @Shrinkable EnumSet<E> this);
 

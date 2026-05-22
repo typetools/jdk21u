@@ -165,6 +165,7 @@ public interface ConcurrentNavigableMap<K,V>
      *
      * @return a navigable set view of the keys in this map
      */
+    @SideEffectFree
     @PolyShrink NavigableSet<K> keySet(@PolyShrink ConcurrentNavigableMap<K, V> this);
 
     /**

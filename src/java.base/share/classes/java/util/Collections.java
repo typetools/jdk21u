@@ -49,12 +49,12 @@ import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.common.value.qual.ArrayLen;
 import org.checkerframework.common.value.qual.MinLen;
 import org.checkerframework.common.value.qual.StaticallyExecutable;
-import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 // import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -298,6 +298,7 @@ public class Collections {
      * Gets the ith element from the given list by repositioning the specified
      * list listIterator.
      */
+    // @SideEffectsOnly("#1")
     private static <T> T get(ListIterator<? extends T> i, int index) {
         T obj;
         int pos = i.nextIndex();
@@ -1120,7 +1121,6 @@ public class Collections {
         public boolean contains(@UnknownSignedness Object o)          {return c.contains(o);}
         @SideEffectFree
         public @PolyNull @PolySigned Object[] toArray(Collections.UnmodifiableCollection<@PolyNull @PolySigned E> this)                  {return c.toArray();}
-        @SideEffectFree
         public <T> @Nullable T[] toArray(@PolyNull T[] a)              {return c.toArray(a);}
         @SideEffectFree
         public <T> T[] toArray(IntFunction<T[]> f) {return c.toArray(f);}
@@ -1136,7 +1136,9 @@ public class Collections {
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext() {return i.hasNext();}
                 // @SideEffectsOnly("this")
+                @DoesNotUnrefineReceiver("modifiability")
                 public E next(/*@NonEmpty Iterator<E> this*/)          {return i.next();}
+                // @SideEffectsOnly("this")
                 @DoesNotUnrefineReceiver("modifiability")
                 public void remove() {
                     throw new UnsupportedOperationException();
@@ -1150,11 +1152,13 @@ public class Collections {
             };
         }
 
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         @EnsuresNonEmpty("this")
         public boolean add(E e) {
             throw new UnsupportedOperationException();
         }
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public boolean remove(@UnknownSignedness Object o) {
             throw new UnsupportedOperationException();
@@ -1164,18 +1168,22 @@ public class Collections {
         public boolean containsAll(Collection<? extends @UnknownSignedness Object> coll) {
             return c.containsAll(coll);
         }
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public boolean addAll(Collection<? extends E> coll) {
             throw new UnsupportedOperationException();
         }
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public boolean removeAll(Collection<? extends @UnknownSignedness Object> coll) {
             throw new UnsupportedOperationException();
         }
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public boolean retainAll(Collection<? extends @UnknownSignedness Object> coll) {
             throw new UnsupportedOperationException();
         }
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public void clear() {
             throw new UnsupportedOperationException();
@@ -1188,6 +1196,7 @@ public class Collections {
             c.forEach(action);
         }
         @Override
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public boolean removeIf(Predicate<? super E> filter) {
             throw new UnsupportedOperationException();
@@ -1200,12 +1209,14 @@ public class Collections {
         }
         @SuppressWarnings("unchecked")
         @Override
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public Stream<E> stream() {
             return (Stream<E>)c.stream();
         }
         @SuppressWarnings("unchecked")
         @Override
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public Stream<E> parallelStream() {
             return (Stream<E>)c.parallelStream();
@@ -1264,16 +1275,19 @@ public class Collections {
         // Even though this wrapper class is serializable, the reversed view is effectively
         // not serializable because it points to the reversed collection view, which usually isn't
         // serializable.
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public SequencedCollection<E> reversed() {
             return new UnmodifiableSequencedCollection<>(sc().reversed());
         }
 
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public void addFirst(E e) {
             throw new UnsupportedOperationException();
         }
 
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public void addLast(E e) {
             throw new UnsupportedOperationException();
@@ -1289,11 +1303,13 @@ public class Collections {
             return sc().getLast();
         }
 
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public E removeFirst() {
             throw new UnsupportedOperationException();
         }
 
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public E removeLast() {
             throw new UnsupportedOperationException();
@@ -1386,6 +1402,7 @@ public class Collections {
         // Even though this wrapper class is serializable, the reversed view is effectively
         // not serializable because it points to the reversed set view, which usually isn't
         // serializable.
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public SequencedSet<E> reversed() {
             return new UnmodifiableSequencedSet<>(ss().reversed());
@@ -1433,14 +1450,17 @@ public class Collections {
         @Pure
         public Comparator<? super E> comparator() {return ss.comparator();}
 
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public SortedSet<E> subSet(E fromElement, E toElement) {
             return new UnmodifiableSortedSet<>(ss.subSet(fromElement,toElement));
         }
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public SortedSet<E> headSet(E toElement) {
             return new UnmodifiableSortedSet<>(ss.headSet(toElement));
         }
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public SortedSet<E> tailSet(E fromElement) {
             return new UnmodifiableSortedSet<>(ss.tailSet(fromElement));
@@ -1529,29 +1549,36 @@ public class Collections {
         public E ceiling(E e)                         { return ns.ceiling(e); }
         @Pure
         public E higher(E e)                           { return ns.higher(e); }
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public E pollFirst()     { throw new UnsupportedOperationException(); }
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public E pollLast()      { throw new UnsupportedOperationException(); }
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public NavigableSet<E> descendingSet()
                  { return new UnmodifiableNavigableSet<>(ns.descendingSet()); }
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public Iterator<E> descendingIterator()
                                          { return descendingSet().iterator(); }
 
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public NavigableSet<E> subSet(E fromElement, boolean fromInclusive, E toElement, boolean toInclusive) {
             return new UnmodifiableNavigableSet<>(
                 ns.subSet(fromElement, fromInclusive, toElement, toInclusive));
         }
 
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public NavigableSet<E> headSet(E toElement, boolean inclusive) {
             return new UnmodifiableNavigableSet<>(
                 ns.headSet(toElement, inclusive));
         }
 
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
             return new UnmodifiableNavigableSet<>(
@@ -1609,14 +1636,17 @@ public class Collections {
 
         @Pure
         public E get(int index) {return list.get(index);}
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public E set(int index, E element) {
             throw new UnsupportedOperationException();
         }
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public void add(int index, E element) {
             throw new UnsupportedOperationException();
         }
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public E remove(int index) {
             throw new UnsupportedOperationException();
@@ -1627,6 +1657,7 @@ public class Collections {
         @Pure
         @StaticallyExecutable
         public int lastIndexOf(Object o)        {return list.lastIndexOf(o);}
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public boolean addAll(int index, Collection<? extends E> c) {
             throw new UnsupportedOperationException();
@@ -1638,6 +1669,7 @@ public class Collections {
             throw new UnsupportedOperationException();
         }
         @Override
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public void sort(Comparator<? super E> c) {
             throw new UnsupportedOperationException();
@@ -1645,6 +1677,7 @@ public class Collections {
 
         public @PolyGrowShrink @PolyNonEmpty ListIterator<E> listIterator(@PolyGrowShrink @PolyNonEmpty UnmodifiableList<E> this)   {return listIterator(0);}
 
+        // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         public ListIterator<E> listIterator(final int index) {
             return new ListIterator<>() {
@@ -1655,20 +1688,29 @@ public class Collections {
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext()     {return i.hasNext();}
                 // @SideEffectsOnly("this")
+                @DoesNotUnrefineReceiver("modifiability")
                 public E next(/*@NonEmpty ListIterator<E> this*/)              {return i.next();}
                 @Pure
                 public boolean hasPrevious() {return i.hasPrevious();}
                 // @SideEffectsOnly("this")
                 public E previous()          {return i.previous();}
+                @Pure
                 public int nextIndex()       {return i.nextIndex();}
+                @Pure
                 public int previousIndex()   {return i.previousIndex();}
 
+                // @SideEffectsOnly("this")
+                @DoesNotUnrefineReceiver("modifiability")
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }
+                // @SideEffectsOnly("this")
+                @DoesNotUnrefineReceiver("modifiability")
                 public void set(E e) {
                     throw new UnsupportedOperationException();
                 }
+                // @SideEffectsOnly("this")
+                @DoesNotUnrefineReceiver("modifiability")
                 public void add(E e) {
                     throw new UnsupportedOperationException();
                 }
@@ -1785,18 +1827,27 @@ public class Collections {
         public boolean containsKey(@UnknownSignedness Object key)   {return m.containsKey(key);}
         @Pure
         public boolean containsValue(@UnknownSignedness Object val) {return m.containsValue(val);}
+        @Pure
         public V get(Object key)                 {return m.get(key);}
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         @EnsuresKeyFor(value={"#1"}, map={"this"})
         public V put(K key, V value) {
             throw new UnsupportedOperationException();
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public V remove(Object key) {
             throw new UnsupportedOperationException();
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void putAll(Map<? extends K, ? extends V> m) {
             throw new UnsupportedOperationException();
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void clear() {
             throw new UnsupportedOperationException();
         }
@@ -1824,7 +1875,9 @@ public class Collections {
             return values;
         }
 
+        @Pure
         public boolean equals(Object o) {return o == this || m.equals(o);}
+        @Pure
         public int hashCode()           {return m.hashCode();}
         public String toString()        {return m.toString();}
 
@@ -1843,10 +1896,13 @@ public class Collections {
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
             throw new UnsupportedOperationException();
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         @EnsuresKeyFor(value={"#1"}, map={"this"})
         @Override
         public V putIfAbsent(K key, V value) {
@@ -1854,38 +1910,48 @@ public class Collections {
         }
 
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean remove(@UnknownSignedness Object key, @UnknownSignedness Object value) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean replace(K key, V oldValue, V newValue) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public V replace(K key, V value) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V computeIfAbsent(K key, Function<? super K, ? extends @PolyNull V> mappingFunction) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V computeIfPresent(K key,
                 BiFunction<? super K, ? super V, ? extends @PolyNull V> remappingFunction) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V compute(K key,
                 BiFunction<? super K, ? super V, ? extends @PolyNull V> remappingFunction) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V merge(K key, @NonNull V value,
                 BiFunction<? super V, ? super V, ? extends @PolyNull V> remappingFunction) {
             throw new UnsupportedOperationException();
@@ -1999,9 +2065,12 @@ public class Collections {
                         return i.hasNext();
                     }
                     // @SideEffectsOnly("this")
+                    @DoesNotUnrefineReceiver("modifiability")
                     public Map.Entry<K,V> next(/*@NonEmpty Iterator<Map.Entry<K,V>> this*/) {
                         return new UnmodifiableEntry<>(i.next());
                     }
+                    // @SideEffectsOnly("this")
+                    @DoesNotUnrefineReceiver("modifiability")
                     public void remove() {
                         throw new UnsupportedOperationException();
                     }
@@ -2047,6 +2116,7 @@ public class Collections {
              * that the equality-candidate is Map.Entry and calls its
              * setValue method.
              */
+            @Pure
             @EnsuresNonEmptyIf(result = true, expression = "this")
             public boolean contains(@UnknownSignedness Object o) {
                 if (!(o instanceof Map.Entry))
@@ -2068,6 +2138,7 @@ public class Collections {
                 }
                 return true;
             }
+            @Pure
             public boolean equals(Object o) {
                 if (o == this)
                     return true;
@@ -2090,12 +2161,16 @@ public class Collections {
                 UnmodifiableEntry(Map.Entry<? extends K, ? extends V> e)
                         {this.e = Objects.requireNonNull(e);}
 
+                @Pure
                 public K getKey()        {return e.getKey();}
+                @Pure
                 public V getValue()      {return e.getValue();}
                 public V setValue(V value) {
                     throw new UnsupportedOperationException();
                 }
+                @Pure
                 public int hashCode()    {return e.hashCode();}
+                @Pure
                 public boolean equals(Object o) {
                     if (this == o)
                         return true;
@@ -2157,18 +2232,26 @@ public class Collections {
             return new UnmodifiableSequencedMap<>(sm().reversed());
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public Entry<K, V> pollFirstEntry() {
             throw new UnsupportedOperationException();
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public Entry<K, V> pollLastEntry() {
             throw new UnsupportedOperationException();
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public V putFirst(K k, V v) {
             throw new UnsupportedOperationException();
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public V putLast(K k, V v) {
             throw new UnsupportedOperationException();
         }
@@ -2358,8 +2441,12 @@ public class Collections {
                 : null;
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public Entry<K, V> pollFirstEntry()
                                  { throw new UnsupportedOperationException(); }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public Entry<K, V> pollLastEntry()
                                  { throw new UnsupportedOperationException(); }
         @SideEffectFree
@@ -2482,10 +2569,14 @@ public class Collections {
             return c.iterator(); // Must be manually synched by user!
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         @EnsuresNonEmpty("this")
         public boolean add(E e) {
             synchronized (mutex) {return c.add(e);}
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean remove(@UnknownSignedness Object o) {
             synchronized (mutex) {return c.remove(o);}
         }
@@ -2494,15 +2585,23 @@ public class Collections {
         public boolean containsAll(Collection<? extends @UnknownSignedness Object> coll) {
             synchronized (mutex) {return c.containsAll(coll);}
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean addAll(Collection<? extends E> coll) {
             synchronized (mutex) {return c.addAll(coll);}
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean removeAll(Collection<? extends @UnknownSignedness Object> coll) {
             synchronized (mutex) {return c.removeAll(coll);}
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean retainAll(Collection<? extends @UnknownSignedness Object> coll) {
             synchronized (mutex) {return c.retainAll(coll);}
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void clear() {
             synchronized (mutex) {c.clear();}
         }
@@ -2515,6 +2614,8 @@ public class Collections {
             synchronized (mutex) {c.forEach(consumer);}
         }
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean removeIf(Predicate<? super E> filter) {
             synchronized (mutex) {return c.removeIf(filter);}
         }
@@ -2588,11 +2689,13 @@ public class Collections {
             super(s, mutex);
         }
 
+        @Pure
         public boolean equals(Object o) {
             if (this == o)
                 return true;
             synchronized (mutex) {return c.equals(o);}
         }
+        @Pure
         public int hashCode() {
             synchronized (mutex) {return c.hashCode();}
         }
@@ -2764,7 +2867,11 @@ public class Collections {
         public E floor(E e)      { synchronized (mutex) {return ns.floor(e);} }
         public E ceiling(E e)  { synchronized (mutex) {return ns.ceiling(e);} }
         public E higher(E e)    { synchronized (mutex) {return ns.higher(e);} }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public E pollFirst()  { synchronized (mutex) {return ns.pollFirst();} }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public E pollLast()    { synchronized (mutex) {return ns.pollLast();} }
 
         public NavigableSet<E> descendingSet() {
@@ -2871,11 +2978,13 @@ public class Collections {
             this.list = list;
         }
 
+        @Pure
         public boolean equals(Object o) {
             if (this == o)
                 return true;
             synchronized (mutex) {return list.equals(o);}
         }
+        @Pure
         public int hashCode() {
             synchronized (mutex) {return list.hashCode();}
         }
@@ -2884,12 +2993,18 @@ public class Collections {
         public E get(int index) {
             synchronized (mutex) {return list.get(index);}
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public E set(int index, E element) {
             synchronized (mutex) {return list.set(index, element);}
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void add(int index, E element) {
             synchronized (mutex) {list.add(index, element);}
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public E remove(int index) {
             synchronized (mutex) {return list.remove(index);}
         }
@@ -2905,6 +3020,8 @@ public class Collections {
             synchronized (mutex) {return list.lastIndexOf(o);}
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean addAll(int index, Collection<? extends E> c) {
             synchronized (mutex) {return list.addAll(index, c);}
         }
@@ -2925,10 +3042,13 @@ public class Collections {
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public void replaceAll(UnaryOperator<E> operator) {
             synchronized (mutex) {list.replaceAll(operator);}
         }
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void sort(Comparator<? super E> c) {
             synchronized (mutex) {list.sort(c);}
         }
@@ -3065,20 +3185,29 @@ public class Collections {
         public boolean containsValue(@UnknownSignedness Object value) {
             synchronized (mutex) {return m.containsValue(value);}
         }
+        @Pure
         public V get(Object key) {
             synchronized (mutex) {return m.get(key);}
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         @EnsuresKeyFor(value={"#1"}, map={"this"})
         public V put(K key, V value) {
             synchronized (mutex) {return m.put(key, value);}
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public V remove(Object key) {
             synchronized (mutex) {return m.remove(key);}
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void putAll(Map<? extends K, ? extends V> map) {
             synchronized (mutex) {m.putAll(map);}
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void clear() {
             synchronized (mutex) {m.clear();}
         }
@@ -3112,11 +3241,13 @@ public class Collections {
             }
         }
 
+        @Pure
         public boolean equals(Object o) {
             if (this == o)
                 return true;
             synchronized (mutex) {return m.equals(o);}
         }
+        @Pure
         public int hashCode() {
             synchronized (mutex) {return m.hashCode();}
         }
@@ -3135,42 +3266,55 @@ public class Collections {
             synchronized (mutex) {m.forEach(action);}
         }
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
             synchronized (mutex) {m.replaceAll(function);}
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         @EnsuresKeyFor(value={"#1"}, map={"this"})
         @Override
         public V putIfAbsent(K key, V value) {
             synchronized (mutex) {return m.putIfAbsent(key, value);}
         }
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean remove(@UnknownSignedness Object key, @UnknownSignedness Object value) {
             synchronized (mutex) {return m.remove(key, value);}
         }
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean replace(K key, V oldValue, V newValue) {
             synchronized (mutex) {return m.replace(key, oldValue, newValue);}
         }
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public V replace(K key, V value) {
             synchronized (mutex) {return m.replace(key, value);}
         }
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V computeIfAbsent(K key,
                 Function<? super K, ? extends @PolyNull V> mappingFunction) {
             synchronized (mutex) {return m.computeIfAbsent(key, mappingFunction);}
         }
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V computeIfPresent(K key,
                 BiFunction<? super K, ? super V, ? extends @PolyNull V> remappingFunction) {
             synchronized (mutex) {return m.computeIfPresent(key, remappingFunction);}
         }
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V compute(K key,
                 BiFunction<? super K, ? super V, ? extends @PolyNull V> remappingFunction) {
             synchronized (mutex) {return m.compute(key, remappingFunction);}
         }
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V merge(K key, @NonNull V value,
                 BiFunction<? super V, ? super V, ? extends @PolyNull V> remappingFunction) {
             synchronized (mutex) {return m.merge(key, value, remappingFunction);}
@@ -3381,8 +3525,12 @@ public class Collections {
                            { synchronized (mutex) { return nm.firstEntry(); } }
         public Entry<K, V> lastEntry()
                             { synchronized (mutex) { return nm.lastEntry(); } }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public Entry<K, V> pollFirstEntry()
                        { synchronized (mutex) { return nm.pollFirstEntry(); } }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public Entry<K, V> pollLastEntry()
                         { synchronized (mutex) { return nm.pollLastEntry(); } }
 
@@ -3570,21 +3718,28 @@ public class Collections {
         public boolean contains(@UnknownSignedness Object o)          { return c.contains(o); }
         @SideEffectFree
         public @PolyNull @PolySigned Object[] toArray(Collections.CheckedCollection<@PolyNull @PolySigned E> this)                  { return c.toArray(); }
-        @SideEffectFree
         public <T> @Nullable T[] toArray(@PolyNull T[] a)              { return c.toArray(a); }
         @SideEffectFree
         public <T> T[] toArray(IntFunction<T[]> f) { return c.toArray(f); }
         public String toString()                   { return c.toString(); }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean remove(@UnknownSignedness Object o)            { return c.remove(o); }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void clear()                        {        c.clear(); }
 
         @Pure
         public boolean containsAll(Collection<? extends @UnknownSignedness Object> coll) {
             return c.containsAll(coll);
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean removeAll(Collection<? extends @UnknownSignedness Object> coll) {
             return c.removeAll(coll);
         }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean retainAll(Collection<? extends @UnknownSignedness Object> coll) {
             return c.retainAll(coll);
         }
@@ -3599,7 +3754,10 @@ public class Collections {
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext() { return it.hasNext(); }
                 // @SideEffectsOnly("this")
+                @DoesNotUnrefineReceiver("modifiability")
                 public E next(/*@NonEmpty Iterator<E> this*/)          { return it.next(); }
+                // @SideEffectsOnly("this")
+                @DoesNotUnrefineReceiver("modifiability")
                 public void remove()     {        it.remove(); }
                 public void forEachRemaining(Consumer<? super E> action) {
                     it.forEachRemaining(action);
@@ -3607,6 +3765,8 @@ public class Collections {
             };
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         @EnsuresNonEmpty("this")
         public boolean add(E e)          { return c.add(typeCheck(e)); }
 
@@ -3641,6 +3801,8 @@ public class Collections {
             return (Collection<E>) Arrays.asList(a);
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean addAll(Collection<? extends E> coll) {
             // Doing things this way insulates us from concurrent changes
             // in the contents of coll and provides all-or-nothing
@@ -3653,6 +3815,8 @@ public class Collections {
         @Override
         public void forEach(Consumer<? super E> action) {c.forEach(action);}
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean removeIf(Predicate<? super E> filter) {
             return c.removeIf(filter);
         }
@@ -3713,6 +3877,7 @@ public class Collections {
             this.queue = queue;
         }
 
+        @Pure
         public E element()              {return queue.element();}
         @Pure
         public boolean equals(Object o) {return o == this || c.equals(o);}
@@ -3720,8 +3885,14 @@ public class Collections {
         public int hashCode()           {return c.hashCode();}
         @Pure
         public E peek()                 {return queue.peek();}
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public E poll()                 {return queue.poll();}
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public E remove()               {return queue.remove();}
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean offer(E e)       {return queue.offer(typeCheck(e));}
     }
 
@@ -3767,7 +3938,9 @@ public class Collections {
 
         CheckedSet(Set<E> s, Class<E> elementType) { super(s, elementType); }
 
+        @Pure
         public boolean equals(Object o) { return o == this || c.equals(o); }
+        @Pure
         public int hashCode()           { return c.hashCode(); }
     }
 
@@ -3984,6 +4157,8 @@ public class Collections {
         @Pure
         @StaticallyExecutable
         public E get(int index)          { return list.get(index); }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public E remove(int index)       { return list.remove(index); }
         @Pure
         @StaticallyExecutable
@@ -3992,14 +4167,20 @@ public class Collections {
         @StaticallyExecutable
         public int lastIndexOf(Object o) { return list.lastIndexOf(o); }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public E set(int index, E element) {
             return list.set(index, typeCheck(element));
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void add(int index, E element) {
             list.add(index, typeCheck(element));
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean addAll(int index, Collection<? extends E> c) {
             return list.addAll(index, checkedCopyOf(c));
         }
@@ -4013,18 +4194,27 @@ public class Collections {
                 @EnsuresNonEmptyIf(result = true, expression = "this")
                 public boolean hasNext()     { return i.hasNext(); }
                 // @SideEffectsOnly("this")
+                @DoesNotUnrefineReceiver("modifiability")
                 public E next(/*@NonEmpty ListIterator<E> this*/)              { return i.next(); }
                 @Pure
                 public boolean hasPrevious() { return i.hasPrevious(); }
                 public E previous()          { return i.previous(); }
+                @Pure
                 public int nextIndex()       { return i.nextIndex(); }
+                @Pure
                 public int previousIndex()   { return i.previousIndex(); }
+                // @SideEffectsOnly("this")
+                @DoesNotUnrefineReceiver("modifiability")
                 public void remove()         {        i.remove(); }
 
+                // @SideEffectsOnly("this")
+                @DoesNotUnrefineReceiver("modifiability")
                 public void set(E e) {
                     i.set(typeCheck(e));
                 }
 
+                // @SideEffectsOnly("this")
+                @DoesNotUnrefineReceiver("modifiability")
                 public void add(E e) {
                     i.add(typeCheck(e));
                 }
@@ -4049,12 +4239,15 @@ public class Collections {
          *         already been replaced.
          */
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public void replaceAll(UnaryOperator<E> operator) {
             Objects.requireNonNull(operator);
             list.replaceAll(e -> typeCheck(operator.apply(e)));
         }
 
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void sort(Comparator<? super E> c) {
             list.sort(c);
         }
@@ -4182,21 +4375,32 @@ public class Collections {
         public boolean containsKey(@UnknownSignedness Object key) { return m.containsKey(key); }
         @Pure
         public boolean containsValue(@UnknownSignedness Object v) { return m.containsValue(v); }
+        @Pure
         public V get(Object key)               { return m.get(key); }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public V remove(Object key)            { return m.remove(key); }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void clear()                    { m.clear(); }
         public Set<K> keySet()                 { return m.keySet(); }
         public Collection<V> values()          { return m.values(); }
+        @Pure
         public boolean equals(Object o)        { return o == this || m.equals(o); }
+        @Pure
         public int hashCode()                  { return m.hashCode(); }
         public String toString()               { return m.toString(); }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         @EnsuresKeyFor(value={"#1"}, map={"this"})
         public V put(K key, V value) {
             typeCheck(key, value);
             return m.put(key, value);
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         @SuppressWarnings("unchecked")
         public void putAll(Map<? extends K, ? extends V> t) {
             // Satisfy the following goals:
@@ -4234,10 +4438,13 @@ public class Collections {
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
             m.replaceAll(typeCheck(function));
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         @EnsuresKeyFor(value={"#1"}, map={"this"})
         @Override
         public V putIfAbsent(K key, V value) {
@@ -4246,23 +4453,30 @@ public class Collections {
         }
 
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean remove(@UnknownSignedness Object key, @UnknownSignedness Object value) {
             return m.remove(key, value);
         }
 
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean replace(K key, V oldValue, V newValue) {
             typeCheck(key, newValue);
             return m.replace(key, oldValue, newValue);
         }
 
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public V replace(K key, V value) {
             typeCheck(key, value);
             return m.replace(key, value);
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V computeIfAbsent(K key,
                 Function<? super K, ? extends @PolyNull V> mappingFunction) {
             Objects.requireNonNull(mappingFunction);
@@ -4274,6 +4488,7 @@ public class Collections {
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V computeIfPresent(K key,
                 BiFunction<? super K, ? super V, ? extends @PolyNull V> remappingFunction) {
             return m.computeIfPresent(key, typeCheck(remappingFunction));
@@ -4286,6 +4501,7 @@ public class Collections {
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V merge(K key, @NonNull V value,
                 BiFunction<? super V, ? super V, ? extends @PolyNull V> remappingFunction) {
             Objects.requireNonNull(remappingFunction);
@@ -4318,14 +4534,22 @@ public class Collections {
             @Pure
             @EnsuresNonEmptyIf(result = false, expression = "this")
             public boolean isEmpty() { return s.isEmpty(); }
+            @SideEffectFree
             public String toString() { return s.toString(); }
+            @Pure
             public int hashCode()    { return s.hashCode(); }
+            // @SideEffectsOnly("this")
+            @DoesNotUnrefineReceiver("modifiability")
             public void clear()      {        s.clear(); }
 
+            // @SideEffectsOnly("this")
+            @DoesNotUnrefineReceiver("modifiability")
             @EnsuresNonEmpty("this")
             public boolean add(Map.Entry<K, V> e) {
                 throw new UnsupportedOperationException();
             }
+            // @SideEffectsOnly("this")
+            @DoesNotUnrefineReceiver("modifiability")
             public boolean addAll(Collection<? extends Map.Entry<K, V>> coll) {
                 throw new UnsupportedOperationException();
             }
@@ -4338,8 +4562,11 @@ public class Collections {
                     @EnsuresNonEmptyIf(result = true, expression = "this")
                     public boolean hasNext() { return i.hasNext(); }
                     // @SideEffectsOnly("this")
+                    @DoesNotUnrefineReceiver("modifiability")
                     public void remove()     { i.remove(); }
 
+                    // @SideEffectsOnly("this")
+                    @DoesNotUnrefineReceiver("modifiability")
                     public Map.Entry<K,V> next(/*@NonEmpty Iterator<Map.Entry<K,V>> this*/) {
                         return checkedEntry(i.next(), valueType);
                     }
@@ -4416,6 +4643,8 @@ public class Collections {
                 return true;
             }
 
+            // @SideEffectsOnly("this")
+            @DoesNotUnrefineReceiver("modifiability")
             public boolean remove(@UnknownSignedness Object o) {
                 if (!(o instanceof Map.Entry))
                     return false;
@@ -4423,9 +4652,13 @@ public class Collections {
                                 <>((Map.Entry<?,?>)o));
             }
 
+            // @SideEffectsOnly("this")
+            @DoesNotUnrefineReceiver("modifiability")
             public boolean removeAll(Collection<? extends @UnknownSignedness Object> c) {
                 return batchRemove(c, false);
             }
+            // @SideEffectsOnly("this")
+            @DoesNotUnrefineReceiver("modifiability")
             public boolean retainAll(Collection<? extends @UnknownSignedness Object> c) {
                 return batchRemove(c, true);
             }
@@ -4442,6 +4675,7 @@ public class Collections {
                 return modified;
             }
 
+            @Pure
             public boolean equals(Object o) {
                 if (o == this)
                     return true;
@@ -4471,8 +4705,11 @@ public class Collections {
                     this.valueType = Objects.requireNonNull(valueType);
                 }
 
+                @Pure
                 public K getKey()        { return e.getKey(); }
+                @Pure
                 public V getValue()      { return e.getValue(); }
+                @Pure
                 public int hashCode()    { return e.hashCode(); }
                 public String toString() { return e.toString(); }
 
@@ -4487,6 +4724,7 @@ public class Collections {
                         " value into map with value type " + valueType;
                 }
 
+                @Pure
                 public boolean equals(Object o) {
                     if (o == this)
                         return true;
@@ -4694,6 +4932,8 @@ public class Collections {
                 : null;
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public Entry<K, V> pollFirstEntry() {
             Entry<K,V> entry = nm.pollFirstEntry();
             return (null == entry)
@@ -4701,6 +4941,8 @@ public class Collections {
                 : new CheckedMap.CheckedEntrySet.CheckedEntry<>(entry, valueType);
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public Entry<K, V> pollLastEntry() {
             Entry<K,V> entry = nm.pollLastEntry();
             return (null == entry)
@@ -4797,7 +5039,10 @@ public class Collections {
         @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean hasNext() { return false; }
         // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public E next(@NonEmpty EmptyIterator<E> this) { throw new NoSuchElementException(); }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void remove(@NonEmpty EmptyIterator<E> this) { throw new IllegalStateException(); }
         @Override
         public void forEachRemaining(Consumer<? super E> action) {
@@ -4847,9 +5092,15 @@ public class Collections {
         @Pure
         public boolean hasPrevious() { return false; }
         public E previous() { throw new NoSuchElementException(); }
+        @Pure
         public int nextIndex()     { return 0; }
+        @Pure
         public int previousIndex() { return -1; }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void set(E e) { throw new IllegalStateException(); }
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public void add(E e) { throw new UnsupportedOperationException(); }
     }
 
@@ -4880,6 +5131,7 @@ public class Collections {
         static final EmptyEnumeration<Object> EMPTY_ENUMERATION
             = new EmptyEnumeration<>();
 
+        @Pure
         @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean hasMoreElements() { return false; }
         public E nextElement(@NonEmpty EmptyEnumeration<E> this) { throw new NoSuchElementException(); }
@@ -4975,6 +5227,7 @@ public class Collections {
         }
 
         @Override
+        @Pure
         public int hashCode() {
             return 0;
         }
@@ -5102,10 +5355,12 @@ public class Collections {
             throw new IndexOutOfBoundsException("Index: "+index);
         }
 
+        @Pure
         public boolean equals(Object o) {
             return (o instanceof List) && ((List<?>)o).isEmpty();
         }
 
+        @Pure
         public int hashCode() { return 1; }
 
         @Override
@@ -5236,16 +5491,19 @@ public class Collections {
         public boolean containsKey(@UnknownSignedness Object key)     {return false;}
         @Pure
         public boolean containsValue(@UnknownSignedness Object value) {return false;}
+        @Pure
         public V get(Object key)                   {return null;}
         public Set<K> keySet()                     {return emptySet();}
         public Collection<V> values()              {return emptySet();}
         @SideEffectFree
         public Set<Map.Entry<K,V>> entrySet()      {return emptySet();}
 
+        @Pure
         public boolean equals(Object o) {
             return (o instanceof Map) && ((Map<?,?>)o).isEmpty();
         }
 
+        @Pure
         public int hashCode()                      {return 0;}
 
         // Override default methods in Map
@@ -5265,6 +5523,8 @@ public class Collections {
             Objects.requireNonNull(function);
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         @EnsuresKeyFor(value={"#1"}, map={"this"})
         @Override
         public V putIfAbsent(K key, V value) {
@@ -5272,39 +5532,49 @@ public class Collections {
         }
 
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean remove(@UnknownSignedness Object key, @UnknownSignedness Object value) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean replace(K key, V oldValue, V newValue) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public V replace(K key, V value) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V computeIfAbsent(K key,
                 Function<? super K, ? extends @PolyNull V> mappingFunction) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V computeIfPresent(K key,
                 BiFunction<? super K, ? super V, ? extends @PolyNull V> remappingFunction) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V compute(K key,
                 BiFunction<? super K, ? super V, ? extends @PolyNull V> remappingFunction) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V merge(K key, @NonNull V value,
                 BiFunction<? super V, ? super V, ? extends @PolyNull V> remappingFunction) {
             throw new UnsupportedOperationException();
@@ -5340,6 +5610,7 @@ public class Collections {
                 return hasNext;
             }
             // @SideEffectsOnly("this")
+            @DoesNotUnrefineReceiver("modifiability")
             public E next(/*@NonEmpty Iterator<E> this*/) {
                 if (hasNext) {
                     hasNext = false;
@@ -5347,6 +5618,8 @@ public class Collections {
                 }
                 throw new NoSuchElementException();
             }
+            // @SideEffectsOnly("this")
+            @DoesNotUnrefineReceiver("modifiability")
             public void remove() {
                 throw new UnsupportedOperationException();
             }
@@ -5445,10 +5718,13 @@ public class Collections {
             return singletonSpliterator(element);
         }
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean removeIf(Predicate<? super E> filter) {
             throw new UnsupportedOperationException();
         }
         @Override
+        @Pure
         public int hashCode() {
             return Objects.hashCode(element);
         }
@@ -5509,10 +5785,13 @@ public class Collections {
             action.accept(element);
         }
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean removeIf(Predicate<? super E> filter) {
             throw new UnsupportedOperationException();
         }
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public void replaceAll(UnaryOperator<E> operator) {
             throw new UnsupportedOperationException();
         }
@@ -5525,6 +5804,7 @@ public class Collections {
             return singletonSpliterator(element);
         }
         @Override
+        @Pure
         public int hashCode() {
             return 31 + Objects.hashCode(element);
         }
@@ -5575,6 +5855,7 @@ public class Collections {
         public boolean containsKey(@UnknownSignedness Object key)             {return eq(key, k);}
         @Pure
         public boolean containsValue(@UnknownSignedness Object value)       {return eq(value, v);}
+        @Pure
         public V get(Object key)              {return (eq(key, k) ? v : null);}
 
         private transient Set<K> keySet;
@@ -5614,10 +5895,13 @@ public class Collections {
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
             throw new UnsupportedOperationException();
         }
 
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         @EnsuresKeyFor(value={"#1"}, map={"this"})
         @Override
         public V putIfAbsent(K key, V value) {
@@ -5625,45 +5909,56 @@ public class Collections {
         }
 
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean remove(@UnknownSignedness Object key, @UnknownSignedness Object value) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public boolean replace(K key, V oldValue, V newValue) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public V replace(K key, V value) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V computeIfAbsent(K key,
                 Function<? super K, ? extends @PolyNull V> mappingFunction) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V computeIfPresent(K key,
                 BiFunction<? super K, ? super V, ? extends @PolyNull V> remappingFunction) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V compute(K key,
                 BiFunction<? super K, ? super V, ? extends @PolyNull V> remappingFunction) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        @DoesNotUnrefineReceiver("modifiability")
         public @PolyNull V merge(K key, @NonNull V value,
                 BiFunction<? super V, ? super V, ? extends @PolyNull V> remappingFunction) {
             throw new UnsupportedOperationException();
         }
 
         @Override
+        @Pure
         public int hashCode() {
             return Objects.hashCode(k) ^ Objects.hashCode(v);
         }
@@ -5790,6 +6085,7 @@ public class Collections {
         }
 
         @Override
+        @Pure
         public int hashCode() {
             if (n == 0) return 1;
             // hashCode of n repeating elements is 31^n + elementHash * Sum(31^k, k = 0..n-1)
@@ -5809,6 +6105,7 @@ public class Collections {
         }
 
         @Override
+        @Pure
         public boolean equals(Object o) {
             if (o == this)
                 return true;
@@ -5985,12 +6282,14 @@ public class Collections {
             return cmp.compare(t2, t1);
         }
 
+        @Pure
         public boolean equals(Object o) {
             return (o == this) ||
                 (o instanceof ReverseComparator2<?> that &&
                  cmp.equals(that.cmp));
         }
 
+        @Pure
         public int hashCode() {
             return cmp.hashCode() ^ Integer.MIN_VALUE;
         }
@@ -6020,6 +6319,7 @@ public class Collections {
         return new Enumeration<>() {
             private final Iterator<T> i = c.iterator();
 
+            @Pure
             @EnsuresNonEmptyIf(result = true, expression = "this")
             public boolean hasMoreElements() {
                 return i.hasNext();
@@ -6283,10 +6583,11 @@ public class Collections {
         public Iterator<E> iterator()     { return s.iterator(); }
         @SideEffectFree
         public @PolyNull @PolySigned Object[] toArray(Collections.SetFromMap<@PolyNull @PolySigned E> this)         { return s.toArray(); }
-        @SideEffectFree
         public <T> @Nullable T[] toArray(@PolyNull T[] a)     { return s.toArray(a); }
         public String toString()          { return s.toString(); }
+        @Pure
         public int hashCode()             { return s.hashCode(); }
+        @Pure
         public boolean equals(Object o)   { return o == this || s.equals(o); }
         @Pure
         public boolean containsAll(Collection<? extends @UnknownSignedness Object> c) {return s.containsAll(c);}
@@ -6455,6 +6756,7 @@ public class Collections {
         public E remove()                           { return q.removeFirst(); }
         @Pure
         public E peek()                             { return q.peekFirst(); }
+        @Pure
         public E element()                          { return q.getFirst(); }
         public void clear()                         {        q.clear(); }
         @Pure
@@ -6470,7 +6772,6 @@ public class Collections {
         public Iterator<E> iterator()               { return q.iterator(); }
         @SideEffectFree
         public @PolyNull @PolySigned Object[] toArray(Collections.AsLIFOQueue<@PolyNull @PolySigned E> this)                   { return q.toArray(); }
-        @SideEffectFree
         public <T> @Nullable T[] toArray(@PolyNull T[] a)               { return q.toArray(a); }
         @SideEffectFree
         public <T> T[] toArray(IntFunction<T[]> f)  { return q.toArray(f); }

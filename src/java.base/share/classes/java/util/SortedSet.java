@@ -31,11 +31,11 @@ import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.modifiability.qual.ThrowsUOE;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 /**
  * A {@link Set} that further provides a <i>total ordering</i> on its elements.
@@ -272,7 +272,7 @@ public interface SortedSet<E> extends Set<E>, SequencedSet<E> {
      * @since 1.8
      */
     @Override
-    @DoesNotUnrefineReceiver("modifiability")
+    @SideEffectFree
     default Spliterator<E> spliterator() {
         return new Spliterators.IteratorSpliterator<E>(
                 this, Spliterator.DISTINCT | Spliterator.SORTED | Spliterator.ORDERED) {
@@ -296,8 +296,9 @@ public interface SortedSet<E> extends Set<E>, SequencedSet<E> {
      * @throws UnsupportedOperationException always
      * @since 21
      */
-    @ThrowsUOE
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
+    @ThrowsUOE
     default void addFirst(E e) {
         throw new UnsupportedOperationException();
     }
@@ -313,8 +314,9 @@ public interface SortedSet<E> extends Set<E>, SequencedSet<E> {
      * @throws UnsupportedOperationException always
      * @since 21
      */
-    @ThrowsUOE
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
+    @ThrowsUOE
     default void addLast(E e) {
         throw new UnsupportedOperationException();
     }
@@ -359,6 +361,7 @@ public interface SortedSet<E> extends Set<E>, SequencedSet<E> {
      * @throws UnsupportedOperationException {@inheritDoc}
      * @since 21
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     default E removeFirst(@Shrinkable SortedSet<E> this) {
         E e = this.first();
@@ -378,6 +381,7 @@ public interface SortedSet<E> extends Set<E>, SequencedSet<E> {
      * @throws UnsupportedOperationException {@inheritDoc}
      * @since 21
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     default E removeLast(@Shrinkable SortedSet<E> this) {
         E e = this.last();
@@ -401,6 +405,7 @@ public interface SortedSet<E> extends Set<E>, SequencedSet<E> {
      * @return a reverse-ordered view of this collection, as a {@code SortedSet}
      * @since 21
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     default @PolyModifiable SortedSet<E> reversed(@PolyModifiable SortedSet<E> this) {
         return ReverseOrderSortedSetView.of(this);

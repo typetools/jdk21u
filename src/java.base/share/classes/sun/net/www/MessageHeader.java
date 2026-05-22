@@ -31,6 +31,7 @@ package sun.net.www;
 
 import org.checkerframework.dataflow.qual.Pure;
 // import org.checkerframework.dataflow.qual.SideEffectsOnly;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 import java.io.*;
 import java.lang.reflect.Array;
@@ -235,6 +236,7 @@ class MessageHeader {
             }
         }
         // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public String next() {
             synchronized (lock) {
                 if (haveNext) {
@@ -248,6 +250,7 @@ class MessageHeader {
                 }
             }
         }
+        @DoesNotUnrefineReceiver("modifiability")
         public void remove () {
             throw new UnsupportedOperationException ("remove not allowed");
         }

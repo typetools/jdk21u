@@ -34,8 +34,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-// import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
+// import org.checkerframework.dataflow.qual.SideEffectsOnly;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -3879,6 +3880,7 @@ public final @UsesObjectEquals class Files {
                     }
                 }
                 // @SideEffectsOnly("this")
+                @DoesNotUnrefineReceiver("modifiability")
                 @Override
                 public Path next(/*@NonEmpty Iterator<Path> this*/) {
                     try {

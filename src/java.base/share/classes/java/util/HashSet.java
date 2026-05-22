@@ -40,11 +40,11 @@ import org.checkerframework.checker.nonempty.qual.PolyNonEmpty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
-import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
 // import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 import java.io.InvalidObjectException;
 import jdk.internal.access.SharedSecrets;
@@ -255,8 +255,9 @@ public class HashSet<E>
      */
     // @SideEffectsOnly("this")
     @EnsuresNonEmpty("this")
-    public boolean add(@Growable @GuardSatisfied HashSet<E> this, E e) {
-        return map.put(e, PRESENT)==null;
+    // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
+    public boolean add(@Growable @GuardSatisfied HashSet<E> this, E e) {        return map.put(e, PRESENT)==null;
     }
 
     /**
@@ -272,6 +273,7 @@ public class HashSet<E>
      * @return {@code true} if the set contained the specified element
      */
     // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     public boolean remove(@Shrinkable @GuardSatisfied HashSet<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
         return map.remove(o)==PRESENT;
     }
@@ -281,6 +283,7 @@ public class HashSet<E>
      * The set will be empty after this call returns.
      */
     // @SideEffectsOnly("this")
+    @DoesNotUnrefineReceiver("modifiability")
     public void clear(@Shrinkable @GuardSatisfied HashSet<E> this) {
         map.clear();
     }
@@ -400,7 +403,7 @@ public class HashSet<E>
      * @return a {@code Spliterator} over the elements in this set
      * @since 1.8
      */
-    @DoesNotUnrefineReceiver("modifiability")
+    @SideEffectFree
     public Spliterator<E> spliterator() {
         return new HashMap.KeySpliterator<>(map, 0, -1, 0, 0);
     }

@@ -25,12 +25,10 @@
 
 package java.util;
 
-
 import org.checkerframework.checker.modifiability.qual.Growable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
-import org.checkerframework.dataflow.qual.DoesNotUnrefineReceiver;
 import org.checkerframework.dataflow.qual.Pure;
-
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 /**
  * A collection that has a well-defined encounter order, that supports operations at both ends,
@@ -94,6 +92,7 @@ public interface SequencedCollection<E> extends Collection<E> {
      *
      * @return a reverse-ordered view of this collection
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     SequencedCollection<E> reversed();
 
@@ -111,6 +110,7 @@ public interface SequencedCollection<E> extends Collection<E> {
      * @throws UnsupportedOperationException if this collection implementation
      *         does not support this operation
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     default void addFirst(@Growable SequencedCollection<E> this, E e) {
         throw new UnsupportedOperationException();
@@ -130,6 +130,7 @@ public interface SequencedCollection<E> extends Collection<E> {
      * @throws UnsupportedOperationException if this collection implementation
      *         does not support this operation
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     default void addLast(@Growable SequencedCollection<E> this, E e) {
         throw new UnsupportedOperationException();
@@ -184,6 +185,7 @@ public interface SequencedCollection<E> extends Collection<E> {
      * @throws UnsupportedOperationException if this collection implementation
      *         does not support this operation
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     default E removeFirst(@Shrinkable SequencedCollection<E> this) {
         var it = this.iterator();
@@ -207,6 +209,7 @@ public interface SequencedCollection<E> extends Collection<E> {
      * @throws UnsupportedOperationException if this collection implementation
      *         does not support this operation
      */
+    // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     default E removeLast(@Shrinkable SequencedCollection<E> this) {
         var it = this.reversed().iterator();

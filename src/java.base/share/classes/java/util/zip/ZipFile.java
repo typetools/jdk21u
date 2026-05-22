@@ -39,6 +39,7 @@ import org.checkerframework.dataflow.qual.Pure;
 // import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 
 import java.io.Closeable;
 import java.io.InputStream;
@@ -517,6 +518,7 @@ public @UsesObjectEquals class ZipFile implements ZipConstants, Closeable {
         }
 
         @Override
+        @Pure
         @EnsuresNonEmptyIf(result = true, expression = "this")
         public boolean hasMoreElements() {
             return hasNext();
@@ -531,6 +533,7 @@ public @UsesObjectEquals class ZipFile implements ZipConstants, Closeable {
 
         @Override
         // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public T nextElement(@NonEmpty ZipEntryIterator<T> this) {
             return next();
         }
@@ -538,6 +541,7 @@ public @UsesObjectEquals class ZipFile implements ZipConstants, Closeable {
         @Override
         @SuppressWarnings("unchecked")
         // @SideEffectsOnly("this")
+        @DoesNotUnrefineReceiver("modifiability")
         public T next(@NonEmpty ZipEntryIterator<T> this) {
             synchronized (ZipFile.this) {
                 ensureOpen();
@@ -1030,6 +1034,7 @@ public @UsesObjectEquals class ZipFile implements ZipConstants, Closeable {
             return rem > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) rem;
         }
 
+        @Pure
         public long size() {
             return size;
         }
@@ -1432,12 +1437,14 @@ public @UsesObjectEquals class ZipFile implements ZipConstants, Closeable {
                 this.utf8 = zc.isUTF8();
             }
 
+            @Pure
             public int hashCode() {
                 long t = utf8 ? 0 : Long.MAX_VALUE;
                 t += attrs.lastModifiedTime().toMillis();
                 return ((int)(t ^ (t >>> 32))) + file.hashCode();
             }
 
+            @Pure
             public boolean equals(Object obj) {
                 if (obj instanceof Key key) {
                     if (key.utf8 != utf8) {
