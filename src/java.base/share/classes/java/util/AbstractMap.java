@@ -440,7 +440,6 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
 
                 @Pure
                 @EnsuresNonEmptyIf(result = true, expression = "this")
-                @Pure
                 public boolean contains(@UnknownSignedness Object k) {
                     return AbstractMap.this.containsKey(k);
                 }
