@@ -337,7 +337,8 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
     @EnsuresNonEmpty("this")
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean add(@Growable @GuardSatisfied PriorityQueue<E> this, E e) {        return offer(e);
+    public boolean add(@Growable @GuardSatisfied PriorityQueue<E> this, E e) {
+        return offer(e);
     }
 
     /**
@@ -351,7 +352,8 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean offer(@Growable PriorityQueue<E> this, E e) {        if (e == null)
+    public boolean offer(@Growable PriorityQueue<E> this, E e) {
+        if (e == null)
             throw new NullPointerException();
         modCount++;
         int i = size;
@@ -391,7 +393,8 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean remove(@Shrinkable @GuardSatisfied @CanShrink PriorityQueue<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {        int i = indexOf(o);
+    public boolean remove(@Shrinkable @GuardSatisfied @CanShrink PriorityQueue<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
+        int i = indexOf(o);
         if (i == -1)
             return false;
         else {
@@ -606,7 +609,8 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable @GuardSatisfied @CanShrink PriorityQueue<E> this) {        modCount++;
+    public void clear(@Shrinkable @GuardSatisfied @CanShrink PriorityQueue<E> this) {
+        modCount++;
         final Object[] es = queue;
         for (int i = 0, n = size; i < n; i++)
             es[i] = null;
@@ -615,7 +619,8 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
 
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable E poll(@Shrinkable @GuardSatisfied @CanShrink PriorityQueue<E> this) {        final Object[] es;
+    public @Nullable E poll(@Shrinkable @GuardSatisfied @CanShrink PriorityQueue<E> this) {
+        final Object[] es;
         final E result;
 
         if ((result = (E) ((es = queue)[0])) != null) {
@@ -940,7 +945,8 @@ public class PriorityQueue<E extends @NonNull Object> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean removeIf(@Shrinkable @GuardSatisfied @CanShrink PriorityQueue<E> this, Predicate<? super E> filter) {        Objects.requireNonNull(filter);
+    public boolean removeIf(@Shrinkable @GuardSatisfied @CanShrink PriorityQueue<E> this, Predicate<? super E> filter) {
+        Objects.requireNonNull(filter);
         return bulkRemove(filter);
     }
 

@@ -173,7 +173,6 @@ public interface Queue<E> extends Collection<E> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     boolean add(@Growable @GuardSatisfied Queue<E> this, E e);
-
     /**
      * Inserts the specified element into this queue if it is possible to do
      * so immediately without violating capacity restrictions.
@@ -194,7 +193,6 @@ public interface Queue<E> extends Collection<E> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     boolean offer(@Growable Queue<E> this, E e);
-
     /**
      * Retrieves and removes the head of this queue.  This method differs
      * from {@link #poll() poll()} only in that it throws an exception if
@@ -206,7 +204,6 @@ public interface Queue<E> extends Collection<E> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     E remove(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink Queue<E> this);
-
     /**
      * Retrieves and removes the head of this queue,
      * or returns {@code null} if this queue is empty.
@@ -216,7 +213,6 @@ public interface Queue<E> extends Collection<E> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     @Nullable E poll(@Shrinkable @GuardSatisfied @CanShrink Queue<E> this);
-
     /**
      * Retrieves, but does not remove, the head of this queue.  This method
      * differs from {@link #peek peek} only in that it throws an exception

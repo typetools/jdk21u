@@ -257,7 +257,8 @@ public class HashSet<E>
     @EnsuresNonEmpty("this")
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean add(@Growable @GuardSatisfied HashSet<E> this, E e) {        return map.put(e, PRESENT)==null;
+    public boolean add(@Growable @GuardSatisfied HashSet<E> this, E e) {
+        return map.put(e, PRESENT)==null;
     }
 
     /**

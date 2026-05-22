@@ -47,6 +47,7 @@ import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 // import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
@@ -658,8 +659,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     @EnsuresKeyFor(value={"#1"}, map={"this"})
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V put(@Growable @Replaceable @GuardSatisfied HashMap<K, V> this, K key, V value) {
-        return putVal(hash(key), key, value, false, true);
+    public @Nullable V put(@Growable @Replaceable @GuardSatisfied HashMap<K, V> this, K key, V value) {        return putVal(hash(key), key, value, false, true);
     }
 
     /**
@@ -834,8 +834,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void putAll(@Growable @Replaceable @GuardSatisfied HashMap<K, V> this, Map<? extends K, ? extends V> m) {
-        putMapEntries(m, true);
+    public void putAll(@Growable @Replaceable @GuardSatisfied HashMap<K, V> this, Map<? extends K, ? extends V> m) {        putMapEntries(m, true);
     }
 
     /**
@@ -849,8 +848,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V remove(@Shrinkable @GuardSatisfied HashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {
-        Node<K,V> e;
+    public @Nullable V remove(@Shrinkable @GuardSatisfied HashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {        Node<K,V> e;
         return (e = removeNode(hash(key), key, null, false, true)) == null ?
             null : e.value;
     }
@@ -912,8 +910,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable @GuardSatisfied HashMap<K, V> this) {
-        Node<K,V>[] tab;
+    public void clear(@Shrinkable @GuardSatisfied HashMap<K, V> this) {        Node<K,V>[] tab;
         modCount++;
         if ((tab = table) != null && size > 0) {
             size = 0;
@@ -1236,22 +1233,19 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V putIfAbsent(@Growable HashMap<K,V> this, K key, V value) {
-        return putVal(hash(key), key, value, true, true);
+    public @Nullable V putIfAbsent(@Growable HashMap<K,V> this, K key, V value) {        return putVal(hash(key), key, value, true, true);
     }
 
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean remove(@Shrinkable HashMap<K,V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key, @GuardSatisfied @Nullable @UnknownSignedness Object value) {
-        return removeNode(hash(key), key, value, true, true) != null;
+    public boolean remove(@Shrinkable HashMap<K,V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key, @GuardSatisfied @Nullable @UnknownSignedness Object value) {        return removeNode(hash(key), key, value, true, true) != null;
     }
 
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean replace(@Replaceable HashMap<K,V> this, K key, V oldValue, V newValue) {
-        Node<K,V> e; V v;
+    public boolean replace(@Replaceable HashMap<K,V> this, K key, V oldValue, V newValue) {        Node<K,V> e; V v;
         if ((e = getNode(key)) != null &&
             ((v = e.value) == oldValue || (v != null && v.equals(oldValue)))) {
             e.value = newValue;
@@ -1264,8 +1258,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V replace(@Replaceable HashMap<K,V> this, K key, V value) {
-        Node<K,V> e;
+    public @Nullable V replace(@Replaceable HashMap<K,V> this, K key, V value) {        Node<K,V> e;
         if ((e = getNode(key)) != null) {
             V oldValue = e.value;
             e.value = value;

@@ -314,7 +314,6 @@ public interface Map<K, V> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     @Nullable V put(@Growable @Replaceable @GuardSatisfied Map<K, V> this, K key, V value);
-
     /**
      * Removes the mapping for a key from this map if it is present
      * (optional operation).   More formally, if this map contains a mapping
@@ -348,7 +347,6 @@ public interface Map<K, V> {
     @DoesNotUnrefineReceiver("modifiability")
     @Nullable V remove(@Shrinkable @GuardSatisfied Map<K, V> this, @GuardSatisfied @UnknownSignedness Object key);
 
-
     // Bulk Operations
 
     /**
@@ -375,7 +373,6 @@ public interface Map<K, V> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     void putAll(@Growable @Replaceable @GuardSatisfied Map<K, V> this, Map<? extends K, ? extends V> m);
-
     /**
      * Removes all of the mappings from this map (optional operation).
      * The map will be empty after this call returns.
@@ -386,7 +383,6 @@ public interface Map<K, V> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     void clear(@Shrinkable @GuardSatisfied Map<K, V> this);
-
 
     // Views
 
@@ -552,7 +548,6 @@ public interface Map<K, V> {
         // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
         V setValue(Map.@Replaceable @GuardSatisfied Entry<K, V> this, V value);
-
         /**
          * Compares the specified object with this entry for equality.
          * Returns {@code true} if the given object is also a map entry and
@@ -911,8 +906,7 @@ public interface Map<K, V> {
     @EnsuresKeyFor(value={"#1"}, map={"this"})
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default @Nullable V putIfAbsent(@Growable Map<K, V> this, K key, V value) {
-        V v = get(key);
+    default @Nullable V putIfAbsent(@Growable Map<K, V> this, K key, V value) {        V v = get(key);
         if (v == null) {
             v = put(key, value);
         }
@@ -957,8 +951,7 @@ public interface Map<K, V> {
     @CFComment("nullness: key and value are not @Nullable because this map might not permit null values")
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default boolean remove(@Shrinkable Map<K, V> this, @GuardSatisfied @UnknownSignedness Object key, @GuardSatisfied @UnknownSignedness Object value) {
-        Object curValue = get(key);
+    default boolean remove(@Shrinkable Map<K, V> this, @GuardSatisfied @UnknownSignedness Object key, @GuardSatisfied @UnknownSignedness Object value) {        Object curValue = get(key);
         if (!Objects.equals(curValue, value) ||
             (curValue == null && !containsKey(key))) {
             return false;
@@ -1009,8 +1002,7 @@ public interface Map<K, V> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default boolean replace(@Replaceable Map<K, V> this, K key, V oldValue, V newValue) {
-        Object curValue = get(key);
+    default boolean replace(@Replaceable Map<K, V> this, K key, V oldValue, V newValue) {        Object curValue = get(key);
         if (!Objects.equals(curValue, oldValue) ||
             (curValue == null && !containsKey(key))) {
             return false;
@@ -1059,8 +1051,7 @@ public interface Map<K, V> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default @Nullable V replace(@Replaceable Map<K, V> this, K key, V value) {
-        V curValue;
+    default @Nullable V replace(@Replaceable Map<K, V> this, K key, V value) {        V curValue;
         if (((curValue = get(key)) != null) || containsKey(key)) {
             curValue = put(key, value);
         }

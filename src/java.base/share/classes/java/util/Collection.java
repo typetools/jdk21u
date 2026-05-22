@@ -280,7 +280,7 @@ import java.util.stream.StreamSupport;
  */
 
 @CFComment("lock/nullness: Subclasses of this interface/class may opt to prohibit null elements")
-@AnnotatedFor({"lock", "nullness", "index"})
+@AnnotatedFor({"lock", "nullness", "index", "modifiability"})
 public interface Collection<E> extends Iterable<E> {
     // Query Operations
 
@@ -418,7 +418,7 @@ public interface Collection<E> extends Iterable<E> {
      * @throws NullPointerException if the specified array is null
      */
     @SideEffectFree
-    <T extends @UnknownSignedness Object> @Nullable T [] toArray(@UnknownModifiability Collection<E> this, @PolyNull T[] a);
+    <T extends @UnknownSignedness Object> @Nullable T[] toArray(@UnknownModifiability Collection<E> this, @PolyNull T[] a);
 
     /**
      * Returns an array containing all of the elements in this collection,
@@ -499,7 +499,6 @@ public interface Collection<E> extends Iterable<E> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     boolean add(@Growable @GuardSatisfied Collection<E> this, E e);
-
     /**
      * Removes a single instance of the specified element from this
      * collection, if it is present (optional operation).  More formally,
@@ -523,7 +522,6 @@ public interface Collection<E> extends Iterable<E> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     boolean remove(@Shrinkable @GuardSatisfied @CanShrink Collection<E> this, @UnknownSignedness Object o);
-
 
     // Bulk Operations
 
@@ -577,7 +575,6 @@ public interface Collection<E> extends Iterable<E> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     boolean addAll(@Growable @GuardSatisfied Collection<E> this, Collection<? extends E> c);
-
     /**
      * Removes all of this collection's elements that are also contained in the
      * specified collection (optional operation).  After this call returns,
@@ -604,7 +601,6 @@ public interface Collection<E> extends Iterable<E> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     boolean removeAll(@Shrinkable @GuardSatisfied @CanShrink Collection<E> this, Collection<? extends @UnknownSignedness Object> c);
-
     /**
      * Removes all of the elements of this collection that satisfy the given
      * predicate.  Errors or runtime exceptions thrown during iteration or by
@@ -667,7 +663,6 @@ public interface Collection<E> extends Iterable<E> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     boolean retainAll(@Shrinkable @GuardSatisfied @CanShrink Collection<E> this, Collection<? extends @UnknownSignedness Object> c);
-
     /**
      * Removes all of the elements from this collection (optional operation).
      * The collection will be empty after this method returns.
@@ -678,7 +673,6 @@ public interface Collection<E> extends Iterable<E> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     void clear(@Shrinkable @GuardSatisfied @CanShrink Collection<E> this);
-
 
     // Comparison and hashing
 

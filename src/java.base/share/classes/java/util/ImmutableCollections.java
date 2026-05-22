@@ -1369,8 +1369,6 @@ class ImmutableCollections {
                 return remaining > 0;
             }
 
-            // @SideEffectsOnly("this")
-            @DoesNotUnrefineReceiver("modifiability")
             @Pure
             private int nextIndex() {
                 int idx = this.idx;

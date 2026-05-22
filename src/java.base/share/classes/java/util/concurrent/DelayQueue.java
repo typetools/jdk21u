@@ -49,6 +49,7 @@ import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 // import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
@@ -177,8 +178,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
     @EnsuresNonEmpty("this")
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean add(@Growable DelayQueue<E> this, E e) {
-        return offer(e);
+    public boolean add(@Growable DelayQueue<E> this, E e) {        return offer(e);
     }
 
     /**
@@ -190,8 +190,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean offer(@Growable DelayQueue<E> this, E e) {
-        final ReentrantLock lock = this.lock;
+    public boolean offer(@Growable DelayQueue<E> this, E e) {        final ReentrantLock lock = this.lock;
         lock.lock();
         try {
             q.offer(e);
@@ -214,8 +213,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void put(@Growable DelayQueue<E> this, E e) {
-        offer(e);
+    public void put(@Growable DelayQueue<E> this, E e) {        offer(e);
     }
 
     /**
@@ -230,8 +228,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean offer(@Growable DelayQueue<E> this, E e, long timeout, TimeUnit unit) {
-        return offer(e);
+    public boolean offer(@Growable DelayQueue<E> this, E e, long timeout, TimeUnit unit) {        return offer(e);
     }
 
     /**
@@ -244,8 +241,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable E poll(@Shrinkable @GuardSatisfied @CanShrink DelayQueue<E> this) {
-        final ReentrantLock lock = this.lock;
+    public @Nullable E poll(@Shrinkable @GuardSatisfied @CanShrink DelayQueue<E> this) {        final ReentrantLock lock = this.lock;
         lock.lock();
         try {
             E first = q.peek();
@@ -267,8 +263,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E take(@Shrinkable @GuardSatisfied @CanShrink DelayQueue<E> this) throws InterruptedException {
-        final ReentrantLock lock = this.lock;
+    public E take(@Shrinkable @GuardSatisfied @CanShrink DelayQueue<E> this) throws InterruptedException {        final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
         try {
             for (;;) {
@@ -314,8 +309,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable E poll(@Shrinkable @GuardSatisfied @CanShrink DelayQueue<E> this, long timeout, TimeUnit unit) throws InterruptedException {
-        long nanos = unit.toNanos(timeout);
+    public @Nullable E poll(@Shrinkable @GuardSatisfied @CanShrink DelayQueue<E> this, long timeout, TimeUnit unit) throws InterruptedException {        long nanos = unit.toNanos(timeout);
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
         try {
@@ -366,8 +360,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E remove(@Shrinkable DelayQueue<E> this) {
-        return super.remove();
+    public E remove(@Shrinkable DelayQueue<E> this) {        return super.remove();
     }
 
     /**
@@ -409,8 +402,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public int drainTo(@Shrinkable @GuardSatisfied @CanShrink DelayQueue<E> this, @Growable Collection<? super E> c) {
-        return drainTo(c, Integer.MAX_VALUE);
+    public int drainTo(@Shrinkable @GuardSatisfied @CanShrink DelayQueue<E> this, @Growable Collection<? super E> c) {        return drainTo(c, Integer.MAX_VALUE);
     }
 
     /**
@@ -421,8 +413,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public int drainTo(@Shrinkable @GuardSatisfied @CanShrink DelayQueue<E> this, @Growable Collection<? super E> c, int maxElements) {
-        Objects.requireNonNull(c);
+    public int drainTo(@Shrinkable @GuardSatisfied @CanShrink DelayQueue<E> this, @Growable Collection<? super E> c, int maxElements) {        Objects.requireNonNull(c);
         if (c == this)
             throw new IllegalArgumentException();
         if (maxElements <= 0)
@@ -453,8 +444,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable @GuardSatisfied @CanShrink DelayQueue<E> this) {
-        final ReentrantLock lock = this.lock;
+    public void clear(@Shrinkable @GuardSatisfied @CanShrink DelayQueue<E> this) {        final ReentrantLock lock = this.lock;
         lock.lock();
         try {
             q.clear();
@@ -548,8 +538,7 @@ public class DelayQueue<E extends @NonNull Delayed> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean remove(@Shrinkable @CanShrink DelayQueue<E> this, @UnknownSignedness Object o) {
-        final ReentrantLock lock = this.lock;
+    public boolean remove(@Shrinkable @CanShrink DelayQueue<E> this, @UnknownSignedness Object o) {        final ReentrantLock lock = this.lock;
         lock.lock();
         try {
             return q.remove(o);

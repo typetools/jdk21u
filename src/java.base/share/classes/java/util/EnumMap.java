@@ -34,6 +34,7 @@ import org.checkerframework.checker.modifiability.qual.PolyModifiable;
 import org.checkerframework.checker.modifiability.qual.PolyShrink;
 import org.checkerframework.checker.modifiability.qual.Replaceable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
+import org.checkerframework.checker.modifiability.qual.Ungrowable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
 import org.checkerframework.checker.nonempty.qual.NonEmpty;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
@@ -298,7 +299,8 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
     @EnsuresKeyFor(value={"#1"}, map={"this"})
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V put(@Growable @Replaceable EnumMap<K, V> this, K key, V value) {        typeCheck(key);
+    public @Nullable V put(@Growable @Replaceable EnumMap<K, V> this, K key, V value) {
+        typeCheck(key);
 
         int index = key.ordinal();
         Object oldValue = vals[index];
@@ -319,7 +321,8 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V remove(@Shrinkable EnumMap<K, V> this, @GuardSatisfied @UnknownSignedness Object key) {        if (!isValidKey(key))
+    public @Nullable V remove(@Shrinkable EnumMap<K, V> this, @GuardSatisfied @UnknownSignedness Object key) {
+        if (!isValidKey(key))
             return null;
         int index = ((Enum<?>)key).ordinal();
         Object oldValue = vals[index];
@@ -372,7 +375,8 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
     @RequiresNonNull({"keyUniverse", "vals"})
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void putAll(@Growable @Replaceable @UnknownInitialization EnumMap<K, V> this, Map<? extends K, ? extends V> m) {        if (m instanceof EnumMap<?, ?> em) {
+    public void putAll(@Growable @Replaceable @UnknownInitialization EnumMap<K, V> this, Map<? extends K, ? extends V> m) {
+        if (m instanceof EnumMap<?, ?> em) {
             if (em.keyType != keyType) {
                 if (em.isEmpty())
                     return;
@@ -397,7 +401,8 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K, V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable EnumMap<K, V> this) {        Arrays.fill(vals, null);
+    public void clear(@Shrinkable EnumMap<K, V> this) {
+        Arrays.fill(vals, null);
         size = 0;
     }
 

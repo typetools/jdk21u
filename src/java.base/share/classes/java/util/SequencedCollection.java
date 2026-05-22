@@ -112,8 +112,7 @@ public interface SequencedCollection<E> extends Collection<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default void addFirst(@Growable SequencedCollection<E> this, E e) {
-        throw new UnsupportedOperationException();
+    default void addFirst(@Growable SequencedCollection<E> this, E e) {        throw new UnsupportedOperationException();
     }
 
     /**
@@ -132,8 +131,7 @@ public interface SequencedCollection<E> extends Collection<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default void addLast(@Growable SequencedCollection<E> this, E e) {
-        throw new UnsupportedOperationException();
+    default void addLast(@Growable SequencedCollection<E> this, E e) {        throw new UnsupportedOperationException();
     }
 
     /**

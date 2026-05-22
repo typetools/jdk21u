@@ -208,7 +208,6 @@ public interface NavigableSet<E> extends SortedSet<E> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     @PolyModifiable NavigableSet<E> descendingSet(@PolyModifiable NavigableSet<E> this);
-
     /**
      * Returns an iterator over the elements in this set, in descending order.
      * Equivalent in effect to {@code descendingSet().iterator()}.
@@ -218,7 +217,6 @@ public interface NavigableSet<E> extends SortedSet<E> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     @PolyModifiable Iterator<E> descendingIterator(@PolyModifiable NavigableSet<E> this);
-
     /**
      * Returns a view of the portion of this set whose elements range from
      * {@code fromElement} to {@code toElement}.  If {@code fromElement} and
@@ -367,8 +365,7 @@ public interface NavigableSet<E> extends SortedSet<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default E removeFirst(@Shrinkable NavigableSet<E> this) {
-        if (this.isEmpty()) {
+    default E removeFirst(@Shrinkable NavigableSet<E> this) {        if (this.isEmpty()) {
             throw new NoSuchElementException();
         } else {
             return this.pollFirst();
@@ -388,8 +385,7 @@ public interface NavigableSet<E> extends SortedSet<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default E removeLast(@Shrinkable NavigableSet<E> this) {
-        if (this.isEmpty()) {
+    default E removeLast(@Shrinkable NavigableSet<E> this) {        if (this.isEmpty()) {
             throw new NoSuchElementException();
         } else {
             return this.pollLast();
@@ -410,7 +406,6 @@ public interface NavigableSet<E> extends SortedSet<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default @PolyModifiable NavigableSet<E> reversed(@PolyModifiable NavigableSet<E> this) {
-        return this.descendingSet();
+    default @PolyModifiable NavigableSet<E> reversed(@PolyModifiable NavigableSet<E> this) {        return this.descendingSet();
     }
 }

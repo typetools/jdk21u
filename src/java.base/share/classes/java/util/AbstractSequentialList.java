@@ -133,7 +133,8 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E set(@Replaceable @GuardSatisfied AbstractSequentialList<E> this, int index, E element) {        try {
+    public E set(@Replaceable @GuardSatisfied AbstractSequentialList<E> this, int index, E element) {
+        try {
             ListIterator<E> e = listIterator(index);
             E oldVal = e.next();
             e.set(element);
@@ -165,7 +166,8 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void add(@Growable @GuardSatisfied AbstractSequentialList<E> this, int index, E element) {        try {
+    public void add(@Growable @GuardSatisfied AbstractSequentialList<E> this, int index, E element) {
+        try {
             listIterator(index).add(element);
         } catch (NoSuchElementException exc) {
             throw new IndexOutOfBoundsException("Index: "+index);
@@ -191,7 +193,8 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E remove(@Shrinkable @GuardSatisfied @CanShrink AbstractSequentialList<E> this, int index) {        try {
+    public E remove(@Shrinkable @GuardSatisfied @CanShrink AbstractSequentialList<E> this, int index) {
+        try {
             ListIterator<E> e = listIterator(index);
             E outCast = e.next();
             e.remove();
@@ -235,7 +238,8 @@ public abstract class AbstractSequentialList<E> extends AbstractList<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean addAll(@Growable @GuardSatisfied AbstractSequentialList<E> this, int index, Collection<? extends E> c) {        try {
+    public boolean addAll(@Growable @GuardSatisfied AbstractSequentialList<E> this, int index, Collection<? extends E> c) {
+        try {
             boolean modified = false;
             ListIterator<E> e1 = listIterator(index);
             for (E e : c) {

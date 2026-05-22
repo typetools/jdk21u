@@ -45,6 +45,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 // import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
@@ -388,8 +389,7 @@ public class TreeMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void putAll(@Growable @Replaceable @GuardSatisfied TreeMap<K, V> this, Map<? extends K, ? extends V> map) {
-        int mapSize = map.size();
+    public void putAll(@Growable @Replaceable @GuardSatisfied TreeMap<K, V> this, Map<? extends K, ? extends V> map) {        int mapSize = map.size();
         if (size==0 && mapSize!=0 && map instanceof SortedMap) {
             if (Objects.equals(comparator, ((SortedMap<?,?>)map).comparator())) {
                 ++modCount;
@@ -611,15 +611,13 @@ public class TreeMap<K,V>
     @EnsuresKeyFor(value={"#1"}, map={"this"})
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V put(@Growable @Replaceable @GuardSatisfied TreeMap<K, V> this, K key, V value) {
-        return put(key, value, true);
+    public @Nullable V put(@Growable @Replaceable @GuardSatisfied TreeMap<K, V> this, K key, V value) {        return put(key, value, true);
     }
 
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public V putIfAbsent(@Growable TreeMap<K,V> this, K key, V value) {
-        return put(key, value, false);
+    public V putIfAbsent(@Growable TreeMap<K,V> this, K key, V value) {        return put(key, value, false);
     }
 
     /**
@@ -966,8 +964,7 @@ public class TreeMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V remove(@Shrinkable @GuardSatisfied TreeMap<K, V> this, @GuardSatisfied @UnknownSignedness Object key) {
-        Entry<K,V> p = getEntry(key);
+    public @Nullable V remove(@Shrinkable @GuardSatisfied TreeMap<K, V> this, @GuardSatisfied @UnknownSignedness Object key) {        Entry<K,V> p = getEntry(key);
         if (p == null)
             return null;
 
@@ -982,8 +979,7 @@ public class TreeMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable @GuardSatisfied TreeMap<K, V> this) {
-        modCount++;
+    public void clear(@Shrinkable @GuardSatisfied TreeMap<K, V> this) {        modCount++;
         size = 0;
         root = null;
     }
@@ -1043,8 +1039,7 @@ public class TreeMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public Map.@Nullable Entry<K,V> pollFirstEntry(@Shrinkable @GuardSatisfied TreeMap<K, V> this) {
-        Entry<K,V> p = getFirstEntry();
+    public Map.@Nullable Entry<K,V> pollFirstEntry(@Shrinkable @GuardSatisfied TreeMap<K, V> this) {        Entry<K,V> p = getFirstEntry();
         Map.Entry<K,V> result = exportEntry(p);
         if (p != null)
             deleteEntry(p);
@@ -1056,8 +1051,7 @@ public class TreeMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public Map.@Nullable Entry<K,V> pollLastEntry(@Shrinkable @GuardSatisfied TreeMap<K, V> this) {
-        Entry<K,V> p = getLastEntry();
+    public Map.@Nullable Entry<K,V> pollLastEntry(@Shrinkable @GuardSatisfied TreeMap<K, V> this) {        Entry<K,V> p = getLastEntry();
         Map.Entry<K,V> result = exportEntry(p);
         if (p != null)
             deleteEntry(p);
@@ -1374,7 +1368,8 @@ public class TreeMap<K,V>
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean replace(@Replaceable TreeMap<K,V> this, K key, V oldValue, V newValue) {        Entry<K,V> p = getEntry(key);
+    public boolean replace(@Replaceable TreeMap<K,V> this, K key, V oldValue, V newValue) {
+        Entry<K,V> p = getEntry(key);
         if (p!=null && Objects.equals(oldValue, p.value)) {
             p.value = newValue;
             return true;
@@ -1385,7 +1380,8 @@ public class TreeMap<K,V>
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public V replace(@Replaceable TreeMap<K,V> this, K key, V value) {        Entry<K,V> p = getEntry(key);
+    public V replace(@Replaceable TreeMap<K,V> this, K key, V value) {
+        Entry<K,V> p = getEntry(key);
         if (p!=null) {
             V oldValue = p.value;
             p.value = value;
@@ -1976,7 +1972,8 @@ public class TreeMap<K,V>
         @EnsuresKeyFor(value={"#1"}, map={"this"})
         // @SideEffectsOnly("this")
         @DoesNotUnrefineReceiver("modifiability")
-        public final V put(@Growable @Replaceable NavigableSubMap<K,V> this, K key, V value) {            if (!inRange(key))
+        public final V put(@Growable @Replaceable NavigableSubMap<K,V> this, K key, V value) {
+            if (!inRange(key))
                 throw new IllegalArgumentException("key out of range");
             return m.put(key, value);
         }

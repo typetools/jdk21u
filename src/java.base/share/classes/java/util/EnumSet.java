@@ -152,7 +152,6 @@ public abstract sealed class EnumSet<E extends Enum<E>> extends AbstractSet<E>
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     abstract void addAll(@Growable EnumSet<E> this);
-
     /**
      * Creates an enum set with the same element type as the specified enum
      * set, initially containing the same elements (if any).
@@ -392,14 +391,13 @@ public abstract sealed class EnumSet<E extends Enum<E>> extends AbstractSet<E>
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     abstract void addRange(@Growable EnumSet<E> this, E from, E to);
-
     /**
      * Returns a copy of this set.
      *
      * @return a copy of this set
      */
     @SuppressWarnings("unchecked")
-    @DoesNotUnrefineReceiver("modifiability")
+    @SideEffectFree
     public @Modifiable EnumSet<E> clone() {
         try {
             return (EnumSet<E>) super.clone();
@@ -414,7 +412,6 @@ public abstract sealed class EnumSet<E extends Enum<E>> extends AbstractSet<E>
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     abstract void complement(@Growable @Shrinkable EnumSet<E> this);
-
     /**
      * Throws an exception if e is not of the correct type for this enum set.
      */

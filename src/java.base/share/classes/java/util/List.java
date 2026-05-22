@@ -336,7 +336,6 @@ public interface List<E> extends SequencedCollection<E> {
     @DoesNotUnrefineReceiver("modifiability")
     boolean remove(@Shrinkable @GuardSatisfied @CanShrink List<E> this, @UnknownSignedness Object o);
 
-
     // Bulk Modification Operations
 
     /**
@@ -562,7 +561,8 @@ public interface List<E> extends SequencedCollection<E> {
     @SuppressWarnings({"unchecked", "rawtypes"})
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default void sort(@Replaceable List<E> this, Comparator<? super E> c) {        Object[] a = this.toArray();
+    default void sort(@Replaceable List<E> this, Comparator<? super E> c) {
+        Object[] a = this.toArray();
         Arrays.sort(a, (Comparator) c);
         ListIterator<E> i = this.listIterator();
         for (Object e : a) {
@@ -680,7 +680,6 @@ public interface List<E> extends SequencedCollection<E> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     void add(@Growable @GuardSatisfied List<E> this, @IndexOrHigh({"this"}) int index, E element);
-
     /**
      * Removes the element at the specified position in this list (optional
      * operation).  Shifts any subsequent elements to the left (subtracts one
@@ -866,7 +865,8 @@ public interface List<E> extends SequencedCollection<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default void addFirst(@Growable List<E> this, E e) {        this.add(0, e);
+    default void addFirst(@Growable List<E> this, E e) {
+        this.add(0, e);
     }
 
     /**
@@ -881,7 +881,8 @@ public interface List<E> extends SequencedCollection<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default void addLast(@Growable List<E> this, E e) {        this.add(e);
+    default void addLast(@Growable List<E> this, E e) {
+        this.add(e);
     }
 
     /**
@@ -935,7 +936,8 @@ public interface List<E> extends SequencedCollection<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default E removeFirst(@Shrinkable List<E> this) {        if (this.isEmpty()) {
+    default E removeFirst(@Shrinkable List<E> this) {
+        if (this.isEmpty()) {
             throw new NoSuchElementException();
         } else {
             return this.remove(0);
@@ -955,7 +957,8 @@ public interface List<E> extends SequencedCollection<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default E removeLast(@Shrinkable List<E> this) {        if (this.isEmpty()) {
+    default E removeLast(@Shrinkable List<E> this) {
+        if (this.isEmpty()) {
             throw new NoSuchElementException();
         } else {
             return this.remove(this.size() - 1);

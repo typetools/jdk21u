@@ -57,6 +57,7 @@ import org.checkerframework.checker.signedness.qual.PolySigned;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 // import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
@@ -1046,8 +1047,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
     @EnsuresKeyFor(value={"#1"}, map={"this"})
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V put(@Growable @Replaceable ConcurrentHashMap<K,V> this, K key, V value) {
-        return putVal(key, value, false);
+    public @Nullable V put(@Growable @Replaceable ConcurrentHashMap<K,V> this, K key, V value) {        return putVal(key, value, false);
     }
 
     /** Implementation for put and putIfAbsent */
@@ -1129,8 +1129,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void putAll(@Growable @Replaceable ConcurrentHashMap<K,V> this, Map<? extends K, ? extends V> m) {
-        tryPresize(m.size());
+    public void putAll(@Growable @Replaceable ConcurrentHashMap<K,V> this, Map<? extends K, ? extends V> m) {        tryPresize(m.size());
         for (Map.Entry<? extends K, ? extends V> e : m.entrySet())
             putVal(e.getKey(), e.getValue(), false);
     }
@@ -1146,8 +1145,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V remove(@Shrinkable ConcurrentHashMap<K,V> this, @GuardSatisfied @UnknownSignedness Object key) {
-        return replaceNode(key, null, null);
+    public @Nullable V remove(@Shrinkable ConcurrentHashMap<K,V> this, @GuardSatisfied @UnknownSignedness Object key) {        return replaceNode(key, null, null);
     }
 
     /**
@@ -1233,8 +1231,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable ConcurrentHashMap<K,V> this) {
-        long delta = 0L; // negative number of deletions
+    public void clear(@Shrinkable ConcurrentHashMap<K,V> this) {        long delta = 0L; // negative number of deletions
         int i = 0;
         Node<K,V>[] tab = table;
         while (tab != null && i < tab.length) {
@@ -1597,8 +1594,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
     @EnsuresKeyFor(value={"#1"}, map={"this"})
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V putIfAbsent(@Growable ConcurrentHashMap<K,V> this, K key, V value) {
-        return putVal(key, value, true);
+    public @Nullable V putIfAbsent(@Growable ConcurrentHashMap<K,V> this, K key, V value) {        return putVal(key, value, true);
     }
 
     /**
@@ -1608,8 +1604,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean remove(@Shrinkable ConcurrentHashMap<K,V> this, @GuardSatisfied @UnknownSignedness Object key, @GuardSatisfied @UnknownSignedness Object value) {
-        if (key == null)
+    public boolean remove(@Shrinkable ConcurrentHashMap<K,V> this, @GuardSatisfied @UnknownSignedness Object key, @GuardSatisfied @UnknownSignedness Object value) {        if (key == null)
             throw new NullPointerException();
         return value != null && replaceNode(key, null, value) != null;
     }
@@ -1621,8 +1616,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean replace(@Replaceable ConcurrentHashMap<K,V> this, K key, V oldValue, V newValue) {
-        if (key == null || oldValue == null || newValue == null)
+    public boolean replace(@Replaceable ConcurrentHashMap<K,V> this, K key, V oldValue, V newValue) {        if (key == null || oldValue == null || newValue == null)
             throw new NullPointerException();
         return replaceNode(key, newValue, oldValue) != null;
     }
@@ -1636,8 +1630,7 @@ public class ConcurrentHashMap<K extends @NonNull Object,V extends @NonNull Obje
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V replace(@Replaceable ConcurrentHashMap<K,V> this, K key, V value) {
-        if (key == null || value == null)
+    public @Nullable V replace(@Replaceable ConcurrentHashMap<K,V> this, K key, V value) {        if (key == null || value == null)
             throw new NullPointerException();
         return replaceNode(key, value, null);
     }

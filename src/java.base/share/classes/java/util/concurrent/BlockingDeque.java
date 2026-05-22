@@ -340,7 +340,8 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    boolean offerFirst(@Growable BlockingDeque<E> this, E e, long timeout, TimeUnit unit)        throws InterruptedException;
+    boolean offerFirst(@Growable BlockingDeque<E> this, E e, long timeout, TimeUnit unit)
+        throws InterruptedException;
 
     /**
      * Inserts the specified element at the end of this deque,
@@ -363,7 +364,8 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    boolean offerLast(@Growable BlockingDeque<E> this, E e, long timeout, TimeUnit unit)        throws InterruptedException;
+    boolean offerLast(@Growable BlockingDeque<E> this, E e, long timeout, TimeUnit unit)
+        throws InterruptedException;
 
     /**
      * Retrieves and removes the first element of this deque, waiting
@@ -400,7 +402,8 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    @Nullable E pollFirst(@Shrinkable @CanShrink BlockingDeque<E> this, long timeout, TimeUnit unit)        throws InterruptedException;
+    @Nullable E pollFirst(@Shrinkable @CanShrink BlockingDeque<E> this, long timeout, TimeUnit unit)
+        throws InterruptedException;
 
     /**
      * Retrieves and removes the last element of this deque, waiting
@@ -417,7 +420,8 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    @Nullable E pollLast(@Shrinkable @CanShrink BlockingDeque<E> this, long timeout, TimeUnit unit)        throws InterruptedException;
+    @Nullable E pollLast(@Shrinkable @CanShrink BlockingDeque<E> this, long timeout, TimeUnit unit)
+        throws InterruptedException;
 
     /**
      * Removes the first occurrence of the specified element from this deque.
@@ -542,7 +546,8 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    boolean offer(@Growable BlockingDeque<E> this, E e, long timeout, TimeUnit unit)        throws InterruptedException;
+    boolean offer(@Growable BlockingDeque<E> this, E e, long timeout, TimeUnit unit)
+        throws InterruptedException;
 
     /**
      * Retrieves and removes the head of the queue represented by this deque
@@ -597,7 +602,8 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    @Nullable E poll(@Shrinkable @CanShrink BlockingDeque<E> this, long timeout, TimeUnit unit)        throws InterruptedException;
+    @Nullable E poll(@Shrinkable @CanShrink BlockingDeque<E> this, long timeout, TimeUnit unit)
+        throws InterruptedException;
 
     /**
      * Retrieves, but does not remove, the head of the queue represented by
@@ -698,4 +704,5 @@ public interface BlockingDeque<E extends @NonNull Object> extends BlockingQueue<
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    void push(@Growable BlockingDeque<E> this, E e);}
+    void push(@Growable BlockingDeque<E> this, E e);
+}

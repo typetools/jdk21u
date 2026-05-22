@@ -361,7 +361,6 @@ public interface SortedMap<K,V> extends SequencedMap<K,V> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default @PolyModifiable SortedMap<K, V> reversed(@PolyModifiable SortedMap<K, V> this) {
-        return ReverseOrderSortedMapView.of(this);
+    default @PolyModifiable SortedMap<K, V> reversed(@PolyModifiable SortedMap<K, V> this) {        return ReverseOrderSortedMapView.of(this);
     }
 }

@@ -43,6 +43,7 @@ import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 // import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
@@ -466,8 +467,7 @@ public class IdentityHashMap<K,V>
     @EnsuresKeyFor(value={"#1"}, map={"this"})
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V put(@Growable @Replaceable @GuardSatisfied IdentityHashMap<K, V> this, K key, V value) {
-        final Object k = maskNull(key);
+    public @Nullable V put(@Growable @Replaceable @GuardSatisfied IdentityHashMap<K, V> this, K key, V value) {        final Object k = maskNull(key);
 
         retryAfterResize: for (;;) {
             final Object[] tab = table;
@@ -549,8 +549,7 @@ public class IdentityHashMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void putAll(@Growable @Replaceable @GuardSatisfied IdentityHashMap<K, V> this, Map<? extends K, ? extends V> m) {
-        int n = m.size();
+    public void putAll(@Growable @Replaceable @GuardSatisfied IdentityHashMap<K, V> this, Map<? extends K, ? extends V> m) {        int n = m.size();
         if (n == 0)
             return;
         if (n > size)
@@ -573,8 +572,7 @@ public class IdentityHashMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V remove(@Shrinkable @GuardSatisfied IdentityHashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {
-        Object k = maskNull(key);
+    public @Nullable V remove(@Shrinkable @GuardSatisfied IdentityHashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {        Object k = maskNull(key);
         Object[] tab = table;
         int len = tab.length;
         int i = hash(k, len);
@@ -671,8 +669,7 @@ public class IdentityHashMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable @GuardSatisfied IdentityHashMap<K, V> this) {
-        modCount++;
+    public void clear(@Shrinkable @GuardSatisfied IdentityHashMap<K, V> this) {        modCount++;
         Object[] tab = table;
         for (int i = 0; i < tab.length; i++)
             tab[i] = null;
@@ -1516,7 +1513,8 @@ public class IdentityHashMap<K,V>
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean remove(@Shrinkable IdentityHashMap<K,V> this, Object key, Object value) {        return removeMapping(key, value);
+    public boolean remove(@Shrinkable IdentityHashMap<K,V> this, Object key, Object value) {
+        return removeMapping(key, value);
     }
 
     /**
@@ -1531,7 +1529,8 @@ public class IdentityHashMap<K,V>
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean replace(@Replaceable IdentityHashMap<K,V> this, K key, V oldValue, V newValue) {        Object k = maskNull(key);
+    public boolean replace(@Replaceable IdentityHashMap<K,V> this, K key, V oldValue, V newValue) {
+        Object k = maskNull(key);
         Object[] tab = table;
         int len = tab.length;
         int i = hash(k, len);

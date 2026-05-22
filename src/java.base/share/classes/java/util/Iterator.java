@@ -121,8 +121,7 @@ public interface Iterator<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default void remove(@Shrinkable @GuardSatisfied @CanShrink Iterator<E> this) {
-        throw new UnsupportedOperationException("remove");
+    default void remove(@Shrinkable @GuardSatisfied @CanShrink Iterator<E> this) {        throw new UnsupportedOperationException("remove");
     }
 
     /**

@@ -270,7 +270,8 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    boolean offer(@Growable BlockingQueue<E> this, E e, long timeout, TimeUnit unit)        throws InterruptedException;
+    boolean offer(@Growable BlockingQueue<E> this, E e, long timeout, TimeUnit unit)
+        throws InterruptedException;
 
     /**
      * Retrieves and removes the head of this queue, waiting if necessary
@@ -296,7 +297,8 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    @Nullable E poll(@Shrinkable BlockingQueue<E> this, long timeout, TimeUnit unit)        throws InterruptedException;
+    @Nullable E poll(@Shrinkable BlockingQueue<E> this, long timeout, TimeUnit unit)
+        throws InterruptedException;
 
     /**
      * Returns the number of additional elements that this queue can ideally
@@ -400,4 +402,5 @@ public interface BlockingQueue<E extends @NonNull Object> extends Queue<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    int drainTo(@Shrinkable @GuardSatisfied @CanShrink BlockingQueue<E> this, @Growable Collection<? super E> c, int maxElements);}
+    int drainTo(@Shrinkable @GuardSatisfied @CanShrink BlockingQueue<E> this, @Growable Collection<? super E> c, int maxElements);
+}

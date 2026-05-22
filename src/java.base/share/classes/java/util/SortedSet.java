@@ -363,8 +363,7 @@ public interface SortedSet<E> extends Set<E>, SequencedSet<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default E removeFirst(@Shrinkable SortedSet<E> this) {
-        E e = this.first();
+    default E removeFirst(@Shrinkable SortedSet<E> this) {        E e = this.first();
         this.remove(e);
         return e;
     }
@@ -383,8 +382,7 @@ public interface SortedSet<E> extends Set<E>, SequencedSet<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default E removeLast(@Shrinkable SortedSet<E> this) {
-        E e = this.last();
+    default E removeLast(@Shrinkable SortedSet<E> this) {        E e = this.last();
         this.remove(e);
         return e;
     }
@@ -407,7 +405,6 @@ public interface SortedSet<E> extends Set<E>, SequencedSet<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    default @PolyModifiable SortedSet<E> reversed(@PolyModifiable SortedSet<E> this) {
-        return ReverseOrderSortedSetView.of(this);
+    default @PolyModifiable SortedSet<E> reversed(@PolyModifiable SortedSet<E> this) {        return ReverseOrderSortedSetView.of(this);
     }
 }

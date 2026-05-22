@@ -256,8 +256,7 @@ public class LinkedHashSet<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void addFirst(@Growable LinkedHashSet<E> this, E e) {
-        map().putFirst(e, PRESENT);
+    public void addFirst(@Growable LinkedHashSet<E> this, E e) {        map().putFirst(e, PRESENT);
     }
 
     /**
@@ -270,8 +269,7 @@ public class LinkedHashSet<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void addLast(@Growable LinkedHashSet<E> this, E e) {
-        map().putLast(e, PRESENT);
+    public void addLast(@Growable LinkedHashSet<E> this, E e) {        map().putLast(e, PRESENT);
     }
 
     /**
@@ -304,8 +302,7 @@ public class LinkedHashSet<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E removeFirst(@Shrinkable LinkedHashSet<E> this) {
-        return map().sequencedKeySet().removeFirst();
+    public E removeFirst(@Shrinkable LinkedHashSet<E> this) {        return map().sequencedKeySet().removeFirst();
     }
 
     /**
@@ -316,8 +313,7 @@ public class LinkedHashSet<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E removeLast(@Shrinkable LinkedHashSet<E> this) {
-        return map().sequencedKeySet().removeLast();
+    public E removeLast(@Shrinkable LinkedHashSet<E> this) {        return map().sequencedKeySet().removeLast();
     }
 
     /**

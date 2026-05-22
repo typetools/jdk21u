@@ -46,6 +46,7 @@ import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.common.value.qual.StaticallyExecutable;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
 // import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
@@ -141,8 +142,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
     @EnsuresNonEmpty("this")
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean add(@Growable @GuardSatisfied AbstractList<E> this, E e) {
-        add(size(), e);
+    public boolean add(@Growable @GuardSatisfied AbstractList<E> this, E e) {        add(size(), e);
         return true;
     }
 
@@ -169,8 +169,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E set(@Replaceable @GuardSatisfied AbstractList<E> this, @IndexFor({"this"}) int index, E element) {
-        throw new UnsupportedOperationException();
+    public E set(@Replaceable @GuardSatisfied AbstractList<E> this, @IndexFor({"this"}) int index, E element) {        throw new UnsupportedOperationException();
     }
 
     /**
@@ -188,8 +187,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void add(@Growable @GuardSatisfied AbstractList<E> this, @IndexOrHigh({"this"}) int index, E element) {
-        throw new UnsupportedOperationException();
+    public void add(@Growable @GuardSatisfied AbstractList<E> this, @IndexOrHigh({"this"}) int index, E element) {        throw new UnsupportedOperationException();
     }
 
     /**
@@ -204,8 +202,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E remove(@Shrinkable @GuardSatisfied @CanShrink AbstractList<E> this, @IndexFor({"this"}) int index) {
-        throw new UnsupportedOperationException();
+    public E remove(@Shrinkable @GuardSatisfied @CanShrink AbstractList<E> this, @IndexFor({"this"}) int index) {        throw new UnsupportedOperationException();
     }
 
 
@@ -286,8 +283,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable @GuardSatisfied @CanShrink AbstractList<E> this) {
-        removeRange(0, size());
+    public void clear(@Shrinkable @GuardSatisfied @CanShrink AbstractList<E> this) {        removeRange(0, size());
     }
 
     /**
@@ -312,8 +308,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean addAll(@Growable @GuardSatisfied AbstractList<E> this, @IndexOrHigh({"this"}) int index, Collection<? extends E> c) {
-        rangeCheckForAdd(index);
+    public boolean addAll(@Growable @GuardSatisfied AbstractList<E> this, @IndexOrHigh({"this"}) int index, Collection<? extends E> c) {        rangeCheckForAdd(index);
         boolean modified = false;
         for (E e : c) {
             add(index++, e);

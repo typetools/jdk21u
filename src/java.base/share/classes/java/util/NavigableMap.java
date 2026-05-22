@@ -268,7 +268,6 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     Map.@Nullable Entry<K,V> pollFirstEntry(@Shrinkable @GuardSatisfied NavigableMap<K, V> this);
-
     /**
      * Removes and returns a key-value mapping associated with
      * the greatest key in this map, or {@code null} if the map is empty.
@@ -279,7 +278,6 @@ public interface NavigableMap<K,V> extends SortedMap<K,V> {
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
     Map.@Nullable Entry<K,V> pollLastEntry(@Shrinkable @GuardSatisfied NavigableMap<K, V> this);
-
     /**
      * Returns a reverse order view of the mappings contained in this map.
      * The descending map is backed by this map, so changes to the map are
