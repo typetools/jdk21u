@@ -8,15 +8,16 @@ import java.lang.annotation.Target;
 import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
- * Calling shrink operations such as {@code remove}, {@code clear}, etc. on this collection will not
- * result in throwing {@link UnsupportedOperationException}.
- *
- * <p>No guarantees are made about grow or replace operations.
+ * If a collection's type is {@code @IteratorPolyMod}, then its {@code iterator()} method preserves
+ * the ability to call {@code Iterator.remove()}. That is, if collection {@code c} has type
+ * {@code @Shrinkable}, then {@code c.iterator()} also has type {@code @Shrinkable}. For any
+ * collection whose type is {@code @MaybeIteratorPolyMod}, its iterator is always
+ * {@code @Unshrinkable}.
  *
  * @checker_framework.manual #modifiability-checker Modifiability Checker
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-@SubtypeOf(MaybeShrink.class)
-public @interface Shrinkable {}
+@SubtypeOf(MaybeIteratorPolyMod.class)
+public @interface IteratorPolyMod {}
