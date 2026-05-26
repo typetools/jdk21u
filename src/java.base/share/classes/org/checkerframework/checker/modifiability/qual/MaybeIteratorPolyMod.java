@@ -5,19 +5,20 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.checkerframework.framework.qual.PolymorphicQualifier;
+import org.checkerframework.framework.qual.DefaultQualifierInHierarchy;
+import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
- * A polymorphic qualifier for the Grow hierarchy.
+ * For the annotated collection, The return type of {@code iterator()} is {@code @Unshrinkable}.
  *
- * <p>When used on a method, the Grow capability of the return type matches the Grow capability of
- * the argument or receiver annotated with {@code @PolyGrow}.
+ * <p>This is the default qualifier for unannotated types.
  *
+ * @see IteratorPolyMod
  * @checker_framework.manual #modifiability-checker Modifiability Checker
- * @checker_framework.manual #qualifier-polymorphism Qualifier polymorphism
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-@PolymorphicQualifier(UnknownGrow.class)
-public @interface PolyGrow {}
+@SubtypeOf({})
+@DefaultQualifierInHierarchy
+public @interface MaybeIteratorPolyMod {}

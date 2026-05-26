@@ -8,10 +8,9 @@ import java.lang.annotation.Target;
 import org.checkerframework.framework.qual.PolymorphicQualifier;
 
 /**
- * A polymorphic qualifier for the Replace hierarchy.
+ * A polymorphic qualifier for the Shrink hierarchy that preserves the shrink capability.
  *
- * <p>When used on a method, the Replace capability of the return type matches the Replace
- * capability of the argument or receiver annotated with {@code @PolyReplace}.
+ * <p>Use on methods that preserve shrinkability &mdash; for example, {@code Map.keySet()}.
  *
  * @checker_framework.manual #modifiability-checker Modifiability Checker
  * @checker_framework.manual #qualifier-polymorphism Qualifier polymorphism
@@ -19,5 +18,5 @@ import org.checkerframework.framework.qual.PolymorphicQualifier;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-@PolymorphicQualifier(UnknownReplace.class)
-public @interface PolyReplace {}
+@PolymorphicQualifier(MaybeShrinkable.class)
+public @interface PolyShrinkable {}

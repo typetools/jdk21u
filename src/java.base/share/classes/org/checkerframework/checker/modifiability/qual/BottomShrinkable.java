@@ -8,15 +8,14 @@ import java.lang.annotation.Target;
 import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
- * Calling shrink operations such as {@code remove}, {@code clear}, etc. on this collection will not
- * result in throwing {@link UnsupportedOperationException}.
+ * The bottom qualifier in the Shrink hierarchy.
  *
- * <p>No guarantees are made about grow or replace operations.
+ * <p>Programmers should rarely write this qualifier.
  *
  * @checker_framework.manual #modifiability-checker Modifiability Checker
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-@SubtypeOf(MaybeShrinkable.class)
-public @interface Shrinkable {}
+@SubtypeOf({Shrinkable.class, Unshrinkable.class})
+public @interface BottomShrinkable {}

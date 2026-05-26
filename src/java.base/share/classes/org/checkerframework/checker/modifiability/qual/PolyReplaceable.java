@@ -5,18 +5,19 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.checkerframework.framework.qual.SubtypeOf;
+import org.checkerframework.framework.qual.PolymorphicQualifier;
 
 /**
- * Calling shrink operations such as {@code remove}, {@code clear}, etc. on this collection will not
- * result in throwing {@link UnsupportedOperationException}.
+ * A polymorphic qualifier for the Replace hierarchy.
  *
- * <p>No guarantees are made about grow or replace operations.
+ * <p>When used on a method, the Replace capability of the return type matches the Replace
+ * capability of the argument or receiver annotated with {@code @PolyReplaceable}.
  *
  * @checker_framework.manual #modifiability-checker Modifiability Checker
+ * @checker_framework.manual #qualifier-polymorphism Qualifier polymorphism
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-@SubtypeOf(MaybeShrinkable.class)
-public @interface Shrinkable {}
+@PolymorphicQualifier(MaybeReplaceable.class)
+public @interface PolyReplaceable {}

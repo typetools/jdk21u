@@ -30,7 +30,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.modifiability.qual.Growable;
 import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.PolyModifiable;
-import org.checkerframework.checker.modifiability.qual.PolyShrink;
+import org.checkerframework.checker.modifiability.qual.PolyShrinkable;
 import org.checkerframework.checker.modifiability.qual.Replaceable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.nonempty.qual.EnsuresNonEmptyIf;
@@ -43,11 +43,10 @@ import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
-// import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
 import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
+// import org.checkerframework.dataflow.qual.SideEffectsOnly;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -467,7 +466,8 @@ public class IdentityHashMap<K,V>
     @EnsuresKeyFor(value={"#1"}, map={"this"})
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V put(@Growable @Replaceable @GuardSatisfied IdentityHashMap<K, V> this, K key, V value) {        final Object k = maskNull(key);
+    public @Nullable V put(@Growable @Replaceable @GuardSatisfied IdentityHashMap<K, V> this, K key, V value) {
+        final Object k = maskNull(key);
 
         retryAfterResize: for (;;) {
             final Object[] tab = table;
@@ -549,7 +549,8 @@ public class IdentityHashMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void putAll(@Growable @Replaceable @GuardSatisfied IdentityHashMap<K, V> this, Map<? extends K, ? extends V> m) {        int n = m.size();
+    public void putAll(@Growable @Replaceable @GuardSatisfied IdentityHashMap<K, V> this, Map<? extends K, ? extends V> m) {
+        int n = m.size();
         if (n == 0)
             return;
         if (n > size)
@@ -572,7 +573,8 @@ public class IdentityHashMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V remove(@Shrinkable @GuardSatisfied IdentityHashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {        Object k = maskNull(key);
+    public @Nullable V remove(@Shrinkable @GuardSatisfied IdentityHashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {
+        Object k = maskNull(key);
         Object[] tab = table;
         int len = tab.length;
         int i = hash(k, len);
@@ -669,7 +671,8 @@ public class IdentityHashMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable @GuardSatisfied IdentityHashMap<K, V> this) {        modCount++;
+    public void clear(@Shrinkable @GuardSatisfied IdentityHashMap<K, V> this) {
+        modCount++;
         Object[] tab = table;
         for (int i = 0; i < tab.length; i++)
             tab[i] = null;
@@ -1045,7 +1048,7 @@ public class IdentityHashMap<K,V>
      * @see System#identityHashCode(Object)
      */
     @SideEffectFree
-    public @PolyShrink Set<@KeyFor({"this"}) K> keySet(@PolyShrink @GuardSatisfied IdentityHashMap<K, V> this) {
+    public @PolyShrinkable Set<@KeyFor({"this"}) K> keySet(@PolyShrinkable @GuardSatisfied IdentityHashMap<K, V> this) {
         Set<K> ks = keySet;
         if (ks == null) {
             ks = new KeySet();
@@ -1165,7 +1168,7 @@ public class IdentityHashMap<K,V>
      * {@code containsAll} methods.</b>
      */
     @SideEffectFree
-    public @PolyShrink Collection<V> values(@PolyShrink @GuardSatisfied IdentityHashMap<K, V> this) {
+    public @PolyShrinkable Collection<V> values(@PolyShrinkable @GuardSatisfied IdentityHashMap<K, V> this) {
         Collection<V> vs = values;
         if (vs == null) {
             vs = new Values();
@@ -1283,7 +1286,7 @@ public class IdentityHashMap<K,V>
      * @return a set view of the identity-mappings contained in this map
      */
     @SideEffectFree
-    public @PolyShrink Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K,V>> entrySet(@PolyModifiable @GuardSatisfied IdentityHashMap<K, V> this) {
+    public @PolyShrinkable Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K,V>> entrySet(@PolyModifiable @GuardSatisfied IdentityHashMap<K, V> this) {
         Set<Map.Entry<K,V>> es = entrySet;
         if (es != null)
             return es;

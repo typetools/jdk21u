@@ -263,7 +263,8 @@ public class CopyOnWriteArraySet<E> extends AbstractSet<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable CopyOnWriteArraySet<E> this) {        al.clear();
+    public void clear(@Shrinkable CopyOnWriteArraySet<E> this) {
+        al.clear();
     }
 
     /**
@@ -279,7 +280,8 @@ public class CopyOnWriteArraySet<E> extends AbstractSet<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean remove(@Shrinkable CopyOnWriteArraySet<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {        return al.remove(o);
+    public boolean remove(@Shrinkable CopyOnWriteArraySet<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
+        return al.remove(o);
     }
 
     /**
@@ -297,7 +299,8 @@ public class CopyOnWriteArraySet<E> extends AbstractSet<E>
     @EnsuresNonEmpty("this")
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean add(@Growable CopyOnWriteArraySet<E> this, E e) {        return al.addIfAbsent(e);
+    public boolean add(@Growable CopyOnWriteArraySet<E> this, E e) {
+        return al.addIfAbsent(e);
     }
 
     /**
@@ -368,7 +371,8 @@ public class CopyOnWriteArraySet<E> extends AbstractSet<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean addAll(@Growable CopyOnWriteArraySet<E> this, Collection<? extends E> c) {        return al.addAllAbsent(c) > 0;
+    public boolean addAll(@Growable CopyOnWriteArraySet<E> this, Collection<? extends E> c) {
+        return al.addAllAbsent(c) > 0;
     }
 
     /**
@@ -390,7 +394,8 @@ public class CopyOnWriteArraySet<E> extends AbstractSet<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean removeAll(@Shrinkable CopyOnWriteArraySet<E> this, Collection<? extends @NonNull @UnknownSignedness Object> c) {        return al.removeAll(c);
+    public boolean removeAll(@Shrinkable CopyOnWriteArraySet<E> this, Collection<? extends @NonNull @UnknownSignedness Object> c) {
+        return al.removeAll(c);
     }
 
     /**
@@ -414,7 +419,8 @@ public class CopyOnWriteArraySet<E> extends AbstractSet<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean retainAll(@Shrinkable CopyOnWriteArraySet<E> this, Collection<? extends @NonNull @UnknownSignedness Object> c) {        return al.retainAll(c);
+    public boolean retainAll(@Shrinkable CopyOnWriteArraySet<E> this, Collection<? extends @NonNull @UnknownSignedness Object> c) {
+        return al.retainAll(c);
     }
 
     /**
@@ -462,7 +468,8 @@ public class CopyOnWriteArraySet<E> extends AbstractSet<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean removeIf(@Shrinkable CopyOnWriteArraySet<E> this, Predicate<? super E> filter) {        return al.removeIf(filter);
+    public boolean removeIf(@Shrinkable CopyOnWriteArraySet<E> this, Predicate<? super E> filter) {
+        return al.removeIf(filter);
     }
 
     /**

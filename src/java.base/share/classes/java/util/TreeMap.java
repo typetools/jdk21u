@@ -30,7 +30,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.modifiability.qual.Growable;
 import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.PolyModifiable;
-import org.checkerframework.checker.modifiability.qual.PolyShrink;
+import org.checkerframework.checker.modifiability.qual.PolyShrinkable;
 import org.checkerframework.checker.modifiability.qual.Replaceable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.modifiability.qual.ThrowsUOE;
@@ -389,7 +389,8 @@ public class TreeMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void putAll(@Growable @Replaceable @GuardSatisfied TreeMap<K, V> this, Map<? extends K, ? extends V> map) {        int mapSize = map.size();
+    public void putAll(@Growable @Replaceable @GuardSatisfied TreeMap<K, V> this, Map<? extends K, ? extends V> map) {
+        int mapSize = map.size();
         if (size==0 && mapSize!=0 && map instanceof SortedMap) {
             if (Objects.equals(comparator, ((SortedMap<?,?>)map).comparator())) {
                 ++modCount;
@@ -611,13 +612,15 @@ public class TreeMap<K,V>
     @EnsuresKeyFor(value={"#1"}, map={"this"})
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V put(@Growable @Replaceable @GuardSatisfied TreeMap<K, V> this, K key, V value) {        return put(key, value, true);
+    public @Nullable V put(@Growable @Replaceable @GuardSatisfied TreeMap<K, V> this, K key, V value) {
+        return put(key, value, true);
     }
 
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public V putIfAbsent(@Growable TreeMap<K,V> this, K key, V value) {        return put(key, value, false);
+    public V putIfAbsent(@Growable TreeMap<K,V> this, K key, V value) {
+        return put(key, value, false);
     }
 
     /**
@@ -964,7 +967,8 @@ public class TreeMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V remove(@Shrinkable @GuardSatisfied TreeMap<K, V> this, @GuardSatisfied @UnknownSignedness Object key) {        Entry<K,V> p = getEntry(key);
+    public @Nullable V remove(@Shrinkable @GuardSatisfied TreeMap<K, V> this, @GuardSatisfied @UnknownSignedness Object key) {
+        Entry<K,V> p = getEntry(key);
         if (p == null)
             return null;
 
@@ -979,7 +983,8 @@ public class TreeMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable @GuardSatisfied TreeMap<K, V> this) {        modCount++;
+    public void clear(@Shrinkable @GuardSatisfied TreeMap<K, V> this) {
+        modCount++;
         size = 0;
         root = null;
     }
@@ -1039,7 +1044,8 @@ public class TreeMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public Map.@Nullable Entry<K,V> pollFirstEntry(@Shrinkable @GuardSatisfied TreeMap<K, V> this) {        Entry<K,V> p = getFirstEntry();
+    public Map.@Nullable Entry<K,V> pollFirstEntry(@Shrinkable @GuardSatisfied TreeMap<K, V> this) {
+        Entry<K,V> p = getFirstEntry();
         Map.Entry<K,V> result = exportEntry(p);
         if (p != null)
             deleteEntry(p);
@@ -1051,7 +1057,8 @@ public class TreeMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public Map.@Nullable Entry<K,V> pollLastEntry(@Shrinkable @GuardSatisfied TreeMap<K, V> this) {        Entry<K,V> p = getLastEntry();
+    public Map.@Nullable Entry<K,V> pollLastEntry(@Shrinkable @GuardSatisfied TreeMap<K, V> this) {
+        Entry<K,V> p = getLastEntry();
         Map.Entry<K,V> result = exportEntry(p);
         if (p != null)
             deleteEntry(p);
@@ -1191,7 +1198,7 @@ public class TreeMap<K,V>
      * operations.
      */
     @SideEffectFree
-    public @PolyShrink Set<@KeyFor({"this"}) K> keySet(@PolyShrink @GuardSatisfied TreeMap<K, V> this) {
+    public @PolyShrinkable Set<@KeyFor({"this"}) K> keySet(@PolyShrinkable @GuardSatisfied TreeMap<K, V> this) {
         return navigableKeySet();
     }
 
@@ -1199,7 +1206,7 @@ public class TreeMap<K,V>
      * @since 1.6
      */
     @SideEffectFree
-    public @PolyShrink NavigableSet<@KeyFor({"this"}) K> navigableKeySet(@PolyShrink @GuardSatisfied TreeMap<K, V> this) {
+    public @PolyShrinkable NavigableSet<@KeyFor({"this"}) K> navigableKeySet(@PolyShrinkable @GuardSatisfied TreeMap<K, V> this) {
         KeySet<K> nks = navigableKeySet;
         return (nks != null) ? nks : (navigableKeySet = new KeySet<>(this));
     }
@@ -1208,7 +1215,7 @@ public class TreeMap<K,V>
      * @since 1.6
      */
     @SideEffectFree
-    public @PolyShrink NavigableSet<@KeyFor({"this"}) K> descendingKeySet(@PolyShrink @GuardSatisfied TreeMap<K, V> this) {
+    public @PolyShrinkable NavigableSet<@KeyFor({"this"}) K> descendingKeySet(@PolyShrinkable @GuardSatisfied TreeMap<K, V> this) {
         return descendingMap().navigableKeySet();
     }
 
@@ -1234,7 +1241,7 @@ public class TreeMap<K,V>
      * support the {@code add} or {@code addAll} operations.
      */
     @SideEffectFree
-    public @PolyShrink Collection<V> values(@PolyShrink @GuardSatisfied TreeMap<K, V> this) {
+    public @PolyShrinkable Collection<V> values(@PolyShrinkable @GuardSatisfied TreeMap<K, V> this) {
         Collection<V> vs = values;
         if (vs == null) {
             vs = new Values();
@@ -1266,7 +1273,7 @@ public class TreeMap<K,V>
      * {@code add} or {@code addAll} operations.
      */
     @SideEffectFree
-    public @PolyShrink Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K,V>> entrySet(@PolyModifiable @GuardSatisfied TreeMap<K, V> this) {
+    public @PolyShrinkable Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K,V>> entrySet(@PolyModifiable @GuardSatisfied TreeMap<K, V> this) {
         EntrySet es = entrySet;
         return (es != null) ? es : (entrySet = new EntrySet());
     }

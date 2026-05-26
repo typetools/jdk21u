@@ -30,7 +30,7 @@ import org.checkerframework.checker.lock.qual.GuardSatisfied;
 import org.checkerframework.checker.modifiability.qual.Growable;
 import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.PolyModifiable;
-import org.checkerframework.checker.modifiability.qual.PolyShrink;
+import org.checkerframework.checker.modifiability.qual.PolyShrinkable;
 import org.checkerframework.checker.modifiability.qual.Replaceable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
 import org.checkerframework.checker.modifiability.qual.UnknownModifiability;
@@ -47,11 +47,10 @@ import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.checkerframework.checker.signedness.qual.UnknownSignedness;
 import org.checkerframework.dataflow.qual.Pure;
 import org.checkerframework.dataflow.qual.SideEffectFree;
-import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
-// import org.checkerframework.dataflow.qual.SideEffectsOnly;
 import org.checkerframework.framework.qual.AnnotatedFor;
 import org.checkerframework.framework.qual.CFComment;
 import org.checkerframework.framework.qual.DoesNotUnrefineReceiver;
+// import org.checkerframework.dataflow.qual.SideEffectsOnly;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -659,7 +658,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     @EnsuresKeyFor(value={"#1"}, map={"this"})
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V put(@Growable @Replaceable @GuardSatisfied HashMap<K, V> this, K key, V value) {        return putVal(hash(key), key, value, false, true);
+    public @Nullable V put(@Growable @Replaceable @GuardSatisfied HashMap<K, V> this, K key, V value) {
+        return putVal(hash(key), key, value, false, true);
     }
 
     /**
@@ -834,7 +834,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void putAll(@Growable @Replaceable @GuardSatisfied HashMap<K, V> this, Map<? extends K, ? extends V> m) {        putMapEntries(m, true);
+    public void putAll(@Growable @Replaceable @GuardSatisfied HashMap<K, V> this, Map<? extends K, ? extends V> m) {
+        putMapEntries(m, true);
     }
 
     /**
@@ -848,7 +849,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V remove(@Shrinkable @GuardSatisfied HashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {        Node<K,V> e;
+    public @Nullable V remove(@Shrinkable @GuardSatisfied HashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {
+        Node<K,V> e;
         return (e = removeNode(hash(key), key, null, false, true)) == null ?
             null : e.value;
     }
@@ -910,7 +912,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable @GuardSatisfied HashMap<K, V> this) {        Node<K,V>[] tab;
+    public void clear(@Shrinkable @GuardSatisfied HashMap<K, V> this) {
+        Node<K,V>[] tab;
         modCount++;
         if ((tab = table) != null && size > 0) {
             size = 0;
@@ -958,7 +961,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @return a set view of the keys contained in this map
      */
     @SideEffectFree
-    public @PolyShrink Set<@KeyFor({"this"}) K> keySet(@PolyShrink @GuardSatisfied HashMap<K, V> this) {
+    public @PolyShrinkable Set<@KeyFor({"this"}) K> keySet(@PolyShrinkable @GuardSatisfied HashMap<K, V> this) {
         Set<K> ks = keySet;
         if (ks == null) {
             ks = new KeySet();
@@ -1098,7 +1101,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @return a view of the values contained in this map
      */
     @SideEffectFree
-    public @PolyShrink Collection<V> values(@PolyShrink @GuardSatisfied HashMap<K, V> this) {
+    public @PolyShrinkable Collection<V> values(@PolyShrinkable @GuardSatisfied HashMap<K, V> this) {
         Collection<V> vs = values;
         if (vs == null) {
             vs = new Values();
@@ -1165,7 +1168,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @return a set view of the mappings contained in this map
      */
     @SideEffectFree
-    public @PolyShrink Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K,V>> entrySet(@PolyShrink @GuardSatisfied HashMap<K, V> this) {
+    public @PolyShrinkable Set<Map.@PolyModifiable Entry<@KeyFor({"this"}) K,V>> entrySet(@PolyShrinkable @GuardSatisfied HashMap<K, V> this) {
         Set<Map.Entry<K,V>> es;
         return (es = entrySet) == null ? (entrySet = new EntrySet()) : es;
     }
@@ -1224,7 +1227,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
 
     @Override
     @Pure
-    public V getOrDefault(@GuardSatisfied @Nullable @UnknownSignedness Object key, V defaultValue) {
+    public V getOrDefault(HashMap<K,V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key, V defaultValue) {
         Node<K,V> e;
         return (e = getNode(key)) == null ? defaultValue : e.value;
     }
@@ -1233,19 +1236,22 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V putIfAbsent(@Growable HashMap<K,V> this, K key, V value) {        return putVal(hash(key), key, value, true, true);
+    public @Nullable V putIfAbsent(@Growable HashMap<K,V> this, K key, V value) {
+        return putVal(hash(key), key, value, true, true);
     }
 
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean remove(@Shrinkable HashMap<K,V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key, @GuardSatisfied @Nullable @UnknownSignedness Object value) {        return removeNode(hash(key), key, value, true, true) != null;
+    public boolean remove(@Shrinkable HashMap<K,V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key, @GuardSatisfied @Nullable @UnknownSignedness Object value) {
+        return removeNode(hash(key), key, value, true, true) != null;
     }
 
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean replace(@Replaceable HashMap<K,V> this, K key, V oldValue, V newValue) {        Node<K,V> e; V v;
+    public boolean replace(@Replaceable HashMap<K,V> this, K key, V oldValue, V newValue) {
+        Node<K,V> e; V v;
         if ((e = getNode(key)) != null &&
             ((v = e.value) == oldValue || (v != null && v.equals(oldValue)))) {
             e.value = newValue;
@@ -1258,7 +1264,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V replace(@Replaceable HashMap<K,V> this, K key, V value) {        Node<K,V> e;
+    public @Nullable V replace(@Replaceable HashMap<K,V> this, K key, V value) {
+        Node<K,V> e;
         if ((e = getNode(key)) != null) {
             V oldValue = e.value;
             e.value = value;
