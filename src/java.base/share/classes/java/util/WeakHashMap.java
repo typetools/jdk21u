@@ -492,7 +492,8 @@ public class WeakHashMap<K,V>
     @EnsuresKeyFor(value={"#1"}, map={"this"})
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V put(@Growable @Replaceable @GuardSatisfied WeakHashMap<K, V> this, K key, V value) {        Object k = maskNull(key);
+    public @Nullable V put(@Growable @Replaceable @GuardSatisfied WeakHashMap<K, V> this, K key, V value) {
+        Object k = maskNull(key);
         int h = hash(k);
         Entry<K,V>[] tab = getTable();
         int i = indexFor(h, tab.length);
@@ -585,7 +586,8 @@ public class WeakHashMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void putAll(@Growable @Replaceable @GuardSatisfied WeakHashMap<K, V> this, Map<? extends K, ? extends V> m) {        int numKeysToBeAdded = m.size();
+    public void putAll(@Growable @Replaceable @GuardSatisfied WeakHashMap<K, V> this, Map<? extends K, ? extends V> m) {
+        int numKeysToBeAdded = m.size();
         if (numKeysToBeAdded == 0)
             return;
 
@@ -635,7 +637,8 @@ public class WeakHashMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable V remove(@Shrinkable @GuardSatisfied WeakHashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {        Object k = maskNull(key);
+    public @Nullable V remove(@Shrinkable @GuardSatisfied WeakHashMap<K, V> this, @GuardSatisfied @Nullable @UnknownSignedness Object key) {
+        Object k = maskNull(key);
         int h = hash(k);
         Entry<K,V>[] tab = getTable();
         int i = indexFor(h, tab.length);
@@ -695,7 +698,8 @@ public class WeakHashMap<K,V>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable @GuardSatisfied WeakHashMap<K, V> this) {        // clear out ref queue. We don't need to expunge entries
+    public void clear(@Shrinkable @GuardSatisfied WeakHashMap<K, V> this) {
+        // clear out ref queue. We don't need to expunge entries
         // since table is getting cleared.
         while (queue.poll() != null)
             ;

@@ -546,7 +546,8 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public synchronized @Nullable V remove(@Shrinkable @GuardSatisfied Hashtable<K, V> this, @GuardSatisfied @UnknownSignedness Object key) {        Entry<?,?> tab[] = table;
+    public synchronized @Nullable V remove(@Shrinkable @GuardSatisfied Hashtable<K, V> this, @GuardSatisfied @UnknownSignedness Object key) {
+        Entry<?,?> tab[] = table;
         int hash = key.hashCode();
         int index = (hash & 0x7FFFFFFF) % tab.length;
         @SuppressWarnings("unchecked")
@@ -579,7 +580,8 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public synchronized void putAll(@Growable @Replaceable @GuardSatisfied Hashtable<K, V> this, Map<? extends K, ? extends V> t) {        for (Map.Entry<? extends K, ? extends V> e : t.entrySet())
+    public synchronized void putAll(@Growable @Replaceable @GuardSatisfied Hashtable<K, V> this, Map<? extends K, ? extends V> t) {
+        for (Map.Entry<? extends K, ? extends V> e : t.entrySet())
             put(e.getKey(), e.getValue());
     }
 
@@ -588,7 +590,8 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public synchronized void clear(@Shrinkable @GuardSatisfied Hashtable<K, V> this) {        Entry<?,?> tab[] = table;
+    public synchronized void clear(@Shrinkable @GuardSatisfied Hashtable<K, V> this) {
+        Entry<?,?> tab[] = table;
         for (int index = tab.length; --index >= 0; )
             tab[index] = null;
         modCount++;
@@ -1004,7 +1007,8 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public synchronized V putIfAbsent(@Growable Hashtable<K, V> this, K key, V value) {        Objects.requireNonNull(value);
+    public synchronized V putIfAbsent(@Growable Hashtable<K, V> this, K key, V value) {
+        Objects.requireNonNull(value);
 
         // Makes sure the key is not already in the hashtable.
         Entry<?,?> tab[] = table;
@@ -1029,7 +1033,8 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public synchronized boolean remove(@Shrinkable Hashtable<K, V> this, @GuardSatisfied @UnknownSignedness Object key, @GuardSatisfied @UnknownSignedness Object value) {        Objects.requireNonNull(value);
+    public synchronized boolean remove(@Shrinkable Hashtable<K, V> this, @GuardSatisfied @UnknownSignedness Object key, @GuardSatisfied @UnknownSignedness Object value) {
+        Objects.requireNonNull(value);
 
         Entry<?,?> tab[] = table;
         int hash = key.hashCode();
@@ -1055,7 +1060,8 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public synchronized boolean replace(@Replaceable Hashtable<K, V> this, K key, V oldValue, V newValue) {        Objects.requireNonNull(oldValue);
+    public synchronized boolean replace(@Replaceable Hashtable<K, V> this, K key, V oldValue, V newValue) {
+        Objects.requireNonNull(oldValue);
         Objects.requireNonNull(newValue);
         Entry<?,?> tab[] = table;
         int hash = key.hashCode();
@@ -1078,7 +1084,8 @@ public class Hashtable<K extends @NonNull Object,V extends @NonNull Object>
     @Override
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public synchronized V replace(@Replaceable Hashtable<K, V> this, K key, V value) {        Objects.requireNonNull(value);
+    public synchronized V replace(@Replaceable Hashtable<K, V> this, K key, V value) {
+        Objects.requireNonNull(value);
         Entry<?,?> tab[] = table;
         int hash = key.hashCode();
         int index = (hash & 0x7FFFFFFF) % tab.length;

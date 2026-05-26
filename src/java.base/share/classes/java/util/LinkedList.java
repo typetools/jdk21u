@@ -309,7 +309,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E removeFirst(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink LinkedList<E> this) {        final Node<E> f = first;
+    public E removeFirst(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink LinkedList<E> this) {
+        final Node<E> f = first;
         if (f == null)
             throw new NoSuchElementException();
         return unlinkFirst(f);
@@ -323,7 +324,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E removeLast(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink LinkedList<E> this) {        final Node<E> l = last;
+    public E removeLast(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink LinkedList<E> this) {
+        final Node<E> l = last;
         if (l == null)
             throw new NoSuchElementException();
         return unlinkLast(l);
@@ -336,7 +338,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void addFirst(@Growable @GuardSatisfied LinkedList<E> this, E e) {        linkFirst(e);
+    public void addFirst(@Growable @GuardSatisfied LinkedList<E> this, E e) {
+        linkFirst(e);
     }
 
     /**
@@ -348,7 +351,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void addLast(@Growable @GuardSatisfied LinkedList<E> this, E e) {        linkLast(e);
+    public void addLast(@Growable @GuardSatisfied LinkedList<E> this, E e) {
+        linkLast(e);
     }
 
     /**
@@ -388,7 +392,8 @@ public class LinkedList<E>
     @EnsuresNonEmpty("this")
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean add(@Growable @GuardSatisfied LinkedList<E> this, E e) {        linkLast(e);
+    public boolean add(@Growable @GuardSatisfied LinkedList<E> this, E e) {
+        linkLast(e);
         return true;
     }
 
@@ -408,7 +413,8 @@ public class LinkedList<E>
     @ReleasesNoLocks
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean remove(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {        if (o == null) {
+    public boolean remove(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
+        if (o == null) {
             for (Node<E> x = first; x != null; x = x.next) {
                 if (x.item == null) {
                     unlink(x);
@@ -440,7 +446,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean addAll(@Growable @GuardSatisfied LinkedList<E> this, Collection<? extends E> c) {        return addAll(size, c);
+    public boolean addAll(@Growable @GuardSatisfied LinkedList<E> this, Collection<? extends E> c) {
+        return addAll(size, c);
     }
 
     /**
@@ -460,7 +467,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean addAll(@Growable @GuardSatisfied LinkedList<E> this, @NonNegative int index, Collection<? extends E> c) {        checkPositionIndex(index);
+    public boolean addAll(@Growable @GuardSatisfied LinkedList<E> this, @NonNegative int index, Collection<? extends E> c) {
+        checkPositionIndex(index);
 
         Object[] a = c.toArray();
         int numNew = a.length;
@@ -504,7 +512,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void clear(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this) {        // Clearing all of the links between nodes is "unnecessary", but:
+    public void clear(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this) {
+        // Clearing all of the links between nodes is "unnecessary", but:
         // - helps a generational GC if the discarded nodes inhabit
         //   more than one generation
         // - is sure to free memory even if there is a reachable Iterator
@@ -547,7 +556,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E set(@Replaceable @GuardSatisfied LinkedList<E> this, @NonNegative int index, E element) {        checkElementIndex(index);
+    public E set(@Replaceable @GuardSatisfied LinkedList<E> this, @NonNegative int index, E element) {
+        checkElementIndex(index);
         Node<E> x = node(index);
         E oldVal = x.item;
         x.item = element;
@@ -565,7 +575,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void add(@Growable @GuardSatisfied LinkedList<E> this, @NonNegative int index, E element) {        checkPositionIndex(index);
+    public void add(@Growable @GuardSatisfied LinkedList<E> this, @NonNegative int index, E element) {
+        checkPositionIndex(index);
 
         if (index == size)
             linkLast(element);
@@ -584,7 +595,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E remove(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this, @NonNegative int index) {        checkElementIndex(index);
+    public E remove(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this, @NonNegative int index) {
+        checkElementIndex(index);
         return unlink(node(index));
     }
 
@@ -739,7 +751,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable E poll(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this) {        final Node<E> f = first;
+    public @Nullable E poll(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this) {
+        final Node<E> f = first;
         return (f == null) ? null : unlinkFirst(f);
     }
 
@@ -752,7 +765,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E remove(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink LinkedList<E> this) {        return removeFirst();
+    public E remove(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink LinkedList<E> this) {
+        return removeFirst();
     }
 
     /**
@@ -764,7 +778,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean offer(@Growable LinkedList<E> this, E e) {        return add(e);
+    public boolean offer(@Growable LinkedList<E> this, E e) {
+        return add(e);
     }
 
     // Deque operations
@@ -777,7 +792,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean offerFirst(@Growable LinkedList<E> this, E e) {        addFirst(e);
+    public boolean offerFirst(@Growable LinkedList<E> this, E e) {
+        addFirst(e);
         return true;
     }
 
@@ -790,7 +806,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean offerLast(@Growable LinkedList<E> this, E e) {        addLast(e);
+    public boolean offerLast(@Growable LinkedList<E> this, E e) {
+        addLast(e);
         return true;
     }
 
@@ -832,7 +849,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable E pollFirst(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this) {        final Node<E> f = first;
+    public @Nullable E pollFirst(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this) {
+        final Node<E> f = first;
         return (f == null) ? null : unlinkFirst(f);
     }
 
@@ -846,7 +864,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public @Nullable E pollLast(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this) {        final Node<E> l = last;
+    public @Nullable E pollLast(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this) {
+        final Node<E> l = last;
         return (l == null) ? null : unlinkLast(l);
     }
 
@@ -861,7 +880,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void push(@Growable @GuardSatisfied LinkedList<E> this, E e) {        addFirst(e);
+    public void push(@Growable @GuardSatisfied LinkedList<E> this, E e) {
+        addFirst(e);
     }
 
     /**
@@ -877,7 +897,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E pop(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink LinkedList<E> this) {        return removeFirst();
+    public E pop(@Shrinkable @GuardSatisfied @NonEmpty @CanShrink LinkedList<E> this) {
+        return removeFirst();
     }
 
     /**
@@ -891,7 +912,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean removeFirstOccurrence(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {        return remove(o);
+    public boolean removeFirstOccurrence(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
+        return remove(o);
     }
 
     /**
@@ -905,7 +927,8 @@ public class LinkedList<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean removeLastOccurrence(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {        if (o == null) {
+    public boolean removeLastOccurrence(@Shrinkable @GuardSatisfied @CanShrink LinkedList<E> this, @GuardSatisfied @Nullable @UnknownSignedness Object o) {
+        if (o == null) {
             for (Node<E> x = last; x != null; x = x.prev) {
                 if (x.item == null) {
                     unlink(x);

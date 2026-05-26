@@ -283,7 +283,8 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean add(@Growable @GuardSatisfied AbstractCollection<E> this, E e) {        throw new UnsupportedOperationException();
+    public boolean add(@Growable @GuardSatisfied AbstractCollection<E> this, E e) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -370,7 +371,8 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean addAll(@Growable @GuardSatisfied AbstractCollection<E> this, Collection<? extends E> c) {        boolean modified = false;
+    public boolean addAll(@Growable @GuardSatisfied AbstractCollection<E> this, Collection<? extends E> c) {
+        boolean modified = false;
         for (E e : c)
             if (add(e))
                 modified = true;
