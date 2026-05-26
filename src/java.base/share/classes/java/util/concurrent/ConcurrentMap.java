@@ -39,7 +39,7 @@ import org.checkerframework.checker.modifiability.qual.Growable;
 import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.modifiability.qual.Replaceable;
 import org.checkerframework.checker.modifiability.qual.Shrinkable;
-import org.checkerframework.checker.modifiability.qual.UnknownModifiability;
+import org.checkerframework.checker.modifiability.qual.MaybeModifiable;
 import org.checkerframework.checker.nullness.qual.EnsuresKeyFor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -99,7 +99,7 @@ public interface ConcurrentMap<K extends @NonNull Object,V extends @NonNull Obje
      */
     @Override
     @Pure
-    default V getOrDefault(@UnknownModifiability ConcurrentMap<K,V> this,Object key, V defaultValue) {
+    default V getOrDefault(@MaybeModifiable ConcurrentMap<K,V> this,Object key, V defaultValue) {
         V v;
         return ((v = get(key)) != null) ? v : defaultValue;
     }
@@ -124,7 +124,7 @@ public interface ConcurrentMap<K extends @NonNull Object,V extends @NonNull Obje
      */
     @Override
     @DoesNotUnrefineReceiver("modifiability")
-    default void forEach(@UnknownModifiability ConcurrentMap<K,V> this,BiConsumer<? super K, ? super V> action) {
+    default void forEach(@MaybeModifiable ConcurrentMap<K,V> this,BiConsumer<? super K, ? super V> action) {
         Objects.requireNonNull(action);
         for (Map.Entry<K,V> entry : entrySet()) {
             K k;
