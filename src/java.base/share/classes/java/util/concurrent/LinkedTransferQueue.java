@@ -1242,7 +1242,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public boolean tryTransfer(@Growable @GuardSatisfied @CanShrink LinkedTransferQueue<E> this, E e) {
+    public boolean tryTransfer(@GuardSatisfied @Growable @CanShrink LinkedTransferQueue<E> this, E e) {
         Objects.requireNonNull(e);
         return xfer(e, 0L) == null;
     }
@@ -1260,7 +1260,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public void transfer(@Growable @GuardSatisfied @CanShrink LinkedTransferQueue<E> this, E e) throws InterruptedException {
+    public void transfer(@GuardSatisfied @Growable @CanShrink LinkedTransferQueue<E> this, E e) throws InterruptedException {
         Objects.requireNonNull(e);
         if (!Thread.interrupted()) {
             if (xfer(e, Long.MAX_VALUE) == null)
@@ -1324,7 +1324,7 @@ public class LinkedTransferQueue<E> extends AbstractQueue<E>
     @SuppressWarnings("unchecked")
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E poll(@Shrinkable @GuardSatisfied @CanShrink LinkedTransferQueue<E> this) {
+    public E poll(@GuardSatisfied @Shrinkable @CanShrink LinkedTransferQueue<E> this) {
         return (E) xfer(null, 0L);
     }
 

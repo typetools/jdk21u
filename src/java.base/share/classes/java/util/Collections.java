@@ -1561,7 +1561,6 @@ public class Collections {
         public NavigableSet<E> descendingSet()
                  { return new UnmodifiableNavigableSet<>(ns.descendingSet()); }
         @SideEffectFree
-        @DoesNotUnrefineReceiver("modifiability")
         public Iterator<E> descendingIterator()
                                          { return descendingSet().iterator(); }
 

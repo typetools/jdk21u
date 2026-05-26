@@ -339,7 +339,7 @@ public class SynchronousQueue<E extends @NonNull Object> extends AbstractQueue<E
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E take(@Shrinkable @GuardSatisfied @CanShrink SynchronousQueue<E> this) throws InterruptedException {
+    public E take(@GuardSatisfied @Shrinkable @CanShrink SynchronousQueue<E> this) throws InterruptedException {
         Object e;
         if (!Thread.interrupted()) {
             if ((e = xfer(null, Long.MAX_VALUE)) != null)
@@ -360,7 +360,7 @@ public class SynchronousQueue<E extends @NonNull Object> extends AbstractQueue<E
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E poll(@Shrinkable @GuardSatisfied @CanShrink SynchronousQueue<E> this, long timeout, TimeUnit unit) throws InterruptedException {
+    public E poll(@GuardSatisfied @Shrinkable @CanShrink SynchronousQueue<E> this, long timeout, TimeUnit unit) throws InterruptedException {
         Object e;
         long nanos = Math.max(unit.toNanos(timeout), 0L);
         if ((e = xfer(null, nanos)) != null || !Thread.interrupted())
@@ -377,7 +377,7 @@ public class SynchronousQueue<E extends @NonNull Object> extends AbstractQueue<E
      */
     // @SideEffectsOnly("this")
     @DoesNotUnrefineReceiver("modifiability")
-    public E poll(@Shrinkable @GuardSatisfied @CanShrink SynchronousQueue<E> this) {
+    public E poll(@GuardSatisfied @Shrinkable @CanShrink SynchronousQueue<E> this) {
         return (E) xfer(null, 0L);
     }
 
